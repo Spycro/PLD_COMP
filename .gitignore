@@ -1,5 +1,8 @@
 # custom
-compiler/ant4r-generated
+compiler/antlr4-generated
+.vscode
+compiler/ifcc
+**/pld-test-output
 
 # Prerequisites
 *.d
