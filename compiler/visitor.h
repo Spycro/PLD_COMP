@@ -26,9 +26,9 @@ public:
               << " main: \n"
               << "  pushq %rbp\n"
               << "  movq %rsp, %rbp\n"
-              << " 	movl	$" << retval << ", %eax\n"
+              << "  movl	$" << retval << ", %eax\n"
               << "  popq %rbp\n"
-              << " 	ret\n";
+              << "  ret\n";
 
     return 0;
   }
