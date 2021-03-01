@@ -24,7 +24,10 @@ public:
     int retval = stoi(ctx->CONST()->getText());
     std::cout << ".global	main\n"
               << " main: \n"
+              << "  pushq %rbp\n"
+              << "  movq %rsp, %rbp\n"
               << " 	movl	$" << retval << ", %eax\n"
+              << "  popq %rbp\n"
               << " 	ret\n";
 
     return 0;
