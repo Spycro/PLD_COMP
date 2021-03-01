@@ -2,7 +2,7 @@
 compiler/antlr4-generated
 .vscode
 compiler/ifcc
-tests/pld-test-output
+**/pld-test-output
 
 # Prerequisites
 *.d
