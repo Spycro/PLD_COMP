@@ -3,6 +3,7 @@ compiler/antlr4-generated
 .vscode
 compiler/ifcc
 **/pld-test-output
+compiler/.antlr
 
 # Prerequisites
 *.d
