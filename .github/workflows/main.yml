@@ -31,7 +31,7 @@ jobs:
           path: $GITHUB_WORKFLOW/compiler/ifcc
   test:
     runs-on: ubuntu-latest
-    
+    needs: [ build ]
     steps:
       - uses: actions/checkout@v2
       - name: download artifact
