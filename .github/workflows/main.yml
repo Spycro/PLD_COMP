@@ -23,8 +23,6 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/compiler
           make ANTLR4_INCDIR=/usr/include/antlr4-runtime ANTLR4_BINDIR=/bin ANTLR4_LIBDIR=/lib/x86_64-linux-gnu
-      - name: debug ls (to remove later)
-        run: ls $GITHUB_WORKSPACE/compiler
       - name: Upload binary for unit test later
         uses: actions/upload-artifact@v2.2.2
         with:
@@ -40,7 +38,5 @@ jobs:
         with:
           name: ifcc
           path: ${{ github.workspace }}/compiler/
-      - name: Sanity check
-        run: ls $GITHUB_WORKSPACE/compiler/
       - name: execute tests
         run: python3 $GITHUB_WORKSPACE/tests/pld-test.py $GITHUB_WORKSPACE/tests/tests/Init/
