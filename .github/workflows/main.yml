@@ -40,5 +40,7 @@ jobs:
         with:
           name: ifcc
           path: ${{ github.workspace }}/compiler/
+      - name: Sanity check
+        run: ls $GITHUB_WORKSPACE/compiler/
       - name: execute tests
-        run: python3 $GITHUB_WORKFLOW/tests/pld-test.py $GITHUB_WORKFLOW/tests/tests/Init/
+        run: python3 $GITHUB_WORKSPACE/tests/pld-test.py $GITHUB_WORKSPACE/tests/tests/Init/
