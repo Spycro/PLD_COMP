@@ -2,6 +2,7 @@
 compiler/antlr4-generated
 compiler/ifcc
 **/pld-test-output
+compiler/testoutput/test.s
 
 # Prerequisites
 *.d
