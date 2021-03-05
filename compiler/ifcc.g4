@@ -22,6 +22,7 @@ expression : expression '*' expression #mult
       | expression '/' expression #div
       | expression '-' expression #sub
       | expression '+' expression #add
+      | '-' expression #minus
       | value #expressionValue
       | affectation #affectationValue 
       | '(' expression ')' #par;

@@ -141,6 +141,17 @@ antlrcpp::Any Visitor::visitSub(ifccParser::SubContext *ctx){
 
 	return result;
 }
+
+antlrcpp::Any Visitor::visitMinus(ifccParser::MinusContext *ctx){
+	//get value of expression and negate it. (0-expression obviously)
+	std::string expr = visit(ctx->expression());
+
+	std::cout<<"	movl	$0, %eax\n";
+	std::cout<<"	subl	"<<expr<<", %eax\n";
+	std::string result = addVariable();
+	std::cout<<"	movl	%eax, " << result<<"\n";
+	return result;
+}
 antlrcpp::Any Visitor::visitExpressionValue(ifccParser::ExpressionValueContext *ctx){
 	return (visit(ctx->value()));//get value of expression, see visitConst and visitVariable
 }

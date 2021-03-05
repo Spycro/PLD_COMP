@@ -34,6 +34,7 @@ public:
 	virtual antlrcpp::Any visitDiv(ifccParser::DivContext *ctx) override;
 	virtual antlrcpp::Any visitAdd(ifccParser::AddContext *ctx) override;
 	virtual antlrcpp::Any visitSub(ifccParser::SubContext *ctx) override;
+	virtual antlrcpp::Any visitMinus(ifccParser::MinusContext *ctx) override;
 	virtual antlrcpp::Any visitExpressionValue(ifccParser::ExpressionValueContext *ctx) override;
 	virtual antlrcpp::Any visitPar(ifccParser::ParContext *ctx) override;
 	virtual antlrcpp::Any visitAffectationValue(ifccParser::AffectationValueContext *ctx) override;
