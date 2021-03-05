@@ -6,9 +6,13 @@ axiom : prog
 prog : TYPE 'main' '(' ')' '{' line*? RETURN expression ';' '}';
 
 
-line : (declaration | affectation) ';' ;
+line : (declaration | affectationall) ';' ;
 
-affectation : VARIABLE_NAME '=' expression ;
+affectationall : VARIABLE_NAME '=' expression #affectation
+            | '++' VARIABLE_NAME #preIncrement
+            | '--' VARIABLE_NAME #preDecrement
+            | VARIABLE_NAME '++' #postIncrement
+            | VARIABLE_NAME '--' #postDecrement;
 
 declarationlist : VARIABLE_NAME ( ',' declarationlist)? #simpleDeclaration
             | VARIABLE_NAME '=' expression ( ',' declarationlist)? #assignDeclaration ;
@@ -18,13 +22,13 @@ declaration : TYPE declarationlist ;
 value : CONST #const
       | VARIABLE_NAME #variable ;
 
-expression : expression '*' expression #mult
+expression : affectationall #affectationValue 
+      | expression '*' expression #mult
       | expression '/' expression #div
       | expression '-' expression #sub
       | expression '+' expression #add
       | '-' expression #minus
       | value #expressionValue
-      | affectation #affectationValue 
       | '(' expression ')' #par;
 
 

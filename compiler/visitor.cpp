@@ -77,6 +77,55 @@ antlrcpp::Any Visitor::visitAffectation(ifccParser::AffectationContext *ctx) {
 	return (std::string) variablePosition;
 }
 
+antlrcpp::Any Visitor::visitPreIncrement(ifccParser::PreIncrementContext *ctx) {
+	std::string variableName = ctx->VARIABLE_NAME()->getText(); //get variable name to be filled
+	symbolsNotUsed.erase(variableName);//Show that this variable has been used on the right side of an affectation
+	std::string variablePosition = getVariable(variableName); //get its position
+
+	std::cout<<"	movl	$1, %eax\n";
+	std::cout<<"	addl	"<<variablePosition<<", %eax\n";
+	std::cout<<"	movl	%eax, " << variablePosition<<"\n"; // we add one, what did you expect
+	return (std::string) variablePosition;
+}
+antlrcpp::Any Visitor::visitPostIncrement(ifccParser::PostIncrementContext *ctx) {
+	std::string variableName = ctx->VARIABLE_NAME()->getText(); //get variable name to be filled
+	symbolsNotUsed.erase(variableName);//Show that this variable has been used on the right side of an affectation
+	std::string variablePosition = getVariable(variableName); //get its position
+
+	std::string copyPosition = addVariable();
+	std::cout<<"	movl	"<<variablePosition<<", %eax\n"; //we create a copy
+	std::cout<<"	movl	%eax, "<<copyPosition<<"\n";
+
+	std::cout<<"	movl	$1, %eax\n";
+	std::cout<<"	addl	"<<variablePosition<<", %eax\n"; 
+	std::cout<<"	movl	%eax, " << variablePosition<<"\n"; //we add one, again...
+	return (std::string) copyPosition;
+}
+antlrcpp::Any Visitor::visitPostDecrement(ifccParser::PostDecrementContext *ctx) {
+	std::string variableName = ctx->VARIABLE_NAME()->getText(); //get variable name to be filled
+	symbolsNotUsed.erase(variableName);//Show that this variable has been used on the right side of an affectation
+	std::string variablePosition = getVariable(variableName); //get its position
+
+	std::string copyPosition = addVariable();
+	std::cout<<"	movl	"<<variablePosition<<", %eax\n"; //copy again, you need a bigger screen. look up
+	std::cout<<"	movl	%eax, "<<copyPosition<<"\n";
+
+	std::cout<<"	movl	"<<variablePosition<<", %eax\n";
+	std::cout<<"	subl	$1, %eax\n";
+	std::cout<<"	movl	%eax, " << variablePosition<<"\n"; // look up
+	return (std::string) copyPosition;
+}
+antlrcpp::Any Visitor::visitPreDecrement(ifccParser::PreDecrementContext *ctx) {
+	std::string variableName = ctx->VARIABLE_NAME()->getText(); //get variable name to be filled
+	symbolsNotUsed.erase(variableName);//Show that this variable has been used on the right side of an affectation
+	std::string variablePosition = getVariable(variableName); //get its position
+
+	std::cout<<"	movl	"<<variablePosition<<", %eax\n";
+	std::cout<<"	subl	$1, %eax\n";
+	std::cout<<"	movl	%eax, " << variablePosition<<"\n"; //we add one
+	return (std::string) variablePosition;
+}
+
 
 antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *ctx){
 	return (std::string) ("$" + ctx->CONST()->getText()); //Get const, You really don't need an explanation here
@@ -159,7 +208,7 @@ antlrcpp::Any Visitor::visitPar(ifccParser::ParContext *ctx){
 	return (visit(ctx->expression()));//Return expression
 }
 antlrcpp::Any Visitor::visitAffectationValue(ifccParser::AffectationValueContext *ctx) {
-	return (visit(ctx->affectation()));//return variable that was just affected
+	return (visit(ctx->affectationall()));//return variable that was just affected
 }
 
 

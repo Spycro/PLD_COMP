@@ -25,6 +25,10 @@ public:
 	virtual antlrcpp::Any visitAssignDeclaration(ifccParser::AssignDeclarationContext *ctx) override; //A declaration with affectation
 
 	virtual antlrcpp::Any visitAffectation(ifccParser::AffectationContext *ctx) override;//An affectation
+	virtual antlrcpp::Any visitPreIncrement(ifccParser::PreIncrementContext *ctx) override;//A ++x affectation
+	virtual antlrcpp::Any visitPostIncrement(ifccParser::PostIncrementContext *ctx) override;//A x++ affectation
+	virtual antlrcpp::Any visitPostDecrement(ifccParser::PostDecrementContext *ctx) override;//A x-- affectation
+	virtual antlrcpp::Any visitPreDecrement(ifccParser::PreDecrementContext *ctx) override;//A --x affectation
 
 	virtual antlrcpp::Any visitConst(ifccParser::ConstContext *ctx) override;//retrieve const value
 	virtual antlrcpp::Any visitVariable(ifccParser::VariableContext *ctx) override;//retrieve variable
