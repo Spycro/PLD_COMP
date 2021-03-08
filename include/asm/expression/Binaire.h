@@ -1,6 +1,8 @@
 #pragma once
 
-class Binaire {
+#include "Arithmetique.h"
+
+class Binaire : public Arithmetique{
 
     public:
 

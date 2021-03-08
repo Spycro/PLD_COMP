@@ -1,6 +1,7 @@
 #pragma once
+#include "Instruction.h"
 
-class Break {
+class Break : public Instruction{
 
     public:
 

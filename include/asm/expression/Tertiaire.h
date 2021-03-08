@@ -1,6 +1,8 @@
 #pragma once
 
-class Tertiaire {
+#include "Arithmetique.h"
+
+class Tertiaire : public Arithmetique{
 
     public:
 

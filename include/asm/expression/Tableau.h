@@ -2,7 +2,7 @@
 
 #include "Expression.h"
 
-class Arithmetique : public Expression {
+class Tableau : public Expression {
 
     public:
 

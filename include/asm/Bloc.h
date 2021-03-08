@@ -1,6 +1,7 @@
 #pragma once
+#include "Instruction.h"
 
-class Bloc {
+class Bloc : public Instruction{
 
     public:
 

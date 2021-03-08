@@ -2,7 +2,7 @@
 
 #include "Expression.h"
 
-class Arithmetique : public Expression {
+class AppelFonction : public Expression {
 
     public:
 
