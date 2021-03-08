@@ -3,7 +3,7 @@ grammar ifcc;
 axiom : prog       
       ;
 
-prog : TYPE 'main' '(' ')' '{' line* RETURN expression ';' '}';
+prog : TYPE 'main' '(' 'void'? ')' '{' line* RETURN expression ';' '}';
 
 
 line : (declaration | affectationall) ';' ;
