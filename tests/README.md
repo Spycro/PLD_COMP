@@ -6,7 +6,7 @@ a collection of C language source codes that can be tested.
 ## Prerequisites
 
 Docker must be installed in order to execute these scripts. The compiler has 
-to be present in the directory `../compiler/ifcc`. Compiler options and location
+to be present in the directory `../build/ifcc`. Compiler options and location
 can be customized in the `pld-wrapper.sh` script.
 
 ## Files
@@ -15,4 +15,4 @@ can be customized in the `pld-wrapper.sh` script.
 image and execute the `pld-test.py` script. Results are put in a new directory
 `pld-test-outputs`.
 
-The tests are in the `tests` subfolder. 
+The tests are in the `test_cases` subfolder. 
