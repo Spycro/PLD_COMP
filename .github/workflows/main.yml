@@ -50,5 +50,5 @@ jobs:
         run: |
               chmod +x $GITHUB_WORKSPACE/build/ifcc
               cd $GITHUB_WORKSPACE/tests 
-              python3 pld-test.py tests_cases/init/
+              python3 pld-test.py test_cases/init/
  
