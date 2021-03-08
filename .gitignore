@@ -2,6 +2,11 @@
 compiler/antlr4-generated
 compiler/ifcc
 **/pld-test-output
+compiler/testoutput/test.s
+.antlr/
+compiler/compile_docker.sh
+compiler/compile_if.sh
+compiler/compile_ubuntu.sh
 
 # Prerequisites
 *.d
