@@ -215,13 +215,13 @@ antlrcpp::Any Visitor::visitAffectationValue(ifccParser::AffectationValueContext
 //Here come the private functions
 
 std::string Visitor::addVariable(){ //used for the addition of temp variables
-	return this->addVariable("temp" + std::to_string((--stackPointer)*4), true);
+	return this->addVariable("temp" + std::to_string((--stackPointer)*8), true);
 }
 std::string Visitor::addVariable(std::string name, bool temp){//used for the addition of normal variables
 	auto symbol  = symbols.find(name);
 	std::string placement;
 	if(symbol == symbols.end()){ //See if variable has already been declared
-		int position  = (--stackPointer)*4;//if it has not, then create is obviously
+		int position  = (--stackPointer)*8;//if it has not, then create is obviously
 		placement = std::to_string(position) + "(%rbp)";
 		symbols.emplace(name,placement);
 		if(!temp){
