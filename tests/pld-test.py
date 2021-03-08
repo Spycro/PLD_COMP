@@ -164,6 +164,8 @@ if args.debug:
 ######################################################################################
 ## TEST step: actually compile all test-cases with both compilers
 
+jobfailed = False
+
 for jobname in jobs:
     os.chdir(orig_cwd)
 
@@ -192,10 +194,12 @@ for jobname in jobs:
     elif gccstatus != 0 and pldstatus == 0:
         ## padawan wrongly accepts invalid program -> error
         print("TEST FAIL (your compiler accepts an invalid program)")
+        jobfailed = True
         continue
     elif gccstatus == 0 and pldstatus != 0:
         ## padawan wrongly rejects valid program -> error
         print("TEST FAIL (your compiler rejects a valid program)")
+        jobfailed = True
         if args.verbose:
             dumpfile("pld-compile.txt")
         continue
@@ -204,6 +208,7 @@ for jobname in jobs:
         ldstatus=command("gcc -o exe-pld asm-pld.s", "pld-link.txt")
         if ldstatus:
             print("TEST FAIL (your compiler produces incorrect assembly)")
+            jobfailed = True
             if args.verbose:
                 dumpfile("pld-link.txt")
             continue
@@ -214,6 +219,7 @@ for jobname in jobs:
     exepldstatus=command("./exe-pld","pld-execute.txt")
     if open("gcc-execute.txt").read() != open("pld-execute.txt").read() :
         print("TEST FAIL (different results at execution)")
+        jobfailed = True
         if args.verbose:
             print("GCC:")
             dumpfile("gcc-execute.txt")
@@ -223,3 +229,6 @@ for jobname in jobs:
 
     ## last but not least
     print("TEST OK")
+
+if jobfailed:
+    exit(1)
