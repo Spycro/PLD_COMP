@@ -3,7 +3,7 @@ grammar ifcc;
 axiom : prog       
       ;
 
-prog : TYPE 'main' '(' 'void'? ')' '{' line* RETURN expression ';' '}';
+prog : TYPE 'main' '(' 'void'? ')' '{' line*? RETURN expression ';' '}';
 
 
 line : (declaration | affectationall) ';' ;
@@ -37,7 +37,7 @@ TYPE : 'int' ;
 RETURN : 'return' ;
 CONST : [0-9]+ ;
 VARIABLE_NAME : [a-zA-Z_][a-zA-Z0-9_]* ;
-COMMENT : '/*' .* '*/' -> skip ;
-COMMENTLINE : '//' .* '\n' -> skip ;
-DIRECTIVE : '#' .* '\n' -> skip ;
+COMMENT : '/*' .*? '*/' -> skip ;
+COMMENTLINE : '//' .*? '\n' -> skip ;
+DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);

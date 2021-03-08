@@ -59,8 +59,8 @@ antlrcpp::Any Visitor::visitSimpleDeclaration(ifccParser::SimpleDeclarationConte
 }
 antlrcpp::Any Visitor::visitAssignDeclaration(ifccParser::AssignDeclarationContext *ctx){
 	std::string variableName = ctx->VARIABLE_NAME()->getText(); //get variable name
-	std::string variableContents = visit(ctx->expression()); //get expression result to fill variable with
 	std::string position  = addVariable(variableName); //add it to symbols
+	std::string variableContents = visit(ctx->expression()); //get expression result to fill variable with	
 	std::cout<<"	movl	"<<variableContents<<", %eax#"<<variableName<<"\n"; //assembly code, self explanatory
 	std::cout<<"	movl	%eax, "<<position<<"#"<<variableName<<"\n";
 	visitChildren(ctx);//Go to next declaration in list if exists
@@ -229,6 +229,7 @@ std::string Visitor::addVariable(std::string name, bool temp){//used for the add
 		}
 	}else{//if it has, shout at the user
 		std::cerr<< name<<" Declared more than once, please remove\n";
+		throw "Declared more than once, please remove";
 		placement = symbol->second;
 	}
 	return placement;//return the position of the variable
@@ -239,5 +240,6 @@ std::string Visitor::getVariable(std::string name){//Get an existing variable fr
 		return symbol->second; // return its position if it exists
 	}
 	std::cerr<<"(!!!ERROR VARIABLE NOT FOUND: " << name << "!!!)\n"; // If it does not, shout at the user a lot. Cause this is serious
+	throw "ERROR VARIABLE NOT FOUND";
 	return (std::string) "NotFound";
 }
