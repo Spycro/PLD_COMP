@@ -48,11 +48,8 @@ jobs:
           name: ifcc
           path: ${{ github.workspace }}/compiler/
       - name: execute tests
-        run: | 
+        run: |
+              chmod +x $GITHUB_WORKSPACE/compiler/ifcc
               cd $GITHUB_WORKSPACE/tests 
               python3 pld-test.py tests/Init/
-      - name: upload test-file 
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-outputs
-          path: ${{ github.workspace }}/tests/
+ 
