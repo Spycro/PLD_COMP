@@ -47,6 +47,7 @@ jobs:
         with:
           name: ifcc
           path: ${{ github.workspace }}/compiler/
-      - run: cd $GITHUB_WORKSPACE/tests
       - name: execute tests
-        run: python3 pld-test.py tests/Init/
+        run: | 
+              cd $GITHUB_WORKSPACE/tests 
+              python3 pld-test.py tests/Init/
