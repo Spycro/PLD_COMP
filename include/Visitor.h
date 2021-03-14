@@ -10,14 +10,14 @@
 #include <unordered_set>
 
 /**
- * This class provides an empty implementation of ifccVisitor, which can be
+ * This class provides an implementation of ifccVisitor, which can be
  * extended to create a visitor which only needs to handle a subset of the
  * available methods.
  */
 class Visitor : public ifccVisitor
 {
 public:
-	virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *ctx) override; //no comment
+	virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *ctx) override; //start
 	virtual antlrcpp::Any visitProg(ifccParser::ProgContext *ctx) override;	  //base program (main in this case), calls children
 	virtual antlrcpp::Any visitLine(ifccParser::LineContext *ctx) override;	  //a basic line, either a declaration or affectation
 
@@ -47,7 +47,7 @@ public:
 private:
 	std::unordered_map<std::string, std::string> symbols; //all symbols
 	std::unordered_set<std::string> symbolsNotUsed;		  //Symbols that have not been used yet
-	int stackPointer = 0;								  // ehm, the stack pointer? what else do you want explained?
+	int stackPointer = 0;
 
 	std::string addVariable(); //Private function to add a temp variable to the symbols
 
