@@ -1,16 +1,18 @@
 #pragma once
 
 #include "Expression.h"
-typedef enum  {PLUS,MINUS,MULT,DIV,EQUAL,NE,GTE,LTE,GT,LT,BINAND,LOGAND,BINOR,LOGOR,BINXOR,LOGXOR} Operator;
+typedef enum  {PLUS,MINUS,MULT,DIV,EQUAL,NE,GTE,LTE,GT,LT,BINAND,LOGAND,BINOR,LOGOR,BINXOR,LOGXOR} BinaryOperator;
+
+using namespace std;
 
 class Binary : public Expression{
 
     public:
 
     private:
-        Expression operand1;
-        Expression operand2;
-        Operator op;
+        shared_ptr<Expression> operand1;
+        shared_ptr<Expression> operand2;
+        BinaryOperator op;
 
 };
 

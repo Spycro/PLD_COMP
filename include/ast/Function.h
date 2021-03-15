@@ -13,7 +13,7 @@ class Function {
     public:
 
     private:
-        Block code;
-        list<Variable> parameters;
+        shared_ptr<Block> code;
+        list<shared_ptr<Variable>> parameters;
 
 };

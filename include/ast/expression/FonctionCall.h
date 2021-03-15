@@ -11,6 +11,6 @@ class FonctionCall : public Expression {
 
     private:
         string symbol;
-        list<Expression> parameters;
+        list<shared_ptr<Expression>> parameters;
 
 };

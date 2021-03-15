@@ -2,11 +2,13 @@
 #include "Instruction.h"
 #include "expression/Expression.h"
 
+using namespace std;
+
 class Return : public Instruction{
 
     public:
 
     private:
-        Expression value;
+        shared_ptr<Expression> value;
 
 };

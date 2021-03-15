@@ -11,6 +11,6 @@ class Array : public Expression {
 
     private:
         string symbol;
-        Expression position;
+        shared_ptr<Expression> position;
 
 };

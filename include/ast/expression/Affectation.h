@@ -13,6 +13,6 @@ class Affectation : public Expression {
     private:
 
         string symbol;
-        Expression value;
+        shared_ptr<Expression> value;
 
 };

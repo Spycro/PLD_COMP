@@ -2,12 +2,14 @@
 
 #include "ControlStructure.h"
 
+using namespace std;
+
 class ForInstr : public ControlStructure {
 
     public:
 
     private:
-        Expression initialisation;
-        Expression step;
+        shared_ptr<Expression> initialisation;
+        shared_ptr<Expression> step;
 
 };

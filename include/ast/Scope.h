@@ -2,13 +2,15 @@
 #include "../SymbolTable.h"
 #include <memory>
 
+using namespace std;
+
 class Scope {
 
     public:
 
     private:
-        SymbolTable symbolicTable;
-        std::shared_ptr<Scope> parentScope;
+        shared_ptr<SymbolTable> symbolicTable;
+        shared_ptr<Scope> parentScope;
 
 
 };

@@ -9,7 +9,7 @@ class Block : public Instruction{
     public:
 
     private:
-        list<Instruction> instructions;
+        list<shared_ptr<Instruction>> instructions;
         Scope scope;
 
 };
