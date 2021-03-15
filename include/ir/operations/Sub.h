@@ -1,7 +1,7 @@
 #pragma once
-#include "../IR.h"
+#include "../IRInstr.h"
 
 class Sub : public IRInstr
 {
     
-}
+};

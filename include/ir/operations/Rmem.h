@@ -1,7 +1,7 @@
 #pragma once
 #include "../IRInstr.h"
 
-class Add : public IRInstr
+class Rmem : public IRInstr
 {
     
 };
