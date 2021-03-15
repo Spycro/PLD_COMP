@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <initializer_list>
+#include "../type/Type.h"
 
 class BasicBlock;
 
@@ -28,13 +29,13 @@ class IRInstr {
 
 
 	/**  constructor */
-	IRInstr(BasicBlock* bb, Type t);
+	IRInstr(BasicBlock* bb, Type* t);
 	
 	/** Actual code generation */
 	void gen_asm(std::ostream &o); /**< x86 assembly code generation for this IR instruction */
 	
  private:
 	BasicBlock* bb; /**< The BB this instruction belongs to, which provides a pointer to the CFG this instruction belong to */
-	Type t;
+	Type* t; //PTDR T QUI
 };
 
