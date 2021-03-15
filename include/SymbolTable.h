@@ -1,16 +1,16 @@
 #pragma once
 #include <unordered_map>
 #include <memory>
-
+#include "type/Type.h"
 
 
 typedef struct symbolTableElements{
-	std::string type;
+	Type* type;
 	bool isSet;
 	bool isUsed;
 	int memoryOffset;
 
-	symbolTableElements(std::string type, bool isSet, bool isUsed, int memoryoffset) 
+	symbolTableElements(Type* type, bool isSet, bool isUsed, int memoryoffset) 
 		: type(type), isSet(isSet), isUsed(isUsed), memoryOffset(memoryoffset) {} 
 } symbolTableElement;
 

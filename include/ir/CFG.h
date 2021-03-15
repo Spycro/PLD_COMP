@@ -1,11 +1,11 @@
 #pragma once
 
 #include "BasicBlock.h"
+#include "../SymbolTable.h"
+#include "../ast/Function.h"
+
 #include <iostream>
 #include <string>
-#include <map>
-
-class DefFonction;
 
 /** The class for the control flow graph, also includes the symbol table */
 
@@ -18,9 +18,9 @@ class DefFonction;
  */
 class CFG {
  public:
-	CFG(DefFonction* ast);
+	CFG(Function* ast);
 
-	DefFonction* ast; /**< The AST this CFG comes from */
+	Function* ast; /**< The AST this CFG comes from */
 	
 	void add_bb(BasicBlock* bb); 
 
@@ -41,8 +41,7 @@ class CFG {
 	BasicBlock* current_bb;
 
  protected:
-	std::map <std::string, Type*> SymbolType; /**< part of the symbol table  */
-	std::map <std::string, int> SymbolIndex; /**< part of the symbol table  */
+	SymbolTable symbolTable; /**< the symbol table  */
 	int nextFreeSymbolIndex; /**< to allocate new symbols in the symbol table */
 	int nextBBnumber; /**< just for naming */
 	
