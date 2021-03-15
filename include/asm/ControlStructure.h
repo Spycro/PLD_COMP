@@ -3,7 +3,7 @@
 #include "Instruction.h"
 #include "expression/Expression.h"
 
-class StructureDeControle : public Instruction {
+class ControlStructure : public Instruction {
 
     public:
 

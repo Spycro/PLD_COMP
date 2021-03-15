@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class Fonction {
+class Function {
 
     public:
 
