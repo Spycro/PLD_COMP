@@ -1,18 +1,16 @@
 #pragma once
 
 #include "Expression.h"
-
 #include <string>
-
+#include <list>
 using namespace std;
 
-class Affectation : public Expression {
+class FonctionCall : public Expression {
 
     public:
 
     private:
-
         string Symbol;
-        Expression Value;
+        list<Expression> Parameters;
 
 };
