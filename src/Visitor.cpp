@@ -6,7 +6,7 @@ antlrcpp::Any Visitor::visitAxiom(ifccParser::AxiomContext *ctx) {
   return visitChildren(ctx);
 }
 antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *ctx) {
-  // The start of the program, basic stuff. No need to explain
+  // The start of the program.
   std::cout << ".globl	main\n"
                " main: \n"
                "#prologue\n"
@@ -25,13 +25,13 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *ctx) {
   std::cout << " 	movl	" << retval
             << ", %eax\n" // move it where it has to be
 
-               "#epiligue\n" // ehm the epilogue, not explainion needed
+               "#epiligue\n" // the epilogue
                "	popq %rbp #restore rbp from stack\n"
                " 	ret\n";
 
   // show remaining warnings detected
   for (auto varName : symbolsNotUsed) {
-    std::cerr << varName << " not used, please remove\n"; // explains itself
+    std::cerr << varName << " not used, please remove\n";
   }
   return 0;
 }
@@ -45,7 +45,7 @@ antlrcpp::Any Visitor::visitDeclaration(ifccParser::DeclarationContext *ctx) {
   // Start to read the declaration list for this "TYPE", always in INT in this
   // case The corresponding declaration list will be a list of children that are
   // either simple or assign Declarations The meaning of these two types are
-  // explained in the .h, will not repeat myself
+  // explained in the .h
   visitChildren(ctx);
   return 0;
 }
@@ -67,7 +67,7 @@ Visitor::visitAssignDeclaration(ifccParser::AssignDeclarationContext *ctx) {
   std::string variableContents =
       visit(ctx->expression()); // get expression result to fill variable with
   std::cout << "	movl	" << variableContents << ", %eax#"
-            << variableName << "\n"; // assembly code, self explanatory
+            << variableName << "\n";
   std::cout << "	movl	%eax, " << position << "#" << variableName << "\n";
   visitChildren(ctx); // Go to next declaration in list if exists
   return 0;
@@ -95,7 +95,7 @@ antlrcpp::Any Visitor::visitPreIncrement(ifccParser::PreIncrementContext *ctx) {
   std::cout << "	movl	$1, %eax\n";
   std::cout << "	addl	" << variablePosition << ", %eax\n";
   std::cout << "	movl	%eax, " << variablePosition
-            << "\n"; // we add one, what did you expect
+            << "\n";
   return (std::string)variablePosition;
 }
 antlrcpp::Any
@@ -114,7 +114,7 @@ Visitor::visitPostIncrement(ifccParser::PostIncrementContext *ctx) {
   std::cout << "	movl	$1, %eax\n";
   std::cout << "	addl	" << variablePosition << ", %eax\n";
   std::cout << "	movl	%eax, " << variablePosition
-            << "\n"; // we add one, again...
+            << "\n";
   return (std::string)copyPosition;
 }
 antlrcpp::Any
@@ -127,12 +127,12 @@ Visitor::visitPostDecrement(ifccParser::PostDecrementContext *ctx) {
 
   std::string copyPosition = addVariable();
   std::cout << "	movl	" << variablePosition
-            << ", %eax\n"; // copy again, you need a bigger screen. look up
+            << ", %eax\n";
   std::cout << "	movl	%eax, " << copyPosition << "\n";
 
   std::cout << "	movl	" << variablePosition << ", %eax\n";
   std::cout << "	subl	$1, %eax\n";
-  std::cout << "	movl	%eax, " << variablePosition << "\n"; // look up
+  std::cout << "	movl	%eax, " << variablePosition << "\n";
   return (std::string)copyPosition;
 }
 antlrcpp::Any Visitor::visitPreDecrement(ifccParser::PreDecrementContext *ctx) {
@@ -144,8 +144,7 @@ antlrcpp::Any Visitor::visitPreDecrement(ifccParser::PreDecrementContext *ctx) {
 
   std::cout << "	movl	" << variablePosition << ", %eax\n";
   std::cout << "	subl	$1, %eax\n";
-  std::cout << "	movl	%eax, " << variablePosition << "\n"; // we add
-                                                                     // one
+  std::cout << "	movl	%eax, " << variablePosition << "\n";
   return (std::string)variablePosition;
 }
 
@@ -153,7 +152,7 @@ antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *ctx) {
   return (std::string)(
       "$" +
       ctx->CONST()
-          ->getText()); // Get const, You really don't need an explanation here
+          ->getText()); // Get const
 }
 antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *ctx) {
   std::string varName = ctx->VARIABLE_NAME()->getText(); // Get variable name
@@ -163,7 +162,7 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *ctx) {
 }
 
 antlrcpp::Any Visitor::visitMult(ifccParser::MultContext *ctx) {
-  // in simple terms, gets both results from left and right part,
+  // Gets both results from left and right part,
   // assigns one to a registry then moves result to a temp variable. The temp
   // variable position is then returned
   std::string left = visit(ctx->expression(0));
@@ -194,7 +193,7 @@ antlrcpp::Any Visitor::visitDiv(ifccParser::DivContext *ctx) {
   return result;
 }
 antlrcpp::Any Visitor::visitAdd(ifccParser::AddContext *ctx) {
-  // view mult, only one instruction has changed so it should not be hard
+  // view mult, only one instruction has changed
   std::string left = visit(ctx->expression(0));
   std::string right = visit(ctx->expression(1));
 
@@ -206,7 +205,7 @@ antlrcpp::Any Visitor::visitAdd(ifccParser::AddContext *ctx) {
   return result;
 }
 antlrcpp::Any Visitor::visitSub(ifccParser::SubContext *ctx) {
-  // view mult, only one instruction has changed so it should not be hard
+  // view mult, only one instruction has changed
   std::string left = visit(ctx->expression(0));
   std::string right = visit(ctx->expression(1));
 
@@ -219,7 +218,7 @@ antlrcpp::Any Visitor::visitSub(ifccParser::SubContext *ctx) {
 }
 
 antlrcpp::Any Visitor::visitMinus(ifccParser::MinusContext *ctx) {
-  // get value of expression and negate it. (0-expression obviously)
+  // get value of expression and negate it. (0-expression)
   std::string expr = visit(ctx->expression());
 
   std::cout << "	movl	$0, %eax\n";
@@ -254,7 +253,7 @@ Visitor::addVariable(std::string name,
   std::string placement;
   if (symbol == symbols.end()) { // See if variable has already been declared
     int position =
-        (--stackPointer) * 8; // if it has not, then create is obviously
+        (--stackPointer) * 8; // if it has not, then create it
     placement = std::to_string(position) + "(%rbp)";
     symbols.emplace(name, placement);
     if (!temp) {
