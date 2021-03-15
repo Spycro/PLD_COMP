@@ -9,6 +9,6 @@ class Variable : public Expression {
     public:
 
     private:
-        string Symbol;
+        string symbol;
 
 };

@@ -10,5 +10,7 @@ class ControlStructure : public Instruction {
     private:
 
         Expression Test;
+        Instruction code;
+
 
 };

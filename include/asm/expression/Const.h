@@ -7,6 +7,6 @@ class Const : public Expression {
     public:
 
     private:
-        int Value;
+        int value;
 
 };

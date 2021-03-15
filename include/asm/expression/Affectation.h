@@ -12,7 +12,7 @@ class Affectation : public Expression {
 
     private:
 
-        string Symbol;
-        Expression Value;
+        string symbol;
+        Expression value;
 
 };

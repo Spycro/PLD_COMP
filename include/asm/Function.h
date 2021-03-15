@@ -1,6 +1,7 @@
 #pragma once
-#include "Instruction.h"
-#include "Return.h"
+
+#include "Block.h"
+#include "expression/Variable.h"
 
 #include <list>
 #include <map>
@@ -12,9 +13,7 @@ class Function {
     public:
 
     private:
-
-        list<Instruction> Instructions;
-        map<string, string> ListeSymboles;
-        Return ReturnStatement;
+        Block code;
+        list<Variable> parameters;
 
 };

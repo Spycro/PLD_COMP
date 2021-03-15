@@ -10,7 +10,7 @@ class FonctionCall : public Expression {
     public:
 
     private:
-        string Symbol;
-        list<Expression> Parameters;
+        string symbol;
+        list<Expression> parameters;
 
 };

@@ -10,7 +10,7 @@ class Array : public Expression {
     public:
 
     private:
-        string Symbol;
-        Expression Position;
+        string symbol;
+        Expression position;
 
 };
