@@ -2,6 +2,7 @@
 
 #include "Block.h"
 #include "expression/Variable.h"
+#include "Node.h"
 
 #include <memory>
 #include <list>
@@ -9,7 +10,7 @@
 
 using namespace std;
 
-class Function {
+class Function : public Node {
 
     public:
         inline shared_ptr<Block> getCode() { return code; }
