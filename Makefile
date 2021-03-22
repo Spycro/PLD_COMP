@@ -53,7 +53,7 @@ $(GEN_SRCS): $(GRAMMAR)
 	@rm -rf /tmp/antlr4-generated
 
 test: $(EXEC_FILE)
-	@(cd $(TESTS_DIR) && python3 pld-test.py .) || (echo "Tests failed"; exit 1)	
+	@(cd $(TESTS_DIR) && python3 pld-test.py .) || (echo "Tests failed"; exit 1)
 
 clean:
 	@rm -rf $(BUILD_DIR)

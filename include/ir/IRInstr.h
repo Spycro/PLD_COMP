@@ -14,7 +14,7 @@ class IRInstr {
    public:
 
 	/**  constructor */
-	IRInstr(BasicBlock* bb, Type* t);
+	IRInstr(BasicBlock* bb_, Type* t_) : bb(bb_), t(t_) {}
 	
 	/** Actual code generation */
 	virtual void gen_asm(std::ostream &o) = 0; /**< x86 assembly code generation for this IR instruction */

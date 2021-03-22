@@ -7,3 +7,11 @@ BasicBlock::BasicBlock(std::shared_ptr<CFG> entry_cfg, std::string entry_label, 
 void BasicBlock::add_IRInstr(IRInstr* instruction){
     instrs.push_back(instruction);
 }
+
+void BasicBlock::gen_asm(std::ostream &o) {
+
+    for(auto& instr : instrs) {
+        instr->gen_asm(o);
+    }
+
+}
