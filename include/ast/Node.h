@@ -9,7 +9,7 @@ using namespace std;
 class Node{
 
     public:
-        vector<shared_ptr<Node>> getChildren() { return children; } 
+        inline vector<shared_ptr<Node>> getChildren() { return children; } 
     private:
         vector<shared_ptr<Node>> children;
         shared_ptr<Node> parent;
