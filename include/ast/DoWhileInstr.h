@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ControlStructure.h"
-#include <iostream>
 
 class DoWhileInstr : public ControlStructure {
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "../SymbolTable.h"
 #include <memory>
-#include <iostream>
 
 using namespace std;
 

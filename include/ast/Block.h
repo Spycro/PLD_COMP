@@ -1,7 +1,6 @@
 #pragma once
 #include "Instruction.h"
 #include "Scope.h"
-#include <iostream>
 #include <list>
 using namespace std;
 

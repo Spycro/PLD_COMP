@@ -2,7 +2,6 @@
 #include "Instruction.h"
 #include "expression/Expression.h"
 
-#include <iostream>
 #include <memory>
 
 using namespace std;

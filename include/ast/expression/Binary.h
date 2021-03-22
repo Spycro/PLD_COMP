@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Expression.h"
-#include <iostream>
 typedef enum  {PLUS,MINUS,MULT,DIV,EQUAL,NE,GTE,LTE,GT,LT,BINAND,LOGAND,BINOR,LOGOR,BINXOR,LOGXOR} BinaryOperator;
 
 using namespace std;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Expression.h"
-#include <iostream>
 
 class Ternary : public Expression{
 

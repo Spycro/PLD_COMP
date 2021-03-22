@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Expression.h"
-#include <iostream>
 typedef enum  {PREINCR,POSTINCR,PREDECR,POSTDECR,PARENTHESIS,TILD,NOT} UnaryOperator;
 
 using namespace std;

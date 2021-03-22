@@ -1,6 +1,6 @@
 #pragma once
 #include "Node.h"
-#include <iostream>
+
 class Instruction : public Node{
 
     public:
