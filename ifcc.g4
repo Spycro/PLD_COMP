@@ -43,8 +43,6 @@ axiom : prog ;
 
 
 
-plusminus : '+' #returnPlus 
-      | '-' #returnMinus;
 
 ///////////////////////////////////////////////////////////////////////////////
 //    SYMBOLS                                                                //
@@ -159,8 +157,8 @@ expression
       | '(' TYPE ')' expression #cast
       | '&' expression #addresOf
       | SIZEOF '(' TYPE ')' #sizeof
-      | expression ('*'|'/'|'%') expression #multiplicationDivisionModulo
-      | expression ('+'|'-') expression #plusMinus
+      | expression MULTDIVMOD expression #multiplicationDivisionModulo
+      | expression PLUSMINUS expression #plusMinus
       | expression ('<<'|'>>') expression #bitwiseShift
       | expression ('<'|'<='|'>'|'>=') expression #lesserOrGreater
       | expression ('=='|'!=') expression #compare
@@ -183,3 +181,6 @@ expression
       | varName ('|='|'or_eq') expression #bitwiseOr_assign
       | expression ',' expression #comma
       ;
+
+MULTDIVMOD : '*' | '/' | '%' ;
+PLUSMINUS : '+' | '-' ;
