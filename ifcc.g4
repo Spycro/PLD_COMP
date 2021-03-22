@@ -73,6 +73,7 @@ IF : 'if' ;
 ELSE : 'else' ;
 FOR : 'for' ;
 MAIN : 'main' ;
+SIZEOF : 'sizeof' ;
 
 
 /*
@@ -80,6 +81,8 @@ MAIN : 'main' ;
  */
 CONST : [0-9]+ ; // TODO : add chars ('a', '\0', '\n' ...)
 NAME : [a-zA-Z_][a-zA-Z0-9_]* ;
+varName : NAME ('[' expression ']')? ;
+functionCall : NAME '(' (expression (',' expression)*)? ')' ;
 
 
 
@@ -122,8 +125,8 @@ singleInstruction
       | BREAK ';' #breakInstr
       | CONTINUE ';' #continueInstr
       | RETURN expression? ';' #returnInstr
-      | controlStructure #controlStructure
-      | expression ';' #expression
+      | controlStructure #controlStruct
+      | expression ';' #expr
       ;
 
 
@@ -140,31 +143,43 @@ controlStructure
 
 
 expression
-      : affectation #affectation
-      | unary #unary
-      | binary #binary
-      | ternary #ternary
-      | CONST #const
-      | NAME ('[' expression ']')? #variable
-      // TODO : add function call
+      : CONST #const
+      | varName #variable
+      | functionCall #functCall
+      | '(' expression ')' #parenthesis
+      // https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
+      | varName '++' #postIncr
+      | varName '--' #postDecr
+      | '++' varName #preIncr
+      | '--' varName #preDecr
+      | '-' expression #unaryMinus
+      | '+' expression #unaryPlus
+      | ('!'|'not') expression #logicalNot
+      | ('~'|'compl') expression #bitwiseNot
+      | '(' TYPE ')' expression #cast
+      | '&' expression #addresOf
+      | SIZEOF '(' TYPE ')' #sizeof
+      | expression ('*'|'/'|'%') expression #multiplicationDivisionModulo
+      | expression ('+'|'-') expression #plusMinus
+      | expression ('<<'|'>>') expression #bitwiseShift
+      | expression ('<'|'<='|'>'|'>=') expression #lesserOrGreater
+      | expression ('=='|'!=') expression #compare
+      | expression ('&'|'bitand') expression #bitwiseAnd
+      | expression ('^'|'bitor') expression #bitwiseXor
+      | expression ('|'|'bitor') expression #bitwiseOr
+      | expression ('&&'|'and') expression #logicalAnd
+      | expression ('||'|'or') expression #logicalOr
+      | expression '?' expression ':' expression #ternary
+      | varName '=' expression #direct_assign
+      | varName '+=' expression #add_assign
+      | varName '-=' expression #sub_assign
+      | varName '*=' expression #mult_assign
+      | varName '/=' expression #div_assign
+      | varName '%=' expression #mod_assign
+      | varName '<<=' expression #bitwiseLeftShift_assign
+      | varName '>>=' expression #bitwiseRightShift_assign
+      | varName ('&='|'and_eq') expression #bitwiseAnd_assign
+      | varName ('^='|'xor_eq') expression #bitwiseXor_assig
+      | varName ('|='|'or_eq') expression #bitwiseOr_assign
+      | expression ',' expression #comma
       ;
-
-
-affectation : NAME ('[' expression ']')? '=' expression ;
-
-
-unary // TODO : complete this
-      : '(' expression ')' #parenthesis
-      | '-' expression #minus
-      ;
-
-
-binary // TODO : complete this
-      : expression '*' expression #mult
-      | expression '/' expression #div
-      | expression '-' expression #minus
-      | expression '+' expression #plus
-      ;
-
-
-ternary : expression '?' expression ':' expression ;
