@@ -4,7 +4,7 @@
 class Copy : public IRInstr
 {
     public:
-        Copy(BasicBlock* bb, Type* t, std::string d, std::string x);
+        Copy(BasicBlock* bb, Type* t, std::string x, std::string d);
 
         void gen_asm(std::ostream &o) override;
     

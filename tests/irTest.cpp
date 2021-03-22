@@ -7,14 +7,16 @@
 
 int main(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr));
-    std::shared_ptr<Scope> scope(new Scope);
+    // std::shared_ptr<Scope> scope(new Scope);
 
-    BasicBlock* bb0 = new BasicBlock(firstCFG,"bb0",scope);
+    BasicBlock* bb0 = new BasicBlock(firstCFG,"bb0",nullptr);
 
     Int* intType = new Int();
 
-    Copy* instr1 = new Copy(bb0,intType, "~1", "$2");
+    Copy* instr1 = new Copy(bb0,intType, "$2", "~1");
     bb0->add_IRInstr(instr1);
 
     firstCFG->add_bb(bb0);
+
+    firstCFG->gen_asm(std::cout);
 }
