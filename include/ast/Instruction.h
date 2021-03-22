@@ -1,6 +1,6 @@
 #pragma once
-
-class Instruction {
+#include "Node.h"
+class Instruction : public Node{
 
     public:
 

@@ -2,13 +2,14 @@
 
 #include "Block.h"
 #include "expression/Variable.h"
+#include "Node.h"
 
 #include <list>
 #include <map>
 
 using namespace std;
 
-class Function {
+class Function : public Node {
 
     public:
 
