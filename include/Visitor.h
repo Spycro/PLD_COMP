@@ -37,12 +37,14 @@ public:
 	//expression visitors
 	virtual antlrcpp::Any visitMult(ifccParser::MultContext *ctx) override;
 	virtual antlrcpp::Any visitDiv(ifccParser::DivContext *ctx) override;
-	virtual antlrcpp::Any visitAdd(ifccParser::AddContext *ctx) override;
-	virtual antlrcpp::Any visitSub(ifccParser::SubContext *ctx) override;
+	virtual antlrcpp::Any visitSubAdd(ifccParser::SubAddContext *ctx) override;
 	virtual antlrcpp::Any visitMinus(ifccParser::MinusContext *ctx) override;
 	virtual antlrcpp::Any visitExpressionValue(ifccParser::ExpressionValueContext *ctx) override;
 	virtual antlrcpp::Any visitPar(ifccParser::ParContext *ctx) override;
 	virtual antlrcpp::Any visitAffectationValue(ifccParser::AffectationValueContext *ctx) override;
+
+	virtual antlrcpp::Any visitReturnPlus(ifccParser::ReturnPlusContext *ctx) override;
+	virtual antlrcpp::Any visitReturnMinus(ifccParser::ReturnMinusContext *ctx) override;
 
 private:
 	std::unordered_map<std::string, std::string> symbols; //all symbols
