@@ -27,6 +27,12 @@ class SymbolTable{
 			elements->emplace(name, symbol);
 		 }
 
+		 std::string create_new_tempvar(Type* t);
+		
+		int get_var_index(std::string name);
+		
+		Type* get_var_type(std::string name);
+
 		//const std::unique_ptr<SymbolMap> & getElements() { return elements; }
 
 	private:
