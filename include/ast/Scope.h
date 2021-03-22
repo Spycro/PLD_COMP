@@ -10,12 +10,7 @@ class Scope {
     public:
         inline shared_ptr<SymbolTable> getSymbolicTable() { return symbolicTable; }
         inline shared_ptr<Scope> getParentScope() { return parentScope; }
-        void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"Scope"<<endl;
-        }
+        void toString(int n);
     private:
         shared_ptr<SymbolTable> symbolicTable;
         shared_ptr<Scope> parentScope;

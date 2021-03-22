@@ -6,12 +6,7 @@
 class Ternary : public Expression{
 
     public:
-        void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"Ternary"<<endl;
-        }
+        void toString(int n);
     private:
         shared_ptr<Expression> operand1;
         shared_ptr<Expression> operand2;

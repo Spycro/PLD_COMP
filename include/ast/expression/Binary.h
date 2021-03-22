@@ -9,12 +9,7 @@ using namespace std;
 class Binary : public Expression{
 
     public:
-        void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"Binary"<<endl;
-        }
+        void toString(int n);
     private:
         shared_ptr<Expression> operand1;
         shared_ptr<Expression> operand2;

@@ -6,12 +6,7 @@
 class Expression : public Instruction {
 
     public:
-        virtual void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"Expression"<<endl;
-        }
+        virtual void toString(int n);
     private:
 
 };

@@ -12,12 +12,7 @@ class ControlStructure : public Instruction {
     public:
         inline shared_ptr<Expression> getTest() { return test; }
         inline shared_ptr<Instruction> getCode() { return code; }
-        virtual void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"ControlStructure"<<endl;
-        }
+        virtual void toString(int n);
     private:
 
         shared_ptr<Expression> test;

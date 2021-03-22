@@ -6,12 +6,7 @@
 class DoWhileInstr : public ControlStructure {
 
     public:
-        void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"DoWhileInstr"<<endl;
-        }
+        void toString(int n);
     private:
 
 };

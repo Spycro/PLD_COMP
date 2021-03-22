@@ -9,12 +9,7 @@ using namespace std;
 class Unary : public Expression{
 
     public:
-        void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"Unary"<<endl;
-        }
+        void toString(int n);
     private:
         shared_ptr<Expression> operand;
         UnaryOperator op;

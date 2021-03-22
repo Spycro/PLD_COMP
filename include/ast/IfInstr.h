@@ -9,12 +9,7 @@ class IfInstr : public ControlStructure {
 
     public:
         inline shared_ptr<Instruction> getCodeElse() { return codeElse; }
-        void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"IfInstr"<<endl;
-        }
+        void toString(int n);
     private:
         shared_ptr<Instruction> codeElse;
 

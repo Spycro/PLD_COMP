@@ -9,12 +9,7 @@ using namespace std;
 class FonctionCall : public Expression {
 
     public:
-        void toString(int n) {
-            for(int i=0;i<n;i++){
-                cout<<"\t";
-            }
-            cout<<"FonctionCall"<<endl;
-        }
+        void toString(int n);
     private:
         string symbol;
         list<shared_ptr<Expression>> parameters;
