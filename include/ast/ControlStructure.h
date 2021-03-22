@@ -2,16 +2,18 @@
 
 #include "Instruction.h"
 #include "expression/Expression.h"
+#include <memory>
 
 using namespace std;
 
 class ControlStructure : public Instruction {
 
     public:
-
+        inline shared_ptr<Expression> getTest() { return test; }
+        inline shared_ptr<Instruction> getCode() { return code; }
     private:
 
-        shared_ptr<Expression> Test;
+        shared_ptr<Expression> test;
         shared_ptr<Instruction> code;
 
 
