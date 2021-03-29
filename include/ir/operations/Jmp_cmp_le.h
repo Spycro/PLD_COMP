@@ -2,11 +2,10 @@
 #include "../IRInstr.h"
 #include "SymbolTable.h"
 
-//Equal comparison instruction
-class Cmp_eq : public IRInstr
+class Jmp_cmp_le : public IRInstr
 {
 public:
-    Cmp_eq(BasicBlock *bb, symbolTableElement x, symbolTableElement y);
+    Jmp_cmp_le(BasicBlock *bb, symbolTableElement x, symbolTableElement y);
 
     void gen_asm(std::ostream &o) override;
 

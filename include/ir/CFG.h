@@ -29,15 +29,12 @@ class CFG {
 	std::string IR_reg_to_asm(std::string reg); /**< helper method: inputs a IR reg or input variable, returns e.g. "-24(%rbp)" for the proper value of 24 */	;
 
 	// basic block management
-	std::string new_BB_name();
 	BasicBlock* current_bb;
 
 private :
 	void gen_asm_prologue(std::ostream& o);
 	void gen_asm_epilogue(std::ostream& o);
 
- protected:	
-	int nextBBnumber; /**< just for naming */
-	
+ protected:		
 	std::vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/
 };

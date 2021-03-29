@@ -3,6 +3,4 @@
 
 class Add : public IRInstr
 {
-    
 };
-

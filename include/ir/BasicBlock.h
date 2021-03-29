@@ -42,7 +42,7 @@ Possible optimization:
 
 class BasicBlock {
  public:
-	BasicBlock(std::shared_ptr<CFG> entry_cfg, std::string entry_label, std::shared_ptr<Scope> entry_scope);
+	BasicBlock(std::shared_ptr<CFG> entry_cfg, std::shared_ptr<Scope> entry_scope, std::string entry_label="L"+std::to_string(nextBBnumber++));
 	void gen_asm(std::ostream &o); /**< x86 assembly code generation for this basic block (very simple) */
 
 	void add_IRInstr(IRInstr* instruction);
@@ -56,6 +56,8 @@ class BasicBlock {
  	std::string test_var_name;  /** < when generating IR code for an if(expr) or while(expr) etc,
 													 store here the name of the variable that holds the value of expr */
  protected:
+ 	static int nextBBnumber; /**< just for naming */
+
 	std::shared_ptr<Scope> scope;
  
 
