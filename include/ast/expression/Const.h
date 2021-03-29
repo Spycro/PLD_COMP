@@ -5,7 +5,7 @@
 class Const : public Expression {
 
     public:
-
+        void toString(int n);
     private:
         int value;
 
