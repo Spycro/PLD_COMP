@@ -25,13 +25,14 @@ value : CONST #const
 expression : affectationall #affectationValue 
       | expression '*' expression #mult
       | expression '/' expression #div
-      | expression '-' expression #sub
-      | expression '+' expression #add
+      | expression plusminus expression #subAdd
       | '-' expression #minus
       | value #expressionValue
       | '(' expression ')' #par;
 
 
+plusminus : '+' #returnPlus 
+      | '-' #returnMinus;
 
 TYPE : 'int' ;
 RETURN : 'return' ;

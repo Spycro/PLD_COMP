@@ -192,27 +192,27 @@ antlrcpp::Any Visitor::visitDiv(ifccParser::DivContext *ctx) {
 
   return result;
 }
-antlrcpp::Any Visitor::visitAdd(ifccParser::AddContext *ctx) {
+antlrcpp::Any Visitor::visitSubAdd(ifccParser::SubAddContext *ctx) {
   // view mult, only one instruction has changed
-  std::string left = visit(ctx->expression(0));
-  std::string right = visit(ctx->expression(1));
+  std::string plusMinus = visit(ctx->plusminus());
+  std::string result ;
+  if(plusMinus == "-"){
+    std::string left = visit(ctx->expression(0));
+    std::string right = visit(ctx->expression(1));
 
-  std::cout << "	movl	" << right << ", %eax\n";
-  std::cout << "	addl	" << left << ", %eax\n";
-  std::string result = addVariable();
-  std::cout << "	movl	%eax, " << result << "\n";
+    std::cout << "	movl	" << left << ", %eax\n";
+    std::cout << "	subl	" << right << ", %eax\n";
+    result = addVariable();
+    std::cout << "	movl	%eax, " << result << "\n";
+  }else{
+    std::string left = visit(ctx->expression(0));
+    std::string right = visit(ctx->expression(1));
 
-  return result;
-}
-antlrcpp::Any Visitor::visitSub(ifccParser::SubContext *ctx) {
-  // view mult, only one instruction has changed
-  std::string left = visit(ctx->expression(0));
-  std::string right = visit(ctx->expression(1));
-
-  std::cout << "	movl	" << left << ", %eax\n";
-  std::cout << "	subl	" << right << ", %eax\n";
-  std::string result = addVariable();
-  std::cout << "	movl	%eax, " << result << "\n";
+    std::cout << "	movl	" << right << ", %eax\n";
+    std::cout << "	addl	" << left << ", %eax\n";
+    result = addVariable();
+    std::cout << "	movl	%eax, " << result << "\n";
+  }
 
   return result;
 }
@@ -239,6 +239,14 @@ antlrcpp::Any
 Visitor::visitAffectationValue(ifccParser::AffectationValueContext *ctx) {
   return (
       visit(ctx->affectationall())); // return variable that was just affected
+}
+antlrcpp::Any Visitor::visitReturnPlus(ifccParser::ReturnPlusContext *ctx) {
+  std::string res = "+";
+  return res;
+}
+antlrcpp::Any Visitor::visitReturnMinus(ifccParser::ReturnMinusContext *ctx) {
+  std::string res = "-";
+  return res;
 }
 
 // Here come the private functions
