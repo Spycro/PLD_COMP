@@ -2,7 +2,7 @@
 
 #include "Type.h"
 
-class Int : public Type {
+class Int64 : public Type {
     public :
 
     int getSize(){
