@@ -11,7 +11,7 @@ int main(){
 
     BasicBlock* bb0 = new BasicBlock(firstCFG,"bb0",nullptr);
 
-    Int* intType = new Int();
+    Int64* intType = new Int64();
 
     Copy* instr1 = new Copy(bb0,intType, "$2", "~1");
     bb0->add_IRInstr(instr1);
