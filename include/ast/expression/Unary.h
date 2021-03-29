@@ -8,7 +8,7 @@ using namespace std;
 class Unary : public Expression{
 
     public:
-
+        void toString(int n);
     private:
         shared_ptr<Expression> operand;
         UnaryOperator op;

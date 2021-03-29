@@ -2,10 +2,10 @@
 
 #include "Instruction.h"
 
-class ForInstr : public Instruction {
+class NullInstr : public Instruction {
 
     public:
-
+        void toString(int n);
     private:
 
 };

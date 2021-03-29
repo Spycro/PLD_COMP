@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Expression.h"
-
 #include <string>
 
 using namespace std;
@@ -9,7 +8,7 @@ using namespace std;
 class Affectation : public Expression {
 
     public:
-
+        void toString(int n);
     private:
 
         string symbol;

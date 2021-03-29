@@ -5,7 +5,7 @@
 class WhileInstr : public ControlStructure {
 
     public:
-
+        void toString(int n);
     private:
 
 

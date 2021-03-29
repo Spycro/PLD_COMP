@@ -5,7 +5,7 @@
 class Ternary : public Expression{
 
     public:
-
+        void toString(int n);
     private:
         shared_ptr<Expression> operand1;
         shared_ptr<Expression> operand2;

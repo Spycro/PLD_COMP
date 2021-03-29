@@ -5,7 +5,7 @@
 class Continue : public Instruction {
 
     public:
-
+        void toString(int n);
     private:
 
 };
