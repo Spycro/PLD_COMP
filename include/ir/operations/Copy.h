@@ -1,15 +1,16 @@
 #pragma once
 #include "../IRInstr.h"
+#include "SymbolTable.h"
 
 class Copy : public IRInstr
 {
     public:
-        Copy(BasicBlock* bb, Type* t, std::string x, std::string d);
+        Copy(BasicBlock* bb, Type* t, symbolTableElement x, symbolTableElement d);
 
         void gen_asm(std::ostream &o) override;
     
     private:
-        std::string d, x;
+        symbolTableElement x, d;
 
 };
 
