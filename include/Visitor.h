@@ -21,13 +21,15 @@ public:
     virtual antlrcpp::Any visitVarName(ifccParser::VarNameContext *context) override;
     virtual antlrcpp::Any visitFunctionCall(ifccParser::FunctionCallContext *context) override;
     virtual antlrcpp::Any visitProg(ifccParser::ProgContext *context) override;
-    virtual antlrcpp::Any visitFunctionDeclaration(ifccParser::FunctionDeclarationContext *context) override;
+    virtual antlrcpp::Any visitMainFunction(ifccParser::MainFunctionContext *context) override;
+    virtual antlrcpp::Any visitAnyFunction(ifccParser::AnyFunctionContext *context) override;
     virtual antlrcpp::Any visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) override;
     virtual antlrcpp::Any visitVariableDeclarationList(ifccParser::VariableDeclarationListContext *context) override;
     virtual antlrcpp::Any visitNullInstr(ifccParser::NullInstrContext *context) override;
     virtual antlrcpp::Any visitBreakInstr(ifccParser::BreakInstrContext *context) override;
     virtual antlrcpp::Any visitContinueInstr(ifccParser::ContinueInstrContext *context) override;
     virtual antlrcpp::Any visitReturnInstr(ifccParser::ReturnInstrContext *context) override;
+    virtual antlrcpp::Any visitVarDecl(ifccParser::VarDeclContext *context) override;
     virtual antlrcpp::Any visitControlStruct(ifccParser::ControlStructContext *context) override;
     virtual antlrcpp::Any visitExpr(ifccParser::ExprContext *context) override;
     virtual antlrcpp::Any visitInstruction(ifccParser::InstructionContext *context) override;

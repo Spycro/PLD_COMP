@@ -23,13 +23,13 @@
  *     │  └ forInstr (OK)
  *     └ expression (OK)
  *        ├ affectation (OK)
- *        ├ unary
- *        ├ binary
+ *        ├ unary (OK)
+ *        ├ binary (OK)
  *        ├ ternary (OK)
  *        ├ const (OK)
  *        ├ variable (OK)
  *        ├ array (OK)
- *        └ functionCall
+ *        └ functionCall (OK)
  */
 
 
@@ -94,10 +94,13 @@ functionCall : NAME '(' (expression (',' expression)*)? ')' ;
  *    a program is a bunch of declarations (variables and functions),
  *    it may include the "main" function declaration
  */
-prog : (variableDeclaration | functionDeclaration)* ; // TODO : add support for arrays
+prog : (variableDeclaration | functionDeclaration)* ;
 
 
-functionDeclaration : (TYPE|VOID) NAME '(' VOID? ')' block ; // TODO : add suport for parameters 
+functionDeclaration // TODO : add suport for parameters 
+      : (TYPE|VOID) MAIN '(' VOID? ')' block #mainFunction
+      | (TYPE|VOID) NAME '(' VOID? ')' block #anyFunction 
+      ;
 
 
 variableDeclaration : TYPE variableDeclarationList ;
@@ -123,6 +126,7 @@ singleInstruction
       | BREAK ';' #breakInstr
       | CONTINUE ';' #continueInstr
       | RETURN expression? ';' #returnInstr
+      | variableDeclaration ';' #varDecl
       | controlStructure #controlStruct
       | expression ';' #expr
       ;
@@ -182,5 +186,5 @@ expression
       | expression ',' expression #comma
       ;
 
-MULTDIVMOD : '*' | '/' | '%' ;
-PLUSMINUS : '+' | '-' ;
+MULTDIVMOD : '*' | '/' | '%' ; // remplacer par non terminal ? (en minuscules)
+PLUSMINUS : '+' | '-' ; // remplacer par non terminal ? (en minuscules)
