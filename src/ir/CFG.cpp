@@ -3,7 +3,7 @@
 CFG::CFG(Function* ast_) : ast(ast_) {}
 
 void CFG::add_bb(BasicBlock* bb){
-    bbs.push_back(bb);
+    bbs.push_back(bb);    
 }
 
 void CFG::gen_asm(std::ostream& o){

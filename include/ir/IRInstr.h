@@ -14,13 +14,12 @@ class IRInstr {
    public:
 
 	/**  constructor */
-	IRInstr(BasicBlock* bb_, Type* t_) : bb(bb_), t(t_) {}
+	IRInstr(BasicBlock* bb_) : bb(bb_) {}
 	
 	/** Actual code generation */
 	virtual void gen_asm(std::ostream &o) = 0; /**< x86 assembly code generation for this IR instruction */
 	
- private:
+ protected:
 	BasicBlock* bb; /**< The BB this instruction belongs to, which provides a pointer to the CFG this instruction belong to */
-	Type* t; //PTDR T QUI
 };
 
