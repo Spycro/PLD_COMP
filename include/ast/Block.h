@@ -10,6 +10,7 @@ class Block : public Instruction{
         inline Scope getScope() { return scope; }
         inline list<shared_ptr<Instruction>> getInstructions() { return instructions; }
         void toString(int n);
+        inline bool isBlock() {return true; } override;
     private:
         list<shared_ptr<Instruction>> instructions;
         Scope scope;

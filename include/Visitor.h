@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include "ast/Scope.h"
 
 /**
  * This class provides an implementation of ifccVisitor, which can be
@@ -78,5 +79,10 @@ public:
     virtual antlrcpp::Any visitTernary(ifccParser::TernaryContext *context) override;
 
 private:
-	
+	Scope scope;
+
+    shared_ptr<Node> rootNode = make_ptr<Node>();
+
+	shared_ptr<Node> parentNode;
+
 };

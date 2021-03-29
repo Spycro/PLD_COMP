@@ -8,10 +8,13 @@ typedef struct symbolTableElements{
 	Type* type;
 	bool isSet;
 	bool isUsed;
+	bool isFunction;
 	int memoryOffset;
 
-	symbolTableElements(Type* type, bool isSet, bool isUsed, int memoryoffset) 
-		: type(type), isSet(isSet), isUsed(isUsed), memoryOffset(memoryoffset) {} 
+	symbolTableElement(Type* type, isFunction)
+		: type(type), isSet(false), isUsed(false), isFunction(isFunction), memoryOffset(0) {}
+	symbolTableElements(Type* type, bool isSet, bool isUsed, bool isFunction, int memoryoffset) 
+		: type(type), isSet(isSet), isUsed(isUsed), isFunction(isFunction), memoryOffset(memoryoffset) {} 
 } symbolTableElement;
 
 typedef std::unordered_map<std::string, std::shared_ptr<symbolTableElement>> SymbolMap;
@@ -27,6 +30,8 @@ class SymbolTable{
 			elements->emplace(name, symbol);
 		 }
 
+		void addVariable (std::string variableName, Type* variableType);
+		void addFunction (std::string functionName, Type* functionReturnType);
 		//const std::unique_ptr<SymbolMap> & getElements() { return elements; }
 
 	private:
