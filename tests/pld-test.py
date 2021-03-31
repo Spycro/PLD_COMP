@@ -6,6 +6,7 @@ import os
 import shutil
 import sys
 import subprocess
+import filecmp
 
 class colors:
     reset='\033[0m'
@@ -113,14 +114,11 @@ else:
 
 # Then we process the inputs arguments i.e. filenames or subtrees
 inputfilenames = []
-astfilenames = []
 for path in args.input:
     path = os.path.normpath(path)  # collapse redundant slashes etc.
     if os.path.isfile(path):
         if path[-2:] == '.c':
             inputfilenames.append(path)
-        elif path[-4:] == '.ast':
-            astfilenames.append(path)
         else:
             print("error: incorrect filename suffix (should be '.c'): "+path)
     elif os.path.isdir(path):
@@ -129,7 +127,6 @@ for path in args.input:
             #     print("error: INPUT directory:`"+path+"' contains OUTDIR `"+args.outdir+"'")
             #     sys.exit(1)
             inputfilenames += [dirpath+'/' + name for name in filenames if name[-2:] == '.c']
-            astfilenames += [dirpath+'/' + name for name in filenames if name[-4:] == '.ast']
     else:
         print("error: cannot read input path `"+path+"'")
         sys.exit(1)
@@ -151,14 +148,6 @@ for inputfilename in inputfilenames:
         f.close()
     except Exception as e:
         print("error: "+e.args[1]+": "+inputfilename)
-        sys.exit(1)
-
-for astfilename in astfilenames:
-    try:
-        f = open(astfilename, "r")
-        f.close()
-    except Exception as e:
-        print("error: "+e.args[1]+": "+astfilename)
         sys.exit(1)
 
 # Last but not least: we now locate the "wrapper script" that we will
@@ -213,24 +202,10 @@ for inputfilename in inputfilenames:
         if not os.path.isdir(subdir):
             os.mkdir(subdir)
             shutil.copyfile(inputfilename, subdir+'/input.c')
-        jobs.append(subdir)
 
-for astfilename in astfilenames:
+            if os.path.isfile(inputfilename[:-2] + ".ast"):
+                shutil.copyfile(inputfilename[:-2] + ".ast", subdir+'/input.ast')
 
-    if args.debug >= 2:
-        print("debug: PREPARING " + astfilename)
-
-    # Copy input.ast
-    if ('pld-test-output' in os.path.realpath(astfilename) and astfilename[-9:] == 'input.ast'):
-        # print("ALREADY PREPARED")
-        jobs.append(os.path.dirname(astfilename))
-    else:
-        # each test-case gets copied and processed in its own subdirectory:
-        # ../somedir/subdir/file.ast becomes ./pld-test-output/somedir-subdir-file/input.ast
-        subdir = DEST+'/'+astfilename.strip("./")[:-4].replace('/', '-')
-        if not os.path.isdir(subdir):
-            os.mkdir(subdir)
-        shutil.copyfile(astfilename, subdir+'/input.ast')
         jobs.append(subdir)
 
 # eliminate duplicate paths from the 'jobs' list
@@ -254,28 +229,24 @@ jobfailed = False
 
 print("\n" + colors.bold + colors.bg.blue + "➞ AST tests" + colors.reset + "\n")
 
-
 for jobname in jobs:
-    os.chdir(orig_cwd)
 
-    print('TEST-CASE: '+jobname)
+    os.chdir(orig_cwd)
     os.chdir(jobname)
 
-    try:
-        f = open("input.ast")
+    if os.path.isfile('input.ast'):
+        print('TEST-CASE: '+jobname)
+        aststatus = command(astwrapper+" generated.ast input.c", "ast-generate.txt")
 
-        aststatus = command(astwrapper+" generated.ast input.c", "pld-compile.txt")
-
-        # TODO: compare generated.ast (value) with input.ast (expected)
         if aststatus == 0:
-            # TODO
-
-    except IOError:
-        print("No AST file for job " + jobname)
-    finally:
-        f.close()
-
-
+            if filecmp.cmp('input.ast', 'generated.ast', shallow = False):
+                print(colors.fg.green + "TEST OK" + colors.reset)
+            else:
+                print(colors.fg.red + "TEST FAIL (AST doesn't match)" + colors.reset)
+                jobfailed = True
+        else:
+            print(colors.fg.red + "TEST FAIL (AST failed to generate)" + colors.reset)
+            jobfailed = True
 
 print("\n" + colors.bold + colors.bg.blue + "➞ Compilation and execution tests" + colors.reset + "\n")
 
@@ -344,4 +315,5 @@ for jobname in jobs:
     print(colors.fg.green + "TEST OK" + colors.reset)
 
 if jobfailed:
+    print("\n" + colors.bg.red + "One or more tests failed." + colors.reset + "\n")
     exit(1)
