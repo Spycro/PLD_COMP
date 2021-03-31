@@ -8,7 +8,14 @@ using namespace std;
 class Binary : public Expression{
 
     public:
+        Binary(shared_ptr<Expression> op1, shared_ptr<Expression> op2, BinaryOperator op)
+         : operand1(op1), operand2(op2), op(op) {}
+
+        inline shared_ptr<Expression> getOperand1() { return operand1; }
+        inline shared_ptr<Expression> getOperand2() { return operand2; }
+        inline BinaryOperator getOp() { return op; }
         void toString(int n);
+
     private:
         shared_ptr<Expression> operand1;
         shared_ptr<Expression> operand2;

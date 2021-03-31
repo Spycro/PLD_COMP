@@ -7,11 +7,14 @@ using namespace std;
 class Block : public Instruction{
 
     public:
-        inline Scope getScope() { return scope; }
+        Block( shared_ptr<Scope> scope, list<shared_ptr<Instruction>> instr) 
+         : instructions(instr), scope(scope) {}
+
+        inline shared_ptr<Scope> getScope() { return scope; }
         inline list<shared_ptr<Instruction>> getInstructions() { return instructions; }
         void toString(int n);
     private:
         list<shared_ptr<Instruction>> instructions;
-        Scope scope;
+        shared_ptr<Scope> scope;
 
 };
