@@ -5,7 +5,9 @@
 class NullInstr : public Instruction {
 
     public:
+        NullInstr( ) {}
         void toString(int n);
+
     private:
 
 };
