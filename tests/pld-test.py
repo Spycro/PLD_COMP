@@ -85,6 +85,8 @@ argparser.add_argument('-v', '--verbose', action="count", default=0,
                        help='Increase verbosity level. You can use this option multiple times.')
 argparser.add_argument('-w', '--wrapper', metavar='PATH',
                        help='Invoke the PLD compiler through the shell script at PATH. (default: use `pld-wrapper.sh` from the same directory as pld-test.py)')
+argparser.add_argument('-aw', '--astwrapper', metavar='PATH',
+                       help='Invoke the AST builder through the shell script at PATH. (default: use `ast-wrapper.sh` from the same directory as pld-test.py)')
 
 
 args = argparser.parse_args()
@@ -111,11 +113,14 @@ else:
 
 # Then we process the inputs arguments i.e. filenames or subtrees
 inputfilenames = []
+astfilenames = []
 for path in args.input:
     path = os.path.normpath(path)  # collapse redundant slashes etc.
     if os.path.isfile(path):
         if path[-2:] == '.c':
             inputfilenames.append(path)
+        elif path[-4:] == '.ast':
+            astfilenames.append(path)
         else:
             print("error: incorrect filename suffix (should be '.c'): "+path)
     elif os.path.isdir(path):
@@ -123,8 +128,8 @@ for path in args.input:
             # if os.path.samefile(dirpath,args.outdir):
             #     print("error: INPUT directory:`"+path+"' contains OUTDIR `"+args.outdir+"'")
             #     sys.exit(1)
-            inputfilenames += [dirpath+'/' +
-                               name for name in filenames if name[-2:] == '.c']
+            inputfilenames += [dirpath+'/' + name for name in filenames if name[-2:] == '.c']
+            astfilenames += [dirpath+'/' + name for name in filenames if name[-4:] == '.ast']
     else:
         print("error: cannot read input path `"+path+"'")
         sys.exit(1)
@@ -148,6 +153,14 @@ for inputfilename in inputfilenames:
         print("error: "+e.args[1]+": "+inputfilename)
         sys.exit(1)
 
+for astfilename in astfilenames:
+    try:
+        f = open(astfilename, "r")
+        f.close()
+    except Exception as e:
+        print("error: "+e.args[1]+": "+astfilename)
+        sys.exit(1)
+
 # Last but not least: we now locate the "wrapper script" that we will
 # use to invoke the padawan compiler
 
@@ -164,6 +177,22 @@ if not os.path.isfile(wrapper):
 if args.debug:
     print("debug: wrapper path: "+wrapper)
 
+
+
+if args.astwrapper:
+    astwrapper = os.path.realpath(os.getcwd()+"/" + args.astwrapper)
+else:
+    astwrapper = os.path.dirname(os.path.realpath(__file__))+"/pld-wrapper.sh"
+
+if not os.path.isfile(astwrapper):
+    print("error: cannot find "+os.path.basename(astwrapper) +
+          " in directory: "+os.path.dirname(astwrapper))
+    exit(1)
+
+if args.debug:
+    print("debug: astwrapper path: "+astwrapper)
+
+
 ######################################################################################
 # PREPARE step: copy all test-cases under DEST
 
@@ -171,10 +200,10 @@ jobs = []
 
 for inputfilename in inputfilenames:
     if args.debug >= 2:
-        print("debug: PREPARING "+inputfilename)
+        print("debug: PREPARING " + inputfilename)
 
-    if ('pld-test-output' in os.path.realpath(inputfilename)
-            and inputfilename[-7:] == 'input.c'):
+    # Copy input.c
+    if ('pld-test-output' in os.path.realpath(inputfilename) and inputfilename[-7:] == 'input.c'):
         # print("ALREADY PREPARED")
         jobs.append(os.path.dirname(inputfilename))
     else:
@@ -184,6 +213,24 @@ for inputfilename in inputfilenames:
         if not os.path.isdir(subdir):
             os.mkdir(subdir)
             shutil.copyfile(inputfilename, subdir+'/input.c')
+        jobs.append(subdir)
+
+for astfilename in astfilenames:
+
+    if args.debug >= 2:
+        print("debug: PREPARING " + astfilename)
+
+    # Copy input.ast
+    if ('pld-test-output' in os.path.realpath(astfilename) and astfilename[-9:] == 'input.ast'):
+        # print("ALREADY PREPARED")
+        jobs.append(os.path.dirname(astfilename))
+    else:
+        # each test-case gets copied and processed in its own subdirectory:
+        # ../somedir/subdir/file.ast becomes ./pld-test-output/somedir-subdir-file/input.ast
+        subdir = DEST+'/'+astfilename.strip("./")[:-4].replace('/', '-')
+        if not os.path.isdir(subdir):
+            os.mkdir(subdir)
+        shutil.copyfile(astfilename, subdir+'/input.ast')
         jobs.append(subdir)
 
 # eliminate duplicate paths from the 'jobs' list
@@ -203,9 +250,34 @@ if args.debug:
 ######################################################################################
 # TEST step: actually compile all test-cases with both compilers
 
-print("\n" + colors.bold + colors.fg.blue + "➞ Compilation and execution tests" + colors.reset + "\n")
-
 jobfailed = False
+
+print("\n" + colors.bold + colors.bg.blue + "➞ AST tests" + colors.reset + "\n")
+
+
+for jobname in jobs:
+    os.chdir(orig_cwd)
+
+    print('TEST-CASE: '+jobname)
+    os.chdir(jobname)
+
+    try:
+        f = open("input.ast")
+
+        aststatus = command(astwrapper+" generated.ast input.c", "pld-compile.txt")
+
+        # TODO: compare generated.ast (value) with input.ast (expected)
+        if aststatus == 0:
+            # TODO
+
+    except IOError:
+        print("No AST file for job " + jobname)
+    finally:
+        f.close()
+
+
+
+print("\n" + colors.bold + colors.bg.blue + "➞ Compilation and execution tests" + colors.reset + "\n")
 
 for jobname in jobs:
     os.chdir(orig_cwd)
