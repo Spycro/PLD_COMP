@@ -18,7 +18,7 @@
  */
 class CFG {
  public:
-	CFG(Function* ast);
+	CFG(Function* ast, std::string label_);
 
 	Function* ast; /**< The AST this CFG comes from */
 	
@@ -37,4 +37,5 @@ private :
 
  protected:		
 	std::vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/
+	std::string label; //TODO : a modifier
 };
