@@ -29,8 +29,12 @@ protected:
 
 void printASTRecursive(shared_ptr<Node> node, int n, ostream &o)
 {
-    o << std::string(n, '\t') << "└";
-    o << node->toString() << endl;
+    o << std::string(n, ' ') << "└";
+    o << node->toString();
+
+    if(node->getChildren().size() > 0) {
+        o << endl;
+    }
 
     for (shared_ptr<Node> child : node->getChildren())
     {
@@ -43,9 +47,17 @@ int main(int argn, const char **argv)
     stringstream in;
     if (argn == 2)
     {
-        ifstream lecture(argv[1]);
-        in << lecture.rdbuf();
+        ifstream file(argv[1]);
+
+        if (file.fail())
+        {
+            cerr << "Failed to open file " << argv[1] << endl;
+            return 1;
+        }
+
+        in << file.rdbuf();
     }
+
     ANTLRInputStream input(in.str());
     ifccLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
