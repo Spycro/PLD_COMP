@@ -17,7 +17,7 @@ class Function : public Node {
             : code(code), parameters(param) { }
 
         inline shared_ptr<Block> getCode() { return code; }
-        inline list<shared_ptr<Variable>> getParameters() { return parameters; }
+        inline list<shared_ptr<Variable>>& getParameters() { return parameters; }
         void toString(int n);
     private:
         shared_ptr<Block> code;
