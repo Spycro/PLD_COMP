@@ -5,6 +5,8 @@ class Break : public Instruction{
 
     public:
         void toString(int n);
+        Break() { }
+        virtual ~Break() { }
     private:
 
 };

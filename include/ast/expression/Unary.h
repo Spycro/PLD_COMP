@@ -9,6 +9,12 @@ class Unary : public Expression{
 
     public:
         void toString(int n);
+        Unary(shared_ptr<Expression> operand, UnaryOperator op) 
+         : operand(operand), op(op) {}
+         virtual ~Unary() {}
+
+        shared_ptr<Expression> getOperand() { return operand; }
+        UnaryOperator getOp() { return op; }
     private:
         shared_ptr<Expression> operand;
         UnaryOperator op;

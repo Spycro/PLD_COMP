@@ -9,6 +9,13 @@ class Binary : public Expression{
 
     public:
         void toString(int n);
+        Binary(shared_ptr<Expression> op1, shared_ptr<Expression> op2, BinaryOperator op)
+         : operand1(op1), operand2(op2), op(op) {}
+        virtual ~Binary();
+
+        shared_ptr<Expression> getOperand1() { return operand1; }
+        shared_ptr<Expression> getOperand2() { return operand2; }
+        BinaryOperator getOp() { return op; }
     private:
         shared_ptr<Expression> operand1;
         shared_ptr<Expression> operand2;
