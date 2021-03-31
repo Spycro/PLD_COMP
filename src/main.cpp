@@ -55,5 +55,8 @@ int main(int argn, const char **argv) {
   Visitor visitor;
   visitor.visit(tree);
 
+  shared_ptr<Node> rootNode = visitor.getRootNode();
+  
+
   return 0;
 }

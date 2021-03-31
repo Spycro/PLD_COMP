@@ -10,8 +10,9 @@
 
 using namespace std;
 
-class Function : public Node
-{
+//TODO ajouter nom/type ?
+
+class Function : public Node {
 
 public:
     inline shared_ptr<Block> getCode() { return code; }

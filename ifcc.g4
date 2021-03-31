@@ -104,7 +104,7 @@ functionDeclaration // TODO : add suport for parameters
 
 
 variableDeclaration : TYPE variableDeclarationList ;
-variableDeclarationList : NAME ('[' expression ']')? ('=' expression)? (',' variableDeclarationList)? ;
+variableDeclarationList : varName ('=' expression)? (',' variableDeclarationList)? ;
 
 
 
@@ -144,7 +144,7 @@ controlStructure
       ;
 
 
-expression
+expression 
       : CONST #const
       | varName #variable
       | functionCall #functCall

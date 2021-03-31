@@ -4,8 +4,9 @@
 #include <string>
 using namespace std;
 
-class Variable : public Expression
-{
+// TODO : ajouter type
+
+class Variable : public Expression {
 
 public:
     virtual std::string toString() override;

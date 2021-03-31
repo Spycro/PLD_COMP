@@ -1,7 +1,12 @@
 #include "Visitor.h"
 #include "ast/Node.h"
 #include "ast/Function.h"
+#include "ast/Return.h"
+#include "ast/expression/Affectation.h"
+#include "ast/expression/Const.h"
 #include "type/Int.h"
+#include "type/Char.h"
+#include <iostream>
 
 #define UNHANDLED { return 0 ; }
 //define UNHANDLED { throw "Unhandled operation (__PRETTY_FUNCTION__)"; }
@@ -15,13 +20,31 @@ antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDL
 antlrcpp::Any Visitor::visitFunctionCall(ifccParser::FunctionCallContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
+  std::cout<<"visitProg"<<std::endl;
+  
+  std::cout<<"var:"<<context->variableDeclaration().size()<<std::endl;
+  std::cout<<"fx:"<<context->functionDeclaration().size()<<std::endl;
+
   parentNode = rootNode;
+  
+  // TODO : decla variables
+/*
+  for (auto fx : context->functionDeclaration()) {
+    std::cout<<"for"<<std::endl;
+    visit(fx);
+  }*/
+
   return visitChildren(context);
 }
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
+  std::cout<<"visitMainFunction"<<std::endl;
   
-  this->scope.addFunction("main", new Int());
+  // TODO : vérifier le type de main
+  Int* type = new Int();
+  std::cout<<"ok1"<<std::endl;
+  this->scope.addFunction("main", type);
+std::cout<<"ok2"<<std::endl;
 
   shared_ptr<Function> mainFunct = make_shared<Function>();
   parentNode->getChildren().push_back(mainFunct);
@@ -37,11 +60,34 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   return ret;
 }
 
-antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
+  std::cout<<"visitAnyFunction"<<std::endl;
+  return 0;
+}
 
-antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) {
+  string type = context->TYPE()->getSymbol()->getText();
 
-antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarationListContext *context) UNHANDLED
+  if (type == "int") {
+    declarationType = new Int();
+  } else if (type == "char") {
+    declarationType = new Char();
+  }
+
+  return visitChildren(context);
+}
+
+antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarationListContext *context) {
+  // TODO : scope du bloc
+  // TODO : tableaux
+  // TODO : affectation au moment de la declaration
+  // TODO : visite des déclarations multiples
+  
+  string name = context->varName()->NAME()->getSymbol()->getText();
+  scope.addVariable(name, declarationType);
+
+  return 0;
+}
 
 antlrcpp::Any Visitor::visitNullInstr(ifccParser::NullInstrContext *context) UNHANDLED
 
@@ -49,15 +95,32 @@ antlrcpp::Any Visitor::visitBreakInstr(ifccParser::BreakInstrContext *context) U
 
 antlrcpp::Any Visitor::visitContinueInstr(ifccParser::ContinueInstrContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitReturnInstr(ifccParser::ReturnInstrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitReturnInstr(ifccParser::ReturnInstrContext *context) {
+  shared_ptr<Return> retExpr = make_shared<Return>();
+  retExpr->getParent() = parentNode;
+  parentNode->getChildren().push_back(retExpr);
 
-antlrcpp::Any Visitor::visitVarDecl(ifccParser::VarDeclContext *context) UNHANDLED
+  shared_ptr<Node> parent = parentNode;
+  parentNode = retExpr;
+  antlrcpp::Any ret = visit(context->expression());
+  parentNode = parent;
+
+  retExpr->setValue(dynamic_pointer_cast<Expression>(retExpr->getChildren()[0]));
+
+  return ret;
+}
+
+antlrcpp::Any Visitor::visitVarDecl(ifccParser::VarDeclContext *context) {
+  return visitChildren(context);
+}
 
 antlrcpp::Any Visitor::visitControlStruct(ifccParser::ControlStructContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitExpr(ifccParser::ExprContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitInstruction(ifccParser::InstructionContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitInstruction(ifccParser::InstructionContext *context) {
+  return visitChildren(context);
+}
 
 antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
   shared_ptr<Block> block = make_shared<Block>();
@@ -93,7 +156,16 @@ antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) UNHANDL
 
 antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *context) {
+  shared_ptr<Const> constant = make_shared<Const>();
+  constant->getParent() = parentNode;
+  parentNode->getChildren().push_back(constant);
+
+  int value = stoi(context->CONST()->getSymbol()->getText());
+  constant->setValue(value);
+
+  return 0;
+}
 
 antlrcpp::Any Visitor::visitMult_assign(ifccParser::Mult_assignContext *context) UNHANDLED
 
@@ -117,7 +189,27 @@ antlrcpp::Any Visitor::visitDiv_assign(ifccParser::Div_assignContext *context) U
 
 antlrcpp::Any Visitor::visitBitwiseShift(ifccParser::BitwiseShiftContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) {
+  shared_ptr<Affectation> affect = make_shared<Affectation>();
+  affect->getParent() = parentNode;
+  parentNode->getChildren().push_back(affect);
+
+  // TODO : vérifier type
+  // TODO : tableaux
+  // TODO : vérifier que ça existe
+  // TODO : trouver la bonne table de symboles
+
+  string name = context->varName()->NAME()->getText();
+  
+  shared_ptr<Node> parent = parentNode;
+  parentNode = affect;
+  antlrcpp::Any ret = visit(context->expression());
+  parentNode = parent;
+
+  affect->setValue(dynamic_pointer_cast<Expression>(affect->getChildren()[0]));
+
+  return ret;
+}
 
 antlrcpp::Any Visitor::visitBitwiseOr(ifccParser::BitwiseOrContext *context) UNHANDLED
 

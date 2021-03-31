@@ -80,15 +80,14 @@ public:
     virtual antlrcpp::Any visitLogicalOr(ifccParser::LogicalOrContext *context) override;
     virtual antlrcpp::Any visitTernary(ifccParser::TernaryContext *context) override;
 
-    inline shared_ptr<Node> getRootNode()
-    {
-        return rootNode;
-    };
+    inline shared_ptr<Node> getRootNode() { return rootNode; }
 
 private:
-    Scope scope;
+    Scope scope = Scope();
 
     shared_ptr<Node> rootNode = make_shared<Node>();
 
-    shared_ptr<Node> parentNode;
+	shared_ptr<Node> parentNode;
+    Type* declarationType;
+
 };

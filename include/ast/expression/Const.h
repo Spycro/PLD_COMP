@@ -5,9 +5,10 @@
 class Const : public Expression
 {
 
-public:
-    virtual std::string toString() override;
+    public:
+        virtual std::string toString() override;
+        inline void setValue(int value) { this->value = value; }
+    private:
+        int value;
 
-private:
-    int value;
 };

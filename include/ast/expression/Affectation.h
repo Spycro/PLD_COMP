@@ -8,10 +8,12 @@ using namespace std;
 class Affectation : public Expression
 {
 
-public:
-    virtual std::string toString() override;
+    public:
+        virtual std::string toString() override;
+        inline void setValue(shared_ptr<Expression> value) { this->value = value; }
+    private:
 
-private:
-    string symbol;
-    shared_ptr<Expression> value;
+        string symbol;
+        shared_ptr<Expression> value;
+
 };
