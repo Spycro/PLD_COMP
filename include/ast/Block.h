@@ -7,8 +7,8 @@ using namespace std;
 class Block : public Instruction{
 
     public:
-        Block(list<shared_ptr<Instruction>> instr, shared_ptr<Scope> scope) 
-         : instructions(instr), scope(scope) { }
+        Block( shared_ptr<Scope> scope, list<shared_ptr<Instruction>> instr) 
+         : instructions(instr), scope(scope) {}
 
         virtual ~Block() {}
 
