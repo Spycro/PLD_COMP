@@ -2,7 +2,7 @@
 
 extern Void voidType;
 
-CFG::CFG(Function* ast_, std::string label_, Type* type_) : ast(ast_), label(label_), type(type_) {}
+CFG::CFG(Function* ast_, std::string label_, Type* type_, std::vector<symbolTableElement> params_) : ast(ast_), label(label_), type(type_), params(params_) {}
 
 void CFG::add_bb(BasicBlock* bb){
     bbs.push_back(bb);    

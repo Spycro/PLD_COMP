@@ -7,13 +7,18 @@
 #include "ir/operations/Jmp_cmp_eq.h"
 #include "type/Int64.h"
 #include "type/Void.h"
+#include "SymbolTable.h"
 
 Void voidType;
 Int64 intType64;
 
 void test_call(){
+    symbolTableElements param1(&intType64, "5");
+    symbolTableElements param2(&intType64, "0");
+    std::vector<symbolTableElement> params {param1, param2};
+
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &intType64));
-    std::shared_ptr<CFG> secondCFG(new CFG(nullptr, "fct", &voidType));
+    std::shared_ptr<CFG> secondCFG(new CFG(nullptr, "fct", &voidType, params));
 
     BasicBlock bb0(firstCFG, nullptr);
     Call callInstr(&bb0, secondCFG);

@@ -20,11 +20,12 @@
  */
 class CFG {
  public:
-	CFG(Function* ast, std::string label_, Type* type);
+	CFG(Function* ast, std::string label_, Type* type, std::vector<symbolTableElement> params_ = std::vector<symbolTableElement>());
 
 	Function* ast; /**< The AST this CFG comes from */
 	std::string label; //TODO : a modifier!! -> Function
 	Type* type; //TODO : a modifier!! -> Function
+	std::vector<symbolTableElement> params;
 	
 	void add_bb(BasicBlock* bb); 
 
