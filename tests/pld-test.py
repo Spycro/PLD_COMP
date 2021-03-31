@@ -171,7 +171,7 @@ if args.debug:
 if args.astwrapper:
     astwrapper = os.path.realpath(os.getcwd()+"/" + args.astwrapper)
 else:
-    astwrapper = os.path.dirname(os.path.realpath(__file__))+"/pld-wrapper.sh"
+    astwrapper = os.path.dirname(os.path.realpath(__file__))+"/ast-wrapper.sh"
 
 if not os.path.isfile(astwrapper):
     print("error: cannot find "+os.path.basename(astwrapper) +
@@ -227,6 +227,8 @@ if args.debug:
 
 jobfailed = False
 
+# AST TESTS
+
 print("\n" + colors.bold + colors.bg.blue + "➞ AST tests" + colors.reset + "\n")
 
 for jobname in jobs:
@@ -236,6 +238,7 @@ for jobname in jobs:
 
     if os.path.isfile('input.ast'):
         print('TEST-CASE: '+jobname)
+
         aststatus = command(astwrapper+" generated.ast input.c", "ast-generate.txt")
 
         if aststatus == 0:
@@ -247,6 +250,8 @@ for jobname in jobs:
         else:
             print(colors.fg.red + "TEST FAIL (AST failed to generate)" + colors.reset)
             jobfailed = True
+
+# COMPILATION AND EXECUTION TESTS
 
 print("\n" + colors.bold + colors.bg.blue + "➞ Compilation and execution tests" + colors.reset + "\n")
 
