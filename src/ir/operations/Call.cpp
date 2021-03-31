@@ -1,7 +1,8 @@
 #include "ir/operations/Call.h"
+#include "ir/CFG.h"
 
-Call::Call(BasicBlock *bb_, std::string functionName_):IRInstr(bb_),functionName(functionName_){}
+Call::Call(BasicBlock *bb_, std::shared_ptr<CFG> cfg_):IRInstr(bb_),cfg(cfg_){}
 
 void Call::gen_asm(std::ostream &o){
-    o << "\tcall" << functionName << "()" << std::endl;
+    o << "\tcall " << cfg->label << "()" << std::endl;
 }

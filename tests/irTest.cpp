@@ -6,26 +6,33 @@
 #include "ir/operations/Call.h"
 #include "ir/operations/Jmp_cmp_eq.h"
 #include "type/Int64.h"
+#include "type/Void.h"
+
+Void voidType;
+Int64 intType64;
 
 void test_call(){
-    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main"));
-    std::shared_ptr<CFG> secondCFG(new CFG(nullptr, "fct"));
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &intType64));
+    std::shared_ptr<CFG> secondCFG(new CFG(nullptr, "fct", &voidType));
 
     BasicBlock bb0(firstCFG, nullptr);
-    Call callInstr(&bb0, "fct");
+    Call callInstr(&bb0, secondCFG);
+
+    bb0.add_IRInstr(&callInstr);
+
+    firstCFG->add_bb(&bb0);
 
     firstCFG->gen_asm(std::cout);
     secondCFG->gen_asm(std::cout);
 }
 
 void test_if_else_condition() {
-    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main"));
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &intType64));
 
     BasicBlock bb0(firstCFG, nullptr);
     BasicBlock bb1(firstCFG, nullptr, true);
     BasicBlock bb2(firstCFG, nullptr, true);
-    BasicBlock bb3(firstCFG, nullptr);
-    Int64 intType64;
+    BasicBlock bb3(firstCFG, nullptr);    
 
     Jmp_cmp_eq condJmp1(&bb0, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, "4"));
     Copy copyInstr1(&bb1, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, false, false, 8));
@@ -52,12 +59,11 @@ void test_if_else_condition() {
 }
 
 void test_if_condition() {
-    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main"));
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &intType64));
 
     BasicBlock bb0(firstCFG, nullptr);
     BasicBlock bb1(firstCFG, nullptr);
     BasicBlock bb2(firstCFG, nullptr);
-    Int64 intType64;
 
     Jmp_cmp_eq condJmp1(&bb0, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, "4"));
     Copy copyInstr1(&bb1, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, false, false, 8));
@@ -80,11 +86,10 @@ void test_if_condition() {
 }
 
 void test_following_blocks() {
-    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main"));
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &intType64));
 
     BasicBlock bb0(firstCFG, nullptr);
     BasicBlock bb1(firstCFG, nullptr);
-    Int64 intType64;
 
     Copy instr1(&bb0, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, false, false, 8));
     Copy instr2(&bb1, symbolTableElement(&intType64, "4"), symbolTableElement(&intType64, false, false, 16));
@@ -100,11 +105,9 @@ void test_following_blocks() {
 }
 
 void test_single_block() {
-    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main"));
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &intType64));
 
     BasicBlock bb0(firstCFG, nullptr);
-
-    Int64 intType64;
 
     symbolTableElement symbol1(&intType64, "2");
     symbolTableElement symbol2(&intType64, false, false,8);
@@ -121,5 +124,6 @@ int main(){
     //test_single_block();
     //test_following_blocks();
     //test_if_condition();
-    test_if_else_condition();
+    //test_if_else_condition();
+    test_call();
 }

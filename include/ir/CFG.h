@@ -3,6 +3,8 @@
 #include "BasicBlock.h"
 #include "../SymbolTable.h"
 #include "../ast/Function.h"
+#include "type/Void.h"
+#include "type/Type.h"
 
 #include <iostream>
 #include <string>
@@ -18,9 +20,11 @@
  */
 class CFG {
  public:
-	CFG(Function* ast, std::string label_);
+	CFG(Function* ast, std::string label_, Type* type);
 
 	Function* ast; /**< The AST this CFG comes from */
+	std::string label; //TODO : a modifier!! -> Function
+	Type* type; //TODO : a modifier!! -> Function
 	
 	void add_bb(BasicBlock* bb); 
 
@@ -36,6 +40,5 @@ private :
 	void gen_asm_epilogue(std::ostream& o);
 
  protected:		
-	std::vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/
-	std::string label; //TODO : a modifier
+	std::vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/	
 };
