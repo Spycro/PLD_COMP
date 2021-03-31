@@ -9,7 +9,8 @@ using namespace std;
 class Node{
 
     public:
-        inline vector<shared_ptr<Node>> getChildren() { return children; } 
+        inline vector<shared_ptr<Node>>& getChildren() { return children; } 
+        inline shared_ptr<Node> getParent() { return parent; }
         virtual void toString(int n);
         virtual bool isBlock() { return false; }
     private:

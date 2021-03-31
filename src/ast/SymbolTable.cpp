@@ -5,7 +5,7 @@ using namespace std;
 
 void SymbolTable::addVariable (string variableName, Type* variableType) {
 
-    shared_ptr<symbolTableElement> buffer = make_shared<symbolTableElement>(variableType,false,false,0);
+    shared_ptr<symbolTableElement> buffer = make_shared<symbolTableElement>(variableType,false,false,false,0);
     bool test = elements->emplace(variableName,buffer).second;
     if(!test) {
         cerr<<"name is already used";

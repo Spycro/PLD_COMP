@@ -1,12 +1,13 @@
 #include "Visitor.h"
 #include "ast/Node.h"
 #include "ast/Function.h"
+#include "type/Int.h"
 
 #define UNHANDLED { return 0 ; }
 //define UNHANDLED { throw "Unhandled operation (__PRETTY_FUNCTION__)"; }
 
 antlrcpp::Any Visitor::visitAxiom(ifccParser::AxiomContext *context) {
-  return visitProg(context);
+  return visitChildren(context);
 }
 
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDLED
@@ -19,18 +20,19 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
 }
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
-  scope.addFunction("main", new Int());
+  
+  this->scope.addFunction("main", new Int());
 
   shared_ptr<Function> mainFunct = make_shared<Function>();
-  parentNode->children.insert(mainFunct);
-  mainFunct->parent = parentNode;
+  parentNode->getChildren().push_back(mainFunct);
+  mainFunct->getParent() = parentNode;
   
   shared_ptr<Node> parent = parentNode;
   parentNode = mainFunct;
   antlrcpp::Any ret = visitChildren(context);
   parentNode = parent;
 
-  mainFunct->code = children[0];
+  mainFunct->setCode(dynamic_pointer_cast<Block>(mainFunct->getChildren()[0]));
 
   return ret;
 }
@@ -59,15 +61,20 @@ antlrcpp::Any Visitor::visitInstruction(ifccParser::InstructionContext *context)
 
 antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
   shared_ptr<Block> block = make_shared<Block>();
-  parentNode->children.insert(block);
-  block->parent = parentNode;
+  block->getParent() = parentNode;
+  parentNode->getChildren().push_back(block);
+  
+  // TODO : ajouter portée
 
   shared_ptr<Node> parent = parentNode;
   parentNode = block;
   antlrcpp::Any ret = visitChildren(context);
   parentNode = parent;
-  
-  // TODO : remplir l'attribut "instructions" de block
+
+  for (shared_ptr<Node> child : block->getChildren()) {
+    shared_ptr<Instruction> instr = dynamic_pointer_cast<Instruction>(child);
+    block->getInstructions().push_back(instr);
+  }
 
   return ret;
 }

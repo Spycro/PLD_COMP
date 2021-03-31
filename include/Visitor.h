@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "ast/Scope.h"
+#include "ast/Node.h"
 
 /**
  * This class provides an implementation of ifccVisitor, which can be
@@ -81,7 +82,7 @@ public:
 private:
 	Scope scope;
 
-    shared_ptr<Node> rootNode = make_ptr<Node>();
+    shared_ptr<Node> rootNode = make_shared<Node>();
 
 	shared_ptr<Node> parentNode;
 

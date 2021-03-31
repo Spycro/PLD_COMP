@@ -11,7 +11,7 @@ typedef struct symbolTableElements{
 	bool isFunction;
 	int memoryOffset;
 
-	symbolTableElement(Type* type, isFunction)
+	symbolTableElements(Type* type, bool isFunction)
 		: type(type), isSet(false), isUsed(false), isFunction(isFunction), memoryOffset(0) {}
 	symbolTableElements(Type* type, bool isSet, bool isUsed, bool isFunction, int memoryoffset) 
 		: type(type), isSet(isSet), isUsed(isUsed), isFunction(isFunction), memoryOffset(memoryoffset) {} 

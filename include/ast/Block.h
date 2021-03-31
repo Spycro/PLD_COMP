@@ -1,18 +1,19 @@
 #pragma once
 #include "Instruction.h"
 #include "Scope.h"
-#include <list>
+#include <vector>
 using namespace std;
 
 class Block : public Instruction{
 
     public:
-        inline Scope getScope() { return scope; }
-        inline list<shared_ptr<Instruction>> getInstructions() { return instructions; }
+        inline Scope& getScope() { return scope; }
+        inline vector<shared_ptr<Instruction>>& getInstructions() { return instructions; }
         void toString(int n);
-        inline bool isBlock() {return true; } override;
+        inline bool isBlock() { return true; }
+        
     private:
-        list<shared_ptr<Instruction>> instructions;
+        vector<shared_ptr<Instruction>> instructions;
         Scope scope;
 
 };
