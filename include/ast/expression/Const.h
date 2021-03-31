@@ -8,7 +8,7 @@ class Const : public Expression {
         void toString(int n);
         Const(int value) : value(value) {}
 
-        int getValue() { return value; }
+        inline int getValue() { return value; }
     private:
         int value;
 

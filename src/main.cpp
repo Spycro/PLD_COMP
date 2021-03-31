@@ -8,7 +8,6 @@
 #include "antlr4-generated/ifccLexer.h"
 #include "antlr4-generated/ifccParser.h"
 #include "antlr4-runtime.h"
-#include "allinclude.h"
 
 using namespace antlr4;
 using namespace std;

@@ -11,7 +11,7 @@ class Variable : public Expression {
         Variable(string symbol) : symbol(symbol) { }
         virtual ~Variable() { }
         
-        string getSymbol() { return symbol; }
+        inline string getSymbol() { return symbol; }
     private:
         string symbol;
 
