@@ -3,9 +3,7 @@
 
 using namespace std;
 
-void IfInstr::toString(int n) {
-    for(int i=0;i<n;i++){
-        cout<<"\t";
-     }
-    cout<<"IfInstr"<<endl;
+std::string IfInstr::toString()
+{
+    return "IfInstr";
 }

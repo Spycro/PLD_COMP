@@ -3,9 +3,7 @@
 
 using namespace std;
 
-void Ternary::toString(int n) {
-    for(int i=0;i<n;i++){
-        cout<<"\t";
-     }
-    cout<<"Ternary"<<endl;
+std::string Ternary::toString()
+{
+    return "Ternary";
 }

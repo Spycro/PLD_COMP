@@ -6,12 +6,13 @@
 
 using namespace std;
 
-class Return : public Instruction{
+class Return : public Instruction
+{
 
-    public:
-        shared_ptr<Expression> getValue() { return value; }
-        void toString(int n);
-    private:
-        shared_ptr<Expression> value;
+public:
+    shared_ptr<Expression> getValue() { return value; }
+    virtual std::string toString() override;
 
+private:
+    shared_ptr<Expression> value;
 };

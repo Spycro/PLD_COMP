@@ -5,15 +5,17 @@
 
 using namespace std;
 
+class Node
+{
 
-class Node{
+public:
+public:
+    inline vector<shared_ptr<Node>> &getChildren() { return children; }
+    inline shared_ptr<Node> getParent() { return parent; }
+    virtual std::string toString();
+    virtual bool isBlock() { return false; }
 
-    public:
-        inline vector<shared_ptr<Node>>& getChildren() { return children; } 
-        inline shared_ptr<Node> getParent() { return parent; }
-        virtual void toString(int n);
-        virtual bool isBlock() { return false; }
-    private:
-        vector<shared_ptr<Node>> children;
-        shared_ptr<Node> parent;
+private:
+    vector<shared_ptr<Node>> children;
+    shared_ptr<Node> parent;
 };

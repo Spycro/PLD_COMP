@@ -3,9 +3,7 @@
 
 using namespace std;
 
-void Node::toString(int n) {
-    for(int i=0;i<n;i++){
-        cout<<"\t";
-     }
-    cout<<"Node"<<endl;
+std::string Node::toString()
+{
+    return "Node";
 }

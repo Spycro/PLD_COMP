@@ -4,11 +4,12 @@
 #include <string>
 using namespace std;
 
-class Variable : public Expression {
+class Variable : public Expression
+{
 
-    public:
-        void toString(int n);
-    private:
-        string symbol;
+public:
+    virtual std::string toString() override;
 
+private:
+    string symbol;
 };

@@ -3,9 +3,7 @@
 
 using namespace std;
 
-void Function::toString(int n) {
-    for(int i=0;i<n;i++){
-        cout<<"\t";
-     }
-    cout<<"Function"<<endl;
+std::string Function::toString()
+{
+    return "Function";
 }

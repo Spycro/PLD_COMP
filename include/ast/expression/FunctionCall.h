@@ -2,10 +2,10 @@
 
 #include "Expression.h"
 #include <string>
-
+#include <list>
 using namespace std;
 
-class Array : public Expression
+class FunctionCall : public Expression
 {
 
 public:
@@ -13,5 +13,5 @@ public:
 
 private:
     string symbol;
-    shared_ptr<Expression> position;
+    list<shared_ptr<Expression>> parameters;
 };

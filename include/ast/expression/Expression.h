@@ -2,10 +2,11 @@
 
 #include "../Instruction.h"
 
-class Expression : public Instruction {
+class Expression : public Instruction
+{
 
-    public:
-        virtual void toString(int n);
-    private:
+public:
+    virtual std::string toString() override;
 
+private:
 };
