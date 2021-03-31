@@ -5,13 +5,20 @@
 #include <list>
 using namespace std;
 
-class FunctionCall : public Expression
-{
+class FunctionCall : public Expression {
 
-public:
-    virtual std::string toString() override;
+    public:
 
-private:
-    string symbol;
-    list<shared_ptr<Expression>> parameters;
+        FunctionCall(string symbol, list<shared_ptr<Expression>> param) 
+         : symbol(symbol), parameters(param) {}
+
+        inline string& getSymbol() { return symbol; }
+        inline list<shared_ptr<Expression>>& getParameters()  { return parameters; }
+
+        virtual std::string toString() override;
+
+    private:
+        string symbol;
+        list<shared_ptr<Expression>> parameters;
+
 };

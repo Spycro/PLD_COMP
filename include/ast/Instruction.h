@@ -3,9 +3,10 @@
 
 class Instruction : public Node
 {
+    public:
+        Instruction() { }
 
-public:
-    virtual std::string toString() override;
+        virtual std::string toString() override;
 
-private:
+    private:
 };

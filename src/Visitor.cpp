@@ -39,13 +39,9 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
   std::cout<<"visitMainFunction"<<std::endl;
-  
-  // TODO : vérifier le type de main
-  Int* type = new Int();
-  std::cout<<"ok1"<<std::endl;
-  this->scope.addFunction("main", type);
-std::cout<<"ok2"<<std::endl;
 
+  this->scope.addFunction("main", new Int());
+  
   shared_ptr<Function> mainFunct = make_shared<Function>();
   parentNode->getChildren().push_back(mainFunct);
   mainFunct->getParent() = parentNode;

@@ -8,9 +8,13 @@ using namespace std;
 
 class Variable : public Expression {
 
-public:
-    virtual std::string toString() override;
+    public:
+        Variable(string symbol) : symbol(symbol) { }
+        
+        inline string& getSymbol() { return symbol; }
 
-private:
-    string symbol;
+        virtual std::string toString() override;
+
+    private:
+        string symbol;
 };

@@ -4,9 +4,9 @@
 
 class NullInstr : public Instruction
 {
+    public:
+        NullInstr( ) {}
+        virtual std::string toString() override;
 
-public:
-    virtual std::string toString() override;
-
-private:
+    private:
 };

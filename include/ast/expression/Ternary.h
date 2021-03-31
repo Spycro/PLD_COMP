@@ -4,12 +4,17 @@
 
 class Ternary : public Expression
 {
+    public:
+        Ternary(shared_ptr<Expression> op1, shared_ptr<Expression> op2, shared_ptr<Expression> op3) 
+         : operand1(op1), operand2(op2), operand3(op3) {}
 
-public:
-    virtual std::string toString() override;
+        inline shared_ptr<Expression> getOperand1() { return operand1; }
+        inline shared_ptr<Expression> getOperand2() { return operand2; }
+        inline shared_ptr<Expression> getOperand3() { return operand3; }
+        virtual std::string toString() override;
 
-private:
-    shared_ptr<Expression> operand1;
-    shared_ptr<Expression> operand2;
-    shared_ptr<Expression> operand3;
+    private:
+        shared_ptr<Expression> operand1;
+        shared_ptr<Expression> operand2;
+        shared_ptr<Expression> operand3;
 };

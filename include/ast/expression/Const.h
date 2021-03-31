@@ -6,8 +6,13 @@ class Const : public Expression
 {
 
     public:
-        virtual std::string toString() override;
+    Const() {}
+        Const(int value) : value(value) {}
+
+        inline int getValue() { return value; }
         inline void setValue(int value) { this->value = value; }
+        virtual std::string toString() override;
+
     private:
         int value;
 

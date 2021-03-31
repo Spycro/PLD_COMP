@@ -6,11 +6,12 @@ using namespace std;
 
 class IfInstr : public ControlStructure
 {
+    public:
+        IfInstr( shared_ptr<Instruction> codeElse ) 
+            : codeElse(codeElse) { }
 
-public:
-    inline shared_ptr<Instruction> getCodeElse() { return codeElse; }
-    virtual std::string toString() override;
-
-private:
-    shared_ptr<Instruction> codeElse;
+        inline shared_ptr<Instruction> getCodeElse() { return codeElse; }
+        virtual std::string toString() override;
+    private:
+        shared_ptr<Instruction> codeElse;
 };

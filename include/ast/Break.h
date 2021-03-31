@@ -3,9 +3,10 @@
 
 class Break : public Instruction
 {
+    public:        
+        Break() { }
+        
+        virtual std::string toString() override;
 
-public:
-    virtual std::string toString() override;
-
-private:
+    private:
 };

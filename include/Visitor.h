@@ -83,7 +83,7 @@ public:
     inline shared_ptr<Node> getRootNode() { return rootNode; }
 
 private:
-    Scope scope = Scope();
+    Scope scope;
 
     shared_ptr<Node> rootNode = make_shared<Node>();
 

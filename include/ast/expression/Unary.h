@@ -16,11 +16,16 @@ using namespace std;
 
 class Unary : public Expression
 {
+    public:
+        Unary(shared_ptr<Expression> operand, UnaryOperator op) 
+         : operand(operand), op(op) {}
 
-public:
-    virtual std::string toString() override;
+        inline shared_ptr<Expression> getOperand() { return operand; }
+        inline UnaryOperator getOp() { return op; }
 
-private:
-    shared_ptr<Expression> operand;
-    UnaryOperator op;
+        virtual std::string toString() override;
+
+    private:
+        shared_ptr<Expression> operand;
+        UnaryOperator op;
 };

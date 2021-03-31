@@ -4,9 +4,10 @@
 
 class Continue : public Instruction
 {
+    public:
+        Continue() { }
 
-public:
-    virtual std::string toString() override;
+        virtual std::string toString() override;
 
-private:
+    private:
 };

@@ -3,7 +3,6 @@
 
 using namespace std;
 
-std::string FunctionCall::toString()
-{
+string FunctionCall::toString() {
     return "FunctionCall";
 }
