@@ -29,8 +29,8 @@ protected:
 
 void printASTRecursive(shared_ptr<Node> node, int n, ostream &o)
 {
-    o << std::string(n, '\t└');
-    o << node->toString();
+    o << std::string(n, '\t') << "└";
+    o << node->toString() << endl;
 
     for (shared_ptr<Node> child : node->getChildren())
     {
