@@ -1,9 +1,9 @@
-#include "ast/expression/FonctionCall.h"
+#include "ast/expression/FunctionCall.h"
 #include <iostream>
 
 using namespace std;
 
-void FonctionCall::toString(int n) {
+void FunctionCall::toString(int n) {
     for(int i=0;i<n;i++){
         cout<<"\t";
      }

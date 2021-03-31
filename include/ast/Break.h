@@ -3,8 +3,11 @@
 
 class Break : public Instruction{
 
-    public:
+    public:        
+        Break() { }
+        
         void toString(int n);
+
     private:
 
 };
