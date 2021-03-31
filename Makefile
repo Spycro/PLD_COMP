@@ -62,7 +62,7 @@ $(GEN_SRCS): $(GRAMMAR)
 	@rm -rf /tmp/antlr4-generated
 
 test: ifcc test_ast
-	@(cd $(TESTS_DIR) && python3 pld-test.py .) || (echo "Tests failed"; exit 1)
+	@cd $(TESTS_DIR) && python3 pld-test.py . && exit $?
 
 clean:
 	@rm -rf $(BUILD_DIR)
