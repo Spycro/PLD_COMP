@@ -5,10 +5,11 @@
 class Const : public Expression {
 
     public:
-        void toString(int n);
         Const(int value) : value(value) {}
 
         inline int getValue() { return value; }
+        void toString(int n);
+
     private:
         int value;
 

@@ -4,10 +4,11 @@
 
 class DoWhileInstr : public ControlStructure {
 
-    public:
-        void toString(int n);
-        
+    public:        
         DoWhileInstr() { }
+
+        void toString(int n);
+
     private:
 
 };

@@ -4,8 +4,10 @@
 class Instruction : public Node{
 
     public:
-        virtual void toString(int n);
         Instruction() { }
+
+        virtual void toString(int n);
+
     private:
 
 };

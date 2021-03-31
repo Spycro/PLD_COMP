@@ -5,8 +5,10 @@
 class Continue : public Instruction {
 
     public:
-        void toString(int n);
         Continue() { }
+
+        void toString(int n);
+
     private:
 
 };
