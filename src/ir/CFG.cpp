@@ -1,6 +1,8 @@
 #include "../../include/ir/CFG.h"
 
-CFG::CFG(Function* ast_, std::string label_) : ast(ast_), label(label_) {}
+extern Void voidType;
+
+CFG::CFG(Function* ast_, std::string label_, Type* type_) : ast(ast_), label(label_), type(type_) {}
 
 void CFG::add_bb(BasicBlock* bb){
     bbs.push_back(bb);    
@@ -26,7 +28,10 @@ void CFG::gen_asm_prologue(std::ostream& o) {
 }
 
 void CFG::gen_asm_epilogue(std::ostream& o) {
-    o <<       "#epilogue\n" // the epilogue
-               "\tpopq %rbp #restore rbp from stack\n"
-               "\tret\n";
+    o <<       "#epilogue\n" ;// the epilogue
+    if(type==&voidType){
+        o << "\tnop\n";
+    }
+    o   << "\tpopq %rbp #restore rbp from stack\n"
+        << "\tret\n";
 }
