@@ -9,7 +9,6 @@ class Expression : public Instruction {
         virtual void toString(int n);
         
         Expression() {}
-        virtual ~Expression() {};
     private:
 
 };

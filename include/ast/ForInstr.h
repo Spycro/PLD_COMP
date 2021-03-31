@@ -10,7 +10,6 @@ class ForInstr : public ControlStructure {
     public:
         ForInstr(shared_ptr<Expression> initialisation, shared_ptr<Expression> step) 
             : initialisation(initialisation), step(step) {}
-        virtual ~ForInstr() {}
 
         inline shared_ptr<Expression> getInitialisation() { return initialisation; }
         inline shared_ptr<Expression> getStep() { return step; }

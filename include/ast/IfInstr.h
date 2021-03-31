@@ -9,7 +9,6 @@ class IfInstr : public ControlStructure {
     public:
         IfInstr( shared_ptr<Instruction> codeElse ) 
             : codeElse(codeElse) { }
-        virtual ~IfInstr() { } 
 
         inline shared_ptr<Instruction> getCodeElse() { return codeElse; }
         void toString(int n);

@@ -6,8 +6,8 @@ class DoWhileInstr : public ControlStructure {
 
     public:
         void toString(int n);
+        
         DoWhileInstr() { }
-        virtual ~DoWhileInstr() { }
     private:
 
 };

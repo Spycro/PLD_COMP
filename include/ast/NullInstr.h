@@ -7,7 +7,6 @@ class NullInstr : public Instruction {
     public:
         void toString(int n);
         NullInstr( ) {}
-        virtual ~NullInstr() {}
     private:
 
 };

@@ -6,7 +6,6 @@ class Instruction : public Node{
     public:
         virtual void toString(int n);
         Instruction() { }
-        virtual ~Instruction() { }
     private:
 
 };

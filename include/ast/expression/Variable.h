@@ -9,9 +9,8 @@ class Variable : public Expression {
     public:
         void toString(int n);
         Variable(string symbol) : symbol(symbol) { }
-        virtual ~Variable() { }
         
-        inline string getSymbol() { return symbol; }
+        inline string& getSymbol() { return symbol; }
     private:
         string symbol;
 

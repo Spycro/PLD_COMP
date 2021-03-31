@@ -11,7 +11,6 @@ class Unary : public Expression{
         void toString(int n);
         Unary(shared_ptr<Expression> operand, UnaryOperator op) 
          : operand(operand), op(op) {}
-         virtual ~Unary() {}
 
         inline shared_ptr<Expression> getOperand() { return operand; }
         inline UnaryOperator getOp() { return op; }

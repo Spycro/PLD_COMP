@@ -10,9 +10,8 @@ class Affectation : public Expression {
     public:
         void toString(int n);
         Affectation(string symbol, shared_ptr<Expression> value) : symbol(symbol), value(value) {}
-        virtual ~Affectation() {}
         
-        inline string getSymbol() { return symbol; }
+        inline string& getSymbol() { return symbol; }
         inline shared_ptr<Expression> getValue() { return value; }
     private:
 

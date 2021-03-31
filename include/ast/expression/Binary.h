@@ -11,7 +11,6 @@ class Binary : public Expression{
         void toString(int n);
         Binary(shared_ptr<Expression> op1, shared_ptr<Expression> op2, BinaryOperator op)
          : operand1(op1), operand2(op2), op(op) {}
-        virtual ~Binary() {}
 
         inline shared_ptr<Expression> getOperand1() { return operand1; }
         inline shared_ptr<Expression> getOperand2() { return operand2; }

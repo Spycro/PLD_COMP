@@ -7,7 +7,6 @@ class WhileInstr : public ControlStructure {
     public:
         void toString(int n);
         WhileInstr() { }
-        virtual ~WhileInstr () { }
     private:
 
 
