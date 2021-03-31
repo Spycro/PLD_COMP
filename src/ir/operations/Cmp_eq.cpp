@@ -2,12 +2,12 @@
 
 #include "ir/BasicBlock.h"
 
-Cmp_eq::Cmp_eq(BasicBlock* bb_, symbolTableElement x_, symbolTableElement y_) : IRInstr(bb_), x(x_), y(y_){}
+Cmp_eq::Cmp_eq(BasicBlock* bb_, symbolTableElement x_, symbolTableElement y_, symbolTableElement d_) : IRInstr(bb_), x(x_), y(y_), d(d_){}
 
 
 void Cmp_eq::gen_asm(std::ostream &o) {
 
-    std::string valX, valY;
+    std::string valX, valY, valD;
 
     if(x.isConst){
         valX = "$" + x.constValue;
@@ -23,6 +23,10 @@ void Cmp_eq::gen_asm(std::ostream &o) {
         valY = "-" + std::to_string(y.memoryOffset) + "(%rbp)";
     }
 
+    valD = "-" + std::to_string(y.memoryOffset) + "(rbp)";
+
     o << "\tcmpl " << valX << ", " << valY << std::endl;
+    o << "\tsetg %al" << std::endl;
+    o << "\tmovb %al" <<  valD << std::endl;
     
 }

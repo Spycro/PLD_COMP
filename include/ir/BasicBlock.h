@@ -42,7 +42,7 @@ Possible optimization:
 
 class BasicBlock {
  public:
-	BasicBlock(std::shared_ptr<CFG> entry_cfg, std::shared_ptr<Scope> entry_scope, std::string entry_label="L"+std::to_string(nextBBnumber++));
+	BasicBlock(std::shared_ptr<CFG> entry_cfg, std::shared_ptr<Scope> entry_scope, bool entre_needJmp = false, std::string entry_label="L"+std::to_string(nextBBnumber++));
 	void gen_asm(std::ostream &o); /**< x86 assembly code generation for this basic block (very simple) */
 
 	void add_IRInstr(IRInstr* instruction);
@@ -59,6 +59,8 @@ class BasicBlock {
  	static int nextBBnumber; /**< just for naming */
 
 	std::shared_ptr<Scope> scope;
+
+	bool needJmp;
  
 
  

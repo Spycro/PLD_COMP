@@ -1,6 +1,6 @@
 #include "../../include/ir/CFG.h"
 
-CFG::CFG(Function* ast_) : ast(ast_) {}
+CFG::CFG(Function* ast_, std::string label_) : ast(ast_), label(label_) {}
 
 void CFG::add_bb(BasicBlock* bb){
     bbs.push_back(bb);    
@@ -18,8 +18,8 @@ void CFG::gen_asm(std::ostream& o){
 }
 
 void CFG::gen_asm_prologue(std::ostream& o) {
-    o << ".globl " << "NomFONCTION" << std::endl //a modifier
-               << " NomFONCTION: " << std::endl //a modifier
+    o << ".globl " << label << std::endl
+               << label << ":" << std::endl
                << "#prologue" << std::endl //prologue
                << "\tpushq %rbp #save rbp on stack" << std::endl
                << "\tmovq %rsp, %rbp #define rbp for current function" << std::endl;
