@@ -6,16 +6,15 @@
 
 using namespace std;
 
-class ControlStructure : public Instruction {
+class ControlStructure : public Instruction
+{
 
-    public:
-        inline shared_ptr<Expression> getTest() { return test; }
-        inline shared_ptr<Instruction> getCode() { return code; }
-        virtual void toString(int n);
-    private:
+public:
+    inline shared_ptr<Expression> getTest() { return test; }
+    inline shared_ptr<Instruction> getCode() { return code; }
+    virtual std::string toString() override;
 
-        shared_ptr<Expression> test;
-        shared_ptr<Instruction> code;
-
-
+private:
+    shared_ptr<Expression> test;
+    shared_ptr<Instruction> code;
 };

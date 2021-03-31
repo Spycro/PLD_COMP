@@ -3,11 +3,7 @@
 
 using namespace std;
 
-void Binary::toString(int n) {
-    for(int i=0;i<n;i++){
-        cout<<"\t";
-     }
-    cout<<"Binray"<<endl;
+std::string Binary::toString()
+{
+    return "Binary";
 }
-
-

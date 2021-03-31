@@ -2,11 +2,12 @@
 
 #include "Expression.h"
 
-class Const : public Expression {
+class Const : public Expression
+{
 
-    public:
-        void toString(int n);
-    private:
-        int value;
+public:
+    virtual std::string toString() override;
 
+private:
+    int value;
 };

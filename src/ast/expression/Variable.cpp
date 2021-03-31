@@ -3,9 +3,7 @@
 
 using namespace std;
 
-void Variable::toString(int n) {
-    for(int i=0;i<n;i++){
-        cout<<"\t";
-     }
-    cout<<"Variable"<<endl;
+std::string Variable::toString()
+{
+    return "Variable";
 }

@@ -1,10 +1,11 @@
 #pragma once
 #include "Instruction.h"
 
-class Break : public Instruction{
+class Break : public Instruction
+{
 
-    public:
-        void toString(int n);
-    private:
+public:
+    virtual std::string toString() override;
 
+private:
 };

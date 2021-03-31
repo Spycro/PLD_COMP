@@ -3,9 +3,7 @@
 
 using namespace std;
 
-void NullInstr::toString(int n) {
-    for(int i=0;i<n;i++){
-        cout<<"\t";
-     }
-    cout<<"NullInstr"<<endl;
+std::string NullInstr::toString()
+{
+    return "NullInstr";
 }

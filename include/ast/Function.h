@@ -10,15 +10,16 @@
 
 using namespace std;
 
-class Function : public Node {
+class Function : public Node
+{
 
-    public:
-        inline shared_ptr<Block> getCode() { return code; }
-        inline void setCode(shared_ptr<Block> code) { this->code = code; }
-        inline list<shared_ptr<Variable>> getParameters() { return parameters; }
-        void toString(int n);
-    private:
-        shared_ptr<Block> code;
-        list<shared_ptr<Variable>> parameters;
+public:
+    inline shared_ptr<Block> getCode() { return code; }
+    inline void setCode(shared_ptr<Block> code) { this->code = code; }
+    inline list<shared_ptr<Variable>> &getParameters() { return parameters; }
+    virtual std::string toString() override;
 
+private:
+    shared_ptr<Block> code;
+    list<shared_ptr<Variable>> parameters;
 };

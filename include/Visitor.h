@@ -16,10 +16,11 @@
  * extended to create a visitor which only needs to handle a subset of the
  * available methods.
  */
-class Visitor : public ifccVisitor {
-	
+class Visitor : public ifccVisitor
+{
+
 public:
-	virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *context) override;
+    virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *context) override;
     virtual antlrcpp::Any visitVarName(ifccParser::VarNameContext *context) override;
     virtual antlrcpp::Any visitFunctionCall(ifccParser::FunctionCallContext *context) override;
     virtual antlrcpp::Any visitProg(ifccParser::ProgContext *context) override;
@@ -79,11 +80,15 @@ public:
     virtual antlrcpp::Any visitLogicalOr(ifccParser::LogicalOrContext *context) override;
     virtual antlrcpp::Any visitTernary(ifccParser::TernaryContext *context) override;
 
+    inline shared_ptr<Node> getRootNode()
+    {
+        return rootNode;
+    };
+
 private:
-	Scope scope;
+    Scope scope;
 
     shared_ptr<Node> rootNode = make_shared<Node>();
 
-	shared_ptr<Node> parentNode;
-
+    shared_ptr<Node> parentNode;
 };

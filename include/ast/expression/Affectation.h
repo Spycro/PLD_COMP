@@ -5,13 +5,13 @@
 
 using namespace std;
 
-class Affectation : public Expression {
+class Affectation : public Expression
+{
 
-    public:
-        void toString(int n);
-    private:
+public:
+    virtual std::string toString() override;
 
-        string symbol;
-        shared_ptr<Expression> value;
-
+private:
+    string symbol;
+    shared_ptr<Expression> value;
 };

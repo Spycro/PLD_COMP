@@ -20,7 +20,8 @@ GEN_SRCS := $(GEN_SRCS_DIR)/ifccBaseVisitor.cpp $(GEN_SRCS_DIR)/ifccLexer.cpp $(
 GEN_HEADERS := $(GEN_INCLUDE_DIR)/ifccBaseVisitor.h $(GEN_INCLUDE_DIR)/ifccLexer.h $(GEN_INCLUDE_DIR)/ifccParser.h $(GEN_INCLUDE_DIR)/ifccVisitor.h
 GEN_OBJECTS := $(GEN_SRCS:$(GEN_SRCS_DIR)/%.cpp=$(GEN_BUILD_DIR)/%.o)
 
-EXEC_FILE=$(BUILD_DIR)/ifcc
+TESTS_SRCS := $(shell find $(TESTS_DIR)/ -name "*.cpp")
+TESTS_OBJECTS := $(TESTS_SRCS:$(TESTS_DIR)/%.cpp=$(BUILD_DIR)/$(TESTS_DIR)/%.o) $(filter-out $(BUILD_DIR)/main.o,$(OBJECTS))
 
 ANTLR4_BINDIR=/usr/bin
 ANTLR4_INCDIR=/usr/include/antlr4-runtime
@@ -30,11 +31,19 @@ CC=clang++
 CCARGS=-g -std=c++11 -Wno-defaulted-function-deleted -Wno-unknown-warning-option
 LDARGS=-g
 
-all: $(EXEC_FILE)
+all: ifcc
 
-$(EXEC_FILE): $(GEN_OBJECTS) $(GEN_HEADERS) $(OBJECTS) $(HEADERS)
+ifcc: $(GEN_OBJECTS) $(GEN_HEADERS) $(OBJECTS) $(HEADERS)
 	@mkdir -p $(BUILD_DIR) $(GEN_BUILD_DIR)
 	$(CC) $(LDARGS) $(OBJECTS) $(GEN_OBJECTS) $(ANTLR4_LIBDIR)/libantlr4-runtime.a -o $(BUILD_DIR)/ifcc
+
+test_ast: $(GEN_OBJECTS) $(GEN_HEADERS) $(TESTS_OBJECTS) $(HEADERS)
+	@mkdir -p $(BUILD_DIR) $(GEN_BUILD_DIR) $(BUILD_DIR)/$(TESTS_DIR)
+	$(CC) $(LDARGS) $(TESTS_OBJECTS) $(GEN_OBJECTS) $(ANTLR4_LIBDIR)/libantlr4-runtime.a -o $(BUILD_DIR)/test_ast
+
+$(BUILD_DIR)/$(TESTS_DIR)/%.o: $(TESTS_DIR)/%.cpp
+	@mkdir -p $(shell dirname $@)
+	$(CC) $(CCARGS) -I $(ANTLR4_INCDIR) -I $(INCLUDE_DIR) -I $(GEN_INCLUDE_DIR) -c $< -o $@
 
 $(BUILD_DIR)/%.o: $(SRCS_DIR)/%.cpp
 	@mkdir -p $(shell dirname $@)
@@ -52,8 +61,8 @@ $(GEN_SRCS): $(GRAMMAR)
 	@mv /tmp/antlr4-generated/*.h $(GEN_INCLUDE_DIR)
 	@rm -rf /tmp/antlr4-generated
 
-test: $(EXEC_FILE)
-	@(cd $(TESTS_DIR) && python3 pld-test.py .) || (echo "Tests failed"; exit 1)	
+test: ifcc test_ast
+	@(cd $(TESTS_DIR) && python3 pld-test.py .) || (echo "Tests failed"; exit 1)
 
 clean:
 	@rm -rf $(BUILD_DIR)

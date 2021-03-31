@@ -2,11 +2,11 @@
 
 #include "ControlStructure.h"
 
-class WhileInstr : public ControlStructure {
+class WhileInstr : public ControlStructure
+{
 
-    public:
-        void toString(int n);
-    private:
+public:
+    virtual std::string toString() override;
 
-
+private:
 };
