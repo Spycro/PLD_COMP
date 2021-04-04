@@ -11,7 +11,7 @@ class Const : public Expression
         Const(int value) : value(value) {}
 
         inline int getValue() { return value; }
-        inline void setValue(int value) { this->value = value; }
+        void setValue(int value) override { this->value = value; }
         virtual std::string toString() override;
 
     private:

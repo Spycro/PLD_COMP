@@ -10,7 +10,10 @@
 
 #define UNHANDLED { return 0 ; }
 //define UNHANDLED { throw "Unhandled operation (__PRETTY_FUNCTION__)"; }
+
 #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
+#define PRINT(x) std::cout << "[*] value : " << x << std::endl; 
+
 antlrcpp::Any Visitor::visitAxiom(ifccParser::AxiomContext *context) {
   return visitChildren(context);
 }
@@ -55,11 +58,13 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
 }
 
 antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
+  TRACE
   std::cout<<"visitAnyFunction"<<std::endl;
   return 0;
 }
 
 antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) {
+  TRACE
   string type = context->TYPE()->getSymbol()->getText();
 
   if (type == "int") {
@@ -76,9 +81,24 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
   // TODO : tableaux
   // TODO : affectation au moment de la declaration
   // TODO : visite des déclarations multiples
-  
+  TRACE
+
   string name = context->varName()->NAME()->getSymbol()->getText();
+  PRINT(name)
   scope.addVariable(name, declarationType);
+  if(context->expression()){
+    shared_ptr<Affectation> affectation = make_shared<Affectation>(name);
+
+    shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+    parentNode = affectation; //setting parent node before anything else
+    antlrcpp::Any tmp = visit(context->expression());
+    parentNode = parent; //reseting parent node at the end of the call
+
+    shared_ptr<Expression> val = tmp.as<shared_ptr<Expression>>();
+    affectation->setValue(move(val));
+    parentNode->getChildren().push_back(affectation);
+
+  }
 
   return 0;
 }
@@ -106,6 +126,7 @@ antlrcpp::Any Visitor::visitReturnInstr(ifccParser::ReturnInstrContext *context)
 }
 
 antlrcpp::Any Visitor::visitVarDecl(ifccParser::VarDeclContext *context) {
+  TRACE
   return visitChildren(context);
 }
 
@@ -118,6 +139,7 @@ antlrcpp::Any Visitor::visitInstruction(ifccParser::InstructionContext *context)
 }
 
 antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
+  TRACE
   shared_ptr<Block> block = make_shared<Block>();
   block->getParent() = parentNode;
   parentNode->getChildren().push_back(block);
@@ -153,14 +175,20 @@ antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) UNHANDL
 
 antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *context) {
   TRACE
-  shared_ptr<Const> constant = make_shared<Const>();
+  cout << "TEST1" << endl;
+  shared_ptr<Expression> constant = make_shared<Const>();
+  cout << "TEST2" << endl;
   constant->setParent(parentNode);
   parentNode->getChildren().push_back(constant);
+  cout << "TEST3" << endl;
 
   int value = stoi(context->CONST()->getSymbol()->getText());
-  constant->setValue(value);
+  cout << "TEST4" << endl;
 
-  return 0;
+  constant->setValue(value);
+  cout << "TEST5" << endl;
+
+  return antlrcpp::Any(constant);
 }
 
 antlrcpp::Any Visitor::visitMult_assign(ifccParser::Mult_assignContext *context) UNHANDLED
@@ -186,6 +214,7 @@ antlrcpp::Any Visitor::visitDiv_assign(ifccParser::Div_assignContext *context) U
 antlrcpp::Any Visitor::visitBitwiseShift(ifccParser::BitwiseShiftContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) {
+  TRACE
   shared_ptr<Affectation> affect = make_shared<Affectation>();
   affect->getParent() = parentNode;
   parentNode->getChildren().push_back(affect);
@@ -243,7 +272,17 @@ antlrcpp::Any Visitor::visitUnaryPlus(ifccParser::UnaryPlusContext *context) UNH
 
 antlrcpp::Any Visitor::visitSub_assign(ifccParser::Sub_assignContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
+  TRACE
+  std::string symbol = context->varName()->NAME()->getSymbol()->getText();
+  shared_ptr<Expression> tmp = make_shared<Variable>(symbol);
+  parentNode->getChildren().push_back(tmp);
+
+
+  return antlrcpp::Any(tmp);
+
+
+}
 
 antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) UNHANDLED
 
