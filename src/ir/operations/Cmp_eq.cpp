@@ -14,8 +14,8 @@ void Cmp_eq::gen_asm(std::ostream &o) {
     valY = y.getAsm();
 
     valD = d.getAsm();
-
-    o << "\tcmpl " << valX << ", " << valY << std::endl;
+    o << "\tmovl " << valY << ", %eax" << std::endl; // We need one parameter to be a register
+    o << "\tcmpl " << valX << ", %eax" << std::endl;
     o << "\tsetg %al" << std::endl;
     o << "\tmovb %al" <<  valD << std::endl;
     
