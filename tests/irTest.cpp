@@ -17,11 +17,15 @@ void test_call(){
     SymbolTableElement param2(&INTTYPE64, "2");
     std::vector<SymbolTableElement> params {param1, param2};
 
+    SymbolTableElement funParam1(&INTTYPE64,true,true, 4);
+    SymbolTableElement funParam2(&INTTYPE64,true,true, 8);
+    std::vector<SymbolTableElement> funParams {funParam1, funParam2};
+
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
-    std::shared_ptr<CFG> secondCFG(new CFG(nullptr, "fct", &VOIDTYPE, params));
+    std::shared_ptr<CFG> secondCFG(new CFG(nullptr, "fct", &VOIDTYPE, funParams));
 
     BasicBlock bb0(firstCFG, nullptr);
-    Call callInstr(&bb0, secondCFG);
+    Call callInstr(&bb0, secondCFG,params);
 
     bb0.add_IRInstr(&callInstr);
 

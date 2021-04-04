@@ -24,6 +24,31 @@ void CFG::gen_asm_prologue(std::ostream& o) {
                << "#prologue" << std::endl //prologue
                << "\tpushq %rbp #save rbp on stack" << std::endl
                << "\tmovq %rsp, %rbp #define rbp for current function" << std::endl;
+               
+    int i = ((params.size()<6) ? params.size() : 6)-1;
+    while(i >=0){
+        switch(i){
+            case 0 :
+                o   << "\tmovl %edi, "  << params.at(i).getAsm() <<std::endl;
+                break;
+            case 1 :
+                o   << "\tmovl %esi, "  << params.at(i).getAsm() <<std::endl;
+                break;
+            case 2 :
+                o   << "\tmovl %edx, "  << params.at(i).getAsm() <<std::endl;
+                break;
+            case 3 :
+                o   << "\tmovl %ecx, "  << params.at(i).getAsm() <<std::endl;
+                break;
+            case 4 :
+                o   << "\tmovl %r8d, "  << params.at(i).getAsm() <<std::endl;
+                break;
+            case 5:
+                o   << "\tmovl %r9d, "  << params.at(i).getAsm() <<std::endl;
+                break;
+        }
+        --i;
+    }
 }
 
 void CFG::gen_asm_epilogue(std::ostream& o) {
