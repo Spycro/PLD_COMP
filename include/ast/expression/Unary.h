@@ -17,8 +17,11 @@ using namespace std;
 class Unary : public Expression
 {
     public:
+        Unary() 
+            : operand(nullptr), op(0) {}
+
         Unary(shared_ptr<Expression> operand, UnaryOperator op) 
-         : operand(operand), op(op) {}
+            : operand(operand), op(op) {}
 
         inline shared_ptr<Expression> getOperand() { return operand; }
         inline UnaryOperator getOp() { return op; }

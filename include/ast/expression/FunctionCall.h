@@ -8,6 +8,7 @@ using namespace std;
 class FunctionCall : public Expression {
 
     public:
+        FunctionCall() {}
 
         FunctionCall(string symbol, list<shared_ptr<Expression>> param) 
          : symbol(symbol), parameters(param) {}

@@ -8,7 +8,11 @@ using namespace std;
 class Block : public Instruction
 {
     public:
-        Block() {}
+        Block() 
+        : scope(nullptr) {}
+
+        Block(shared_ptr<Scope> scope) 
+            : scope(move(scope)) {}
         Block( shared_ptr<Scope> scope, vector<shared_ptr<Instruction>> instr) 
          : instructions(instr), scope(scope) {}
 

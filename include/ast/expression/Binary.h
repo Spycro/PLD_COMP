@@ -27,6 +27,9 @@ class Binary : public Expression
 {
 
 public:
+    Binary() 
+        : operand1(nullptr), operand2(nullptr), op(0) {}
+
     Binary(shared_ptr<Expression> op1, shared_ptr<Expression> op2, BinaryOperator op)
         : operand1(op1), operand2(op2), op(op) {}
 

@@ -6,7 +6,8 @@ class Const : public Expression
 {
 
     public:
-    Const() {}
+        Const() : value(0) {}
+
         Const(int value) : value(value) {}
 
         inline int getValue() { return value; }

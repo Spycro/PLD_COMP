@@ -7,9 +7,12 @@ using namespace std;
 class Scope {
 
 public:
-    Scope() {}
+    Scope()
+        : parentScope(nullptr) , symbolicTable(make_shared<symbolicTable>()) {}
+    
     Scope(shared_ptr<SymbolTable> s, shared_ptr<Scope> p) 
         : symbolicTable(s), parentScope(p) { }
+    
     Scope(shared_ptr<SymbolTable> s) : symbolicTable(s), parentScope(nullptr) { }
 
     inline shared_ptr<SymbolTable> getSymbolicTable() { return symbolicTable; }

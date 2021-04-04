@@ -9,8 +9,9 @@ using namespace std;
 class Return : public Instruction
 {
     public:
-    Return() {}
-        Return( shared_ptr<Expression> value) : value(value) { }
+        Return() : value(nullptr) {}
+
+        Return(shared_ptr<Expression> value) : value(value) { }
 
         shared_ptr<Expression> getValue() { return value; }
         inline void setValue(shared_ptr<Expression> value) { this->value = value; }

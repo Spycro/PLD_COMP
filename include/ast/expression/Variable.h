@@ -9,6 +9,8 @@ using namespace std;
 class Variable : public Expression {
 
     public:
+        Variable() {}
+
         Variable(string symbol) : symbol(symbol) { }
         
         inline string& getSymbol() { return symbol; }
