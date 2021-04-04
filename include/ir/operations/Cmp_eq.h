@@ -6,10 +6,10 @@
 class Cmp_eq : public IRInstr
 {
 public:
-    Cmp_eq(BasicBlock *bb, symbolTableElement x, symbolTableElement y, symbolTableElement d);
+    Cmp_eq(BasicBlock *bb, SymbolTableElement x, SymbolTableElement y, SymbolTableElement d);
 
     void gen_asm(std::ostream &o) override;
 
 private:
-    symbolTableElement x, y, d;
+    SymbolTableElement x, y, d;
 };

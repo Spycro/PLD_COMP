@@ -13,9 +13,9 @@ Void voidType;
 Int64 intType64;
 
 void test_call(){
-    symbolTableElements param1(&intType64, "5");
-    symbolTableElements param2(&intType64, "0");
-    std::vector<symbolTableElement> params {param1, param2};
+    SymbolTableElement param1(&intType64, "5");
+    SymbolTableElement param2(&intType64, "0");
+    std::vector<SymbolTableElement> params {param1, param2};
 
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &intType64));
     std::shared_ptr<CFG> secondCFG(new CFG(nullptr, "fct", &voidType, params));
@@ -39,9 +39,9 @@ void test_if_else_condition() {
     BasicBlock bb2(firstCFG, nullptr, true);
     BasicBlock bb3(firstCFG, nullptr);    
 
-    Jmp_cmp_eq condJmp1(&bb0, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, "4"));
-    Copy copyInstr1(&bb1, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, false, false, 8));
-    Copy copyInstr2(&bb2, symbolTableElement(&intType64, "3"), symbolTableElement(&intType64, false, false, 8));
+    Jmp_cmp_eq condJmp1(&bb0, SymbolTableElement(&intType64, "2"), SymbolTableElement(&intType64, "4"));
+    Copy copyInstr1(&bb1, SymbolTableElement(&intType64, "2"), SymbolTableElement(&intType64, false, false, 8));
+    Copy copyInstr2(&bb2, SymbolTableElement(&intType64, "3"), SymbolTableElement(&intType64, false, false, 8));
 
     bb0.add_IRInstr(&condJmp1);
     bb1.add_IRInstr(&copyInstr1);
@@ -70,8 +70,8 @@ void test_if_condition() {
     BasicBlock bb1(firstCFG, nullptr);
     BasicBlock bb2(firstCFG, nullptr);
 
-    Jmp_cmp_eq condJmp1(&bb0, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, "4"));
-    Copy copyInstr1(&bb1, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, false, false, 8));
+    Jmp_cmp_eq condJmp1(&bb0, SymbolTableElement(&intType64, "2"), SymbolTableElement(&intType64, "4"));
+    Copy copyInstr1(&bb1, SymbolTableElement(&intType64, "2"), SymbolTableElement(&intType64, false, false, 8));
 
     bb0.add_IRInstr(&condJmp1);
     bb1.add_IRInstr(&copyInstr1);
@@ -96,8 +96,8 @@ void test_following_blocks() {
     BasicBlock bb0(firstCFG, nullptr);
     BasicBlock bb1(firstCFG, nullptr);
 
-    Copy instr1(&bb0, symbolTableElement(&intType64, "2"), symbolTableElement(&intType64, false, false, 8));
-    Copy instr2(&bb1, symbolTableElement(&intType64, "4"), symbolTableElement(&intType64, false, false, 16));
+    Copy instr1(&bb0, SymbolTableElement(&intType64, "2"), SymbolTableElement(&intType64, false, false, 8));
+    Copy instr2(&bb1, SymbolTableElement(&intType64, "4"), SymbolTableElement(&intType64, false, false, 16));
 
     bb0.add_IRInstr(&instr1);
     bb1.add_IRInstr(&instr2);
@@ -114,8 +114,8 @@ void test_single_block() {
 
     BasicBlock bb0(firstCFG, nullptr);
 
-    symbolTableElement symbol1(&intType64, "2");
-    symbolTableElement symbol2(&intType64, false, false,8);
+    SymbolTableElement symbol1(&intType64, "2");
+    SymbolTableElement symbol2(&intType64, false, false,8);
 
     Copy instr1(&bb0, symbol1, symbol2);
     bb0.add_IRInstr(&instr1);

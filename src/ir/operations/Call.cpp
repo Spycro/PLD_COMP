@@ -8,7 +8,7 @@ void Call::gen_asm(std::ostream &o){
     while(i < cfg->params.size() && i < 7){
         switch(i){
             case 1 :
-                o   << "\tmovl " << cfg->params.at(i).constValue << ", %edi" <<std::endl;//TODO : a continuer
+                o   << "\tmovl " << cfg->params.at(i).getAsm() << ", %edi" <<std::endl;//TODO : a continuer
         }
         ++i;
     }
