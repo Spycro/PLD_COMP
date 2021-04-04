@@ -39,7 +39,6 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
   std::cout<<"visitMainFunction"<<std::endl;
-
   this->scope.addFunction("main", new Int());
   
   shared_ptr<Function> mainFunct = make_shared<Function>();

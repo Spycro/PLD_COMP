@@ -21,7 +21,8 @@ typedef std::unordered_map<std::string, std::shared_ptr<symbolTableElement>> Sym
 
 class SymbolTable{
 	public:
-		SymbolTable() {}
+		SymbolTable()
+			: elements(std::unique_ptr<SymbolMap>(new SymbolMap())) {}
 
 		virtual ~SymbolTable() {}
 		

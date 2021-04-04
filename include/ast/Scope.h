@@ -1,14 +1,16 @@
 #pragma once
 #include "../SymbolTable.h"
 #include <memory>
-
+#include <iostream> //Debuggin utilities
 using namespace std;
 
 class Scope {
 
 public:
     Scope()
-        : parentScope(nullptr) {}
+        : parentScope(nullptr), symbolicTable(make_shared<SymbolTable>()) {
+
+        }
     
     Scope(shared_ptr<SymbolTable> s, shared_ptr<Scope> p) 
         : symbolicTable(s), parentScope(p) { }
