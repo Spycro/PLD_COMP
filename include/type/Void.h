@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Type.h"
-
 class Void : public Type {
     public :
 
@@ -10,3 +9,5 @@ class Void : public Type {
     }
     
 };
+
+extern Void VOIDTYPE;

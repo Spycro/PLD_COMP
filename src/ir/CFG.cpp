@@ -1,6 +1,5 @@
 #include "../../include/ir/CFG.h"
 
-extern Void voidType;
 
 CFG::CFG(Function* ast_, std::string label_, Type* type_, std::vector<SymbolTableElement> params_) : ast(ast_), label(label_), type(type_), params(params_) {}
 
@@ -29,7 +28,7 @@ void CFG::gen_asm_prologue(std::ostream& o) {
 
 void CFG::gen_asm_epilogue(std::ostream& o) {
     o <<       "#epilogue\n" ;// the epilogue
-    if(type==&voidType){
+    if(type==&VOIDTYPE){
         o << "\tnop\n";
     }
     o   << "\tpopq %rbp #restore rbp from stack\n"

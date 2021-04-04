@@ -1,7 +1,10 @@
 #include "type/Type.h"
+#include "type/Void.h"
 #include <string>
+
 class SymbolTableElement{
     public:
+        SymbolTableElement():type(&VOIDTYPE), isSet(false), isUsed(false),memoryOffset(0),isConst(false),constValue(""){}
         SymbolTableElement(Type* type, bool isSet, bool isUsed, int memoryoffset) 
 		    : type(type), isSet(isSet), isUsed(isUsed), memoryOffset(memoryoffset) {isConst = false; constValue = "";} 
 	    SymbolTableElement(Type* _type, std::string _constValue)
