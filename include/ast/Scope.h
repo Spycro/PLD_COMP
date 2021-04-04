@@ -8,7 +8,7 @@ class Scope {
 
 public:
     Scope()
-        : parentScope(nullptr) , symbolicTable(make_shared<symbolicTable>()) {}
+        : parentScope(nullptr) {}
     
     Scope(shared_ptr<SymbolTable> s, shared_ptr<Scope> p) 
         : symbolicTable(s), parentScope(p) { }

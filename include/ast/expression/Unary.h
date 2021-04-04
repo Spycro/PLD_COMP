@@ -18,7 +18,7 @@ class Unary : public Expression
 {
     public:
         Unary() 
-            : operand(nullptr), op(0) {}
+            : operand(nullptr) {}
 
         Unary(shared_ptr<Expression> operand, UnaryOperator op) 
             : operand(operand), op(op) {}
