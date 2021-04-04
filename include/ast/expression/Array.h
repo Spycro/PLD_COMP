@@ -9,6 +9,8 @@ class Array : public Expression
 {
 
 public:
+    Array() 
+        : position(nullptr) {}
 
     Array(string symbol, shared_ptr<Expression> position) : symbol(symbol), position(position) {}
 

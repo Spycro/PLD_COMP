@@ -9,9 +9,14 @@ class Node
 {
 
 public:
-public:
-    inline vector<shared_ptr<Node>> &getChildren() { return children; }
-    inline shared_ptr<Node> getParent() { return parent; }
+
+    Node() {}
+
+    Node(shared_ptr<Node> parent) 
+        : parent(parent) {}
+
+    inline vector<shared_ptr<Node>>& getChildren() { return children; }
+    inline shared_ptr<Node>& getParent() { return parent; }
     virtual std::string toString();
     virtual bool isBlock() { return false; }
 
