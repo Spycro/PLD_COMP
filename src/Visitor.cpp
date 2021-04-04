@@ -41,7 +41,7 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
   TRACE
-  this->scope.addFunction("main", new Int());
+  this->scope->addFunction("main", new Int());
   
   shared_ptr<Function> mainFunct = make_shared<Function>();
   parentNode->getChildren().push_back(mainFunct);
@@ -85,7 +85,7 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
 
   string name = context->varName()->NAME()->getSymbol()->getText();
   PRINT(name)
-  scope.addVariable(name, declarationType);
+  scope->addVariable(name, declarationType);
   if(context->expression()){
     shared_ptr<Affectation> affectation = make_shared<Affectation>(name);
 
@@ -140,11 +140,12 @@ antlrcpp::Any Visitor::visitInstruction(ifccParser::InstructionContext *context)
 
 antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
   TRACE
+  pushScope();
   shared_ptr<Block> block = make_shared<Block>();
-  block->getParent() = parentNode;
+  block->setParent(parentNode);
   parentNode->getChildren().push_back(block);
-  
-  // TODO : ajouter portée
+    
+  block->setScope(scope);
 
   shared_ptr<Node> parent = parentNode;
   parentNode = block;
@@ -155,7 +156,7 @@ antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
     shared_ptr<Instruction> instr = dynamic_pointer_cast<Instruction>(child);
     block->getInstructions().push_back(instr);
   }
-
+  popScope();
   return ret;
 }
 
@@ -175,18 +176,13 @@ antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) UNHANDL
 
 antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *context) {
   TRACE
-  cout << "TEST1" << endl;
   shared_ptr<Expression> constant = make_shared<Const>();
-  cout << "TEST2" << endl;
   constant->setParent(parentNode);
   parentNode->getChildren().push_back(constant);
-  cout << "TEST3" << endl;
 
   int value = stoi(context->CONST()->getSymbol()->getText());
-  cout << "TEST4" << endl;
 
   constant->setValue(value);
-  cout << "TEST5" << endl;
 
   return antlrcpp::Any(constant);
 }
@@ -275,6 +271,7 @@ antlrcpp::Any Visitor::visitSub_assign(ifccParser::Sub_assignContext *context) U
 antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   TRACE
   std::string symbol = context->varName()->NAME()->getSymbol()->getText();
+  PRINT(symbol)
   shared_ptr<Expression> tmp = make_shared<Variable>(symbol);
   parentNode->getChildren().push_back(tmp);
 
@@ -289,3 +286,16 @@ antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) U
 antlrcpp::Any Visitor::visitLogicalOr(ifccParser::LogicalOrContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitTernary(ifccParser::TernaryContext *context) UNHANDLED
+
+
+void Visitor::pushScope() {
+  TRACE
+  shared_ptr<Scope> newScope = make_shared<Scope>();
+  newScope->setParentScope(scope);
+  scope = newScope;
+}
+
+void Visitor::popScope() {
+  TRACE
+  scope = scope->getParentScope();
+}

@@ -18,6 +18,9 @@ class Block : public Instruction
 
         inline shared_ptr<Scope> getScope() { return scope; }
         inline vector<shared_ptr<Instruction>> getInstructions() { return instructions; }
+
+        void setScope(shared_ptr<Scope> s) { scope = s; }
+
         virtual std::string toString() override;
         inline bool isBlock() override { return true; }
     private:

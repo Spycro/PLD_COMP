@@ -81,13 +81,17 @@ public:
     virtual antlrcpp::Any visitTernary(ifccParser::TernaryContext *context) override;
 
     inline shared_ptr<Node> getRootNode() { return rootNode; }
+    inline shared_ptr<Scope> getScope() { return scope; }
 
 private:
-    Scope scope;
+    shared_ptr<Scope> scope = make_shared<Scope>();
 
     shared_ptr<Node> rootNode = make_shared<Node>();
 
 	shared_ptr<Node> parentNode;
     Type* declarationType;
+
+    void pushScope();
+    void popScope();
 
 };

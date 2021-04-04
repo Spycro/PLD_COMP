@@ -19,6 +19,9 @@ public:
 
     inline shared_ptr<SymbolTable> getSymbolicTable() { return symbolicTable; }
     inline shared_ptr<Scope> getParentScope() { return parentScope; }
+
+    void setParentScope(shared_ptr<Scope> scope){ parentScope = scope; }
+
     void addVariable(string name, Type *variableType);
     void addFunction(string name, Type *functionType);
     virtual std::string toString();
