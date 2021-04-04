@@ -17,8 +17,14 @@ public:
 
     inline vector<shared_ptr<Node>>& getChildren() { return children; }
     inline shared_ptr<Node>& getParent() { return parent; }
+    void setParent(std::shared_ptr<Node> node) { 
+        parent.reset();
+        parent = node;
+    }
+    
     virtual std::string toString();
     virtual bool isBlock() { return false; }
+
 
 private:
     vector<shared_ptr<Node>> children;

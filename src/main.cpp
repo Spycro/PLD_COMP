@@ -12,6 +12,8 @@
 using namespace antlr4;
 using namespace std;
 
+void PrintAst(shared_ptr<Node> node, int count);
+
 class MyErrorListener : public BaseErrorListener {
 public:
   MyErrorListener() { error = false; }
@@ -56,7 +58,16 @@ int main(int argn, const char **argv) {
   visitor.visit(tree);
 
   shared_ptr<Node> rootNode = visitor.getRootNode();
-  
+  PrintAst(rootNode, 0);
 
   return 0;
+}
+
+
+void PrintAst(shared_ptr<Node> node, int count){
+  std::cout << std::string(count, ' ') << node->toString() << std::endl; 
+
+  for(auto childNode : node->getChildren()){
+    PrintAst(childNode, count+1);
+  }
 }

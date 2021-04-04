@@ -10,7 +10,7 @@
 
 #define UNHANDLED { return 0 ; }
 //define UNHANDLED { throw "Unhandled operation (__PRETTY_FUNCTION__)"; }
-
+#define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
 antlrcpp::Any Visitor::visitAxiom(ifccParser::AxiomContext *context) {
   return visitChildren(context);
 }
@@ -20,8 +20,7 @@ antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDL
 antlrcpp::Any Visitor::visitFunctionCall(ifccParser::FunctionCallContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
-  std::cout<<"visitProg"<<std::endl;
-  
+  TRACE  
   std::cout<<"var:"<<context->variableDeclaration().size()<<std::endl;
   std::cout<<"fx:"<<context->functionDeclaration().size()<<std::endl;
 
@@ -38,17 +37,17 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
 }
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
-  std::cout<<"visitMainFunction"<<std::endl;
+  TRACE
   this->scope.addFunction("main", new Int());
   
   shared_ptr<Function> mainFunct = make_shared<Function>();
   parentNode->getChildren().push_back(mainFunct);
-  mainFunct->getParent() = parentNode;
+  mainFunct->setParent(parentNode);
   
-  shared_ptr<Node> parent = parentNode;
-  parentNode = mainFunct;
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = mainFunct; //setting parent node before anything else
   antlrcpp::Any ret = visitChildren(context);
-  parentNode = parent;
+  parentNode = parent; //reseting parent node at the end of the call
 
   mainFunct->setCode(dynamic_pointer_cast<Block>(mainFunct->getChildren()[0]));
 
@@ -91,8 +90,9 @@ antlrcpp::Any Visitor::visitBreakInstr(ifccParser::BreakInstrContext *context) U
 antlrcpp::Any Visitor::visitContinueInstr(ifccParser::ContinueInstrContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitReturnInstr(ifccParser::ReturnInstrContext *context) {
+  TRACE
   shared_ptr<Return> retExpr = make_shared<Return>();
-  retExpr->getParent() = parentNode;
+  retExpr->setParent(parentNode);
   parentNode->getChildren().push_back(retExpr);
 
   shared_ptr<Node> parent = parentNode;
@@ -152,8 +152,9 @@ antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) UNHANDL
 antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *context) {
+  TRACE
   shared_ptr<Const> constant = make_shared<Const>();
-  constant->getParent() = parentNode;
+  constant->setParent(parentNode);
   parentNode->getChildren().push_back(constant);
 
   int value = stoi(context->CONST()->getSymbol()->getText());
