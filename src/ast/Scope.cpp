@@ -1,7 +1,4 @@
 #include "ast/Scope.h"
-#include <iostream>
-
-using namespace std;
 
 void Scope::addVariable(string name, Type *variableType)
 {
