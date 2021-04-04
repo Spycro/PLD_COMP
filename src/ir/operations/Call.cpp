@@ -1,10 +1,16 @@
 #include "ir/operations/Call.h"
 #include "ir/CFG.h"
 
-Call::Call(BasicBlock *bb_, std::shared_ptr<CFG> cfg_, std::vector<SymbolTableElement> params_ ):IRInstr(bb_),cfg(cfg_),params(params_){}
+Call::Call(BasicBlock *bb_, std::shared_ptr<CFG> cfg_, std::vector<SymbolTableElement> params_ , SymbolTableElement output_):IRInstr(bb_),cfg(cfg_),params(params_),output(output_){}
 
 void Call::gen_asm(std::ostream &o){
-    int i = ((params.size()<6) ? params.size() : 6)-1;
+    int redimCounter = 0;
+    int i = params.size()-1;
+    while(i>=6){
+        o << "\tpushq " << params.at(i).getAsm()<<std::endl;
+        --i;
+        ++redimCounter;
+    }
     while(i >=0){
         switch(i){
             case 0 :
@@ -28,6 +34,7 @@ void Call::gen_asm(std::ostream &o){
         }
         --i;
     }
-    o   << "\tmovl "
-        << "\tcall " << cfg->label << "()" << std::endl;
+    o << "\tcall " << cfg->label << std::endl
+        << "\taddq $" << redimCounter * 8 << ", %rsp"<< std::endl
+        << "\tmovl %eax, "  << output.getAsm() <<std::endl;
 }

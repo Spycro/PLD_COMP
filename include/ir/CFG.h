@@ -29,6 +29,8 @@ class CFG {
 	
 	void add_bb(BasicBlock* bb); 
 
+	void incrementVariableCount(int cnt);
+
 	// x86 code generation: could be encapsulated in a processor class in a retargetable compiler
 	void gen_asm(std::ostream& o);
 	std::string IR_reg_to_asm(std::string reg); /**< helper method: inputs a IR reg or input variable, returns e.g. "-24(%rbp)" for the proper value of 24 */	;
@@ -42,4 +44,5 @@ private :
 
  protected:		
 	std::vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/	
+	int numberOfVariables = 0; //Number of temp variables in the function
 };
