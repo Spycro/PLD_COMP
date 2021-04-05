@@ -5,4 +5,6 @@ class Type {
 
     virtual int getSize() = 0;
 
+    virtual std::string toString() override;
+
 };

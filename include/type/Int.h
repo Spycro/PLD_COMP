@@ -8,5 +8,7 @@ class Int : public Type {
     int getSize(){
         return 8;
     }
+
+    virtual std::string toString() { return "Int"; }
     
 };

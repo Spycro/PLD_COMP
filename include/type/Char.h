@@ -8,5 +8,7 @@ class Char : public Type {
     int getSize(){
         return 4;
     }
-    
+
+    virtual std::string toString() { return "Char"; }
+
 };
