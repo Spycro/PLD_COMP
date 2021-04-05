@@ -2,10 +2,10 @@
 #include "../IRInstr.h"
 
 //Lesser or equal comparison instruction
-class Cmp_le : public IRInstr
+class Cmp_gt : public IRInstr
 {
 public:
-    Cmp_le(BasicBlock *bb, SymbolTableElement rightParameter, SymbolTableElement leftParameter, SymbolTableElement d);
+    Cmp_gt(BasicBlock *bb, SymbolTableElement rightParameter, SymbolTableElement leftParameter, SymbolTableElement d);
 
     void gen_asm(std::ostream &o) override;
 

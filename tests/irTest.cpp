@@ -2,10 +2,21 @@
 #include "ir/BasicBlock.h"
 #include "ir/IRInstr.h"
 #include "ir/operations/Add.h"
+#include "ir/operations/Cmp_eq.h"
+#include "ir/operations/Cmp_neq.h"
+#include "ir/operations/Cmp_ge.h"
+#include "ir/operations/Cmp_gt.h"
+#include "ir/operations/Cmp_le.h"
+#include "ir/operations/Cmp_lt.h"
 #include "ir/operations/Copy.h"
 #include "ir/operations/Call.h"
 #include "ir/operations/Add.h"
 #include "ir/operations/Jmp_cmp_eq.h"
+#include "ir/operations/Jmp_cmp_neq.h"
+#include "ir/operations/Jmp_cmp_lt.h"
+#include "ir/operations/Jmp_cmp_le.h"
+#include "ir/operations/Jmp_cmp_gt.h"
+#include "ir/operations/Jmp_cmp_ge.h"
 #include "type/Int64.h"
 #include "type/Void.h"
 #include "SymbolTable.h"
@@ -28,6 +39,30 @@ void test_operations(){
     Copy instr1(&bb0, output,RAX_REGISTER);
     bb0.add_IRInstr(&instr0);
     bb0.add_IRInstr(&instr1);
+
+    firstCFG->add_bb(&bb0);
+
+    firstCFG->gen_asm(std::cout);
+}
+
+void test_cmp(){
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    BasicBlock bb0(firstCFG, nullptr);
+
+    SymbolTableElement input1(&INTTYPE64, "10");
+    //SymbolTableElement input1(&INTTYPE64,false, false, 8);
+
+    SymbolTableElement input2(&INTTYPE64, "11");
+    SymbolTableElement dest(&INTTYPE64, false, false, 16);
+
+    /* Copy instr0(&bb0, input2, input1);
+    bb0.add_IRInstr(&instr0); */
+
+    Cmp_gt instr1(&bb0,input1, input2, dest);
+    Copy instr2(&bb0, dest, RAX_REGISTER);    
+    bb0.add_IRInstr(&instr1);
+    bb0.add_IRInstr(&instr2);
 
     firstCFG->add_bb(&bb0);
 
@@ -141,11 +176,15 @@ void test_if_condition() {
     BasicBlock bb1(firstCFG, nullptr);
     BasicBlock bb2(firstCFG, nullptr);
 
-    Jmp_cmp_eq condJmp1(&bb0, SymbolTableElement(&INTTYPE64, "2"), SymbolTableElement(&INTTYPE64, "4"));
-    Copy copyInstr1(&bb1, SymbolTableElement(&INTTYPE64, "2"), SymbolTableElement(&INTTYPE64, false, false, 8));
+    SymbolTableElement res(&INTTYPE64, false, false, 8);
+
+    Jmp_cmp_gt condJmp1(&bb0, SymbolTableElement(&INTTYPE64, "6"), SymbolTableElement(&INTTYPE64, "8"));
+    Copy copyInstr1(&bb1, SymbolTableElement(&INTTYPE64, "2"), res);
+    Copy copyInstr2(&bb2, res, RAX_REGISTER);
 
     bb0.add_IRInstr(&condJmp1);
     bb1.add_IRInstr(&copyInstr1);
+    bb2.add_IRInstr(&copyInstr2);
 
     // if branch
     bb0.exit_true = &bb1;
@@ -199,9 +238,10 @@ void test_single_block() {
 int main(){
     //test_single_block();
     //test_following_blocks();
-    //test_if_condition();
+    test_if_condition();
     //test_if_else_condition();
     //test_call();
     //test_call_many_params();
-    test_operations();
+    //test_operations();
+    //test_cmp();
 }

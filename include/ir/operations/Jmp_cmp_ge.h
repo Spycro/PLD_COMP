@@ -2,10 +2,10 @@
 #include "../IRInstr.h"
 #include "SymbolTable.h"
 
-class Jmp_cmp_le : public IRInstr
+class Jmp_cmp_ge : public IRInstr
 {
 public:
-    Jmp_cmp_le(BasicBlock *bb, SymbolTableElement rightParameter, SymbolTableElement leftParameter);
+    Jmp_cmp_ge(BasicBlock *bb, SymbolTableElement rightParameter, SymbolTableElement leftParameter);
 
     void gen_asm(std::ostream &o) override;
 
