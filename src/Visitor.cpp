@@ -5,6 +5,7 @@
 #include "ast/NullInstr.h"
 #include "ast/WhileInstr.h"
 #include "ast/IfInstr.h"
+#include "ast/ForInstr.h"
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
@@ -19,8 +20,8 @@
 #ifdef DEBUG
   #define UNHANDLED { std::cout << "/!\\ unhandled function : " << __PRETTY_FUNCTION__ << std::endl; return 0 ; }
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
-  #define PRINT(x) std::cout << "[*] value : " << x << std::endl;
-  #define PRINTM(m, x) std::cout << "[*] " << m << " : " << x << std::endl;
+  #define PRINT(x) std::cout << "[*] value : " << (x) << std::endl;
+  #define PRINTM(m, x) std::cout << "[*] " << (m) << " : " << (x) << std::endl;
 #else
   #define UNHANDLED { throw "Unhandled operation (__PRETTY_FUNCTION__)"; }
   #define TRACCE ;
@@ -276,7 +277,7 @@ antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = ifInstr; //setting parent to current node before anything else
   antlrcpp::Any test = visit(context->expression());
-  antlrcpp::Any ifCode = visit(context->instruction()[0]); // TODO : comprendre
+  antlrcpp::Any ifCode = visit(context->instruction()[0]);
   antlrcpp::Any elseCode;
   if (context->instruction()[1] != nullptr) { // else code
     elseCode = visit(context->instruction()[1]); 
@@ -302,7 +303,37 @@ antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
   return antlrcpp::Any(ifInstr);
 }
 
-antlrcpp::Any Visitor::visitForInstr(ifccParser::ForInstrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitForInstr(ifccParser::ForInstrContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<ForInstr> forInstr = make_shared<ForInstr>();
+
+  // create links with the tree
+  parentNode->getChildren().push_back(forInstr); // add the new node to it parent
+  forInstr->setParent(parentNode); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = forInstr; //setting parent to current node before anything else
+  antlrcpp::Any expr0 = visit(context->expression()[0]);
+  antlrcpp::Any expr1 = visit(context->expression()[1]);
+  antlrcpp::Any expr2 = visit(context->expression()[2]);
+  antlrcpp::Any code = visit(context->instruction());
+  parentNode = parent; //reseting parent node at the end of the call
+
+  // set current node attributes
+  // initialisation
+  forInstr->setInitialisation(expr0.as<shared_ptr<Expression>>());
+  // test
+  forInstr->setTest(expr1.as<shared_ptr<Expression>>());
+  // step
+  forInstr->setStep(expr2.as<shared_ptr<Expression>>());
+  // code
+  forInstr->setCode(dynamic_pointer_cast<Instruction>(forInstr->getChildren()[3]));
+
+  return antlrcpp::Any(forInstr);
+}
 
 antlrcpp::Any Visitor::visitBitwiseAnd_assign(ifccParser::BitwiseAnd_assignContext *context) UNHANDLED
 

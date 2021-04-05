@@ -15,7 +15,9 @@ class ForInstr : public ControlStructure
             : initialisation(move(initialisation)), step(step) {}
 
         inline shared_ptr<Expression> getInitialisation() { return initialisation; }
+        inline void setInitialisation(shared_ptr<Expression> initialisation) { this->initialisation = initialisation; }
         inline shared_ptr<Expression> getStep() { return step; }
+        inline void setStep(shared_ptr<Expression> step) { this->step = step; }
         virtual std::string toString() override;
     private:
         shared_ptr<Expression> initialisation;

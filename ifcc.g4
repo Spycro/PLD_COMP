@@ -140,7 +140,7 @@ controlStructure
       : WHILE '(' expression ')' instruction #whileInstr
       | DO instruction WHILE '(' expression ')' ';' #doWhileInstr
       | IF '(' expression ')' instruction (ELSE instruction)? #ifInstr
-      | FOR '(' expression? ';' expression? ';' expression? ')' instruction #forInstr
+      | FOR '(' expression ';' expression ';' expression ')' instruction #forInstr // TODO add expression?
       ;
 
 
