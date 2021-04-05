@@ -1,6 +1,7 @@
 #include "ir/CFG.h"
 #include "ir/BasicBlock.h"
 #include "ir/IRInstr.h"
+#include "ir/operations/Mul.h"
 #include "ir/operations/Add.h"
 #include "ir/operations/Cmp_eq.h"
 #include "ir/operations/Cmp_neq.h"
@@ -27,7 +28,26 @@ Void VOIDTYPE;
 Int64 INTTYPE64;
 Int64 INTTYPE32;
 
-void test_operations(){
+void test_operations_mul_div(){
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    BasicBlock bb0(firstCFG, nullptr);
+
+    SymbolTableElement input1(&INTTYPE64, "2");
+    SymbolTableElement input2(&INTTYPE64, "10");
+    SymbolTableElement input3(&INTTYPE64, "4");
+    SymbolTableElement output(&INTTYPE64, false, false,8);
+
+    Mul instr0(&bb0, input1, input2, output);
+    Copy instr2(&bb0, output,RAX_REGISTER);
+    bb0.add_IRInstr(&instr0);
+    bb0.add_IRInstr(&instr2);
+
+    firstCFG->add_bb(&bb0);
+
+    firstCFG->gen_asm(std::cout);
+}
+void test_operations_sub_add(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
     BasicBlock bb0(firstCFG, nullptr);
@@ -242,10 +262,12 @@ void test_single_block() {
 int main(){
     //test_single_block();
     //test_following_blocks();
-    test_if_condition();
+    //test_if_condition();
     //test_if_else_condition();
     //test_call();
     //test_call_many_params();
     //test_operations();
     //test_cmp();
+    //test_operations_sub_add();
+    test_operations_mul_div();
 }
