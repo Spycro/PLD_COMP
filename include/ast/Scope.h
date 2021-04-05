@@ -1,7 +1,6 @@
 #pragma once
 #include "../SymbolTable.h"
 #include <memory>
-#include <iostream> //Debuggin utilities
 using namespace std;
 
 class Scope {
@@ -22,8 +21,8 @@ public:
 
     void setParentScope(shared_ptr<Scope> scope){ parentScope = scope; }
 
-    void addVariable(string name, Type *variableType);
-    void addFunction(string name, Type *functionType);
+    void addVariable(std::string name, Type *variableType);
+    void addFunction(std::string name, Type *functionType);
     virtual std::string toString();
 
 private:
