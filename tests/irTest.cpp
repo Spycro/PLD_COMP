@@ -37,7 +37,7 @@ void test_pointers(){
 
     BasicBlock bb0(firstCFG, nullptr);
 
-    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement constant1(&INTTYPE64,"2");
     SymbolTableElement a(&INTTYPE64, false, false,8);
     SymbolTableElement pointer(&INTTYPE64, false, false,16);
 
@@ -293,8 +293,6 @@ int main(){
     //test_if_else_condition();
     //test_call();
     //test_call_many_params();
-    //test_operations();
-    //test_cmp();
     //test_operations_sub_add();
     //test_operations_mul_div();
     test_pointers();

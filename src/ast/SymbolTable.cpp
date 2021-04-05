@@ -13,7 +13,7 @@ void SymbolTable::addVariable (string variableName, Type* variableType) {
 }
 
 void SymbolTable::addFunction (string functionName, Type* functionReturnType) {
-    shared_ptr<SymbolTableElement> element = make_shared<SymbolTableElement>(functionReturnType, true);
+    shared_ptr<SymbolTableElement> element = make_shared<SymbolTableElement>(functionReturnType, false, false, true, 0);
     bool test = elements->emplace(functionName,element).second;
     if(!test) {
         cerr<<"name is already used";

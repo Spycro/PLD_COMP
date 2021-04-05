@@ -8,9 +8,6 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
     public:
         SymbolTableElement():type(&VOIDTYPE), isSet(false), isUsed(false), memoryOffset(0), isConst(false), constValue(""), isReg(false), regValue(""){}
 
-        SymbolTableElement(Type* type, bool isFunction)
-            : type(type), isSet(false), isUsed(false), isFunction(isFunction), memoryOffset(0), isConst(false),constValue(""), isReg(false), regValue(""){}
-
         SymbolTableElement(Type* type, bool isSet, bool isUsed, int isFunction, int memoryoffset) 
 		    : type(type), isSet(isSet), isUsed(isUsed), isFunction(isFunction), memoryOffset(memoryoffset), isConst(false),constValue(""), isReg(false), regValue(""){} 
 
