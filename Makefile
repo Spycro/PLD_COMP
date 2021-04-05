@@ -20,6 +20,9 @@ GEN_SRCS := $(GEN_SRCS_DIR)/ifccBaseVisitor.cpp $(GEN_SRCS_DIR)/ifccLexer.cpp $(
 GEN_HEADERS := $(GEN_INCLUDE_DIR)/ifccBaseVisitor.h $(GEN_INCLUDE_DIR)/ifccLexer.h $(GEN_INCLUDE_DIR)/ifccParser.h $(GEN_INCLUDE_DIR)/ifccVisitor.h
 GEN_OBJECTS := $(GEN_SRCS:$(GEN_SRCS_DIR)/%.cpp=$(GEN_BUILD_DIR)/%.o)
 
+TESTS_SRCS := $(shell find $(TESTS_DIR)/ -name "*.cpp")
+TESTS_OBJECTS := $(TESTS_SRCS:$(TESTS_DIR)/%.cpp=$(BUILD_DIR)/$(TESTS_DIR)/%.o) $(filter-out $(BUILD_DIR)/main.o,$(OBJECTS))
+
 AST_TESTS_OBJECTS := $(BUILD_DIR)/$(TESTS_DIR)/test_ast.o $(filter-out $(BUILD_DIR)/main.o,$(OBJECTS))
 
 ANTLR4_BINDIR=/usr/bin

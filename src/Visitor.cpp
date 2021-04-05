@@ -7,7 +7,7 @@
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
 #include "ast/expression/Unary.h"
-#include "type/Int.h"
+#include "type/Int64.h"
 #include "type/Char.h"
 #include <iostream>
 
@@ -56,7 +56,7 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   TRACE
 
   // create corresponding AST node
-  this->scope->addFunction("main", new Int());
+  this->scope->addFunction("main", new Int64());
   shared_ptr<Function> mainFunct = make_shared<Function>();
   
   // create links with the tree
@@ -83,7 +83,7 @@ antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationC
   // retrieve type
   string type = context->TYPE()->getSymbol()->getText();
   if (type == "int") {
-    declarationType = new Int();
+    declarationType = new Int64();
   } else if (type == "char") {
     declarationType = new Char();
   }
