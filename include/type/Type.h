@@ -1,10 +1,12 @@
 #pragma once
 
-class Type {
-    public :
+namespace VarType
+{
+    class Type {
+        public :
 
-    virtual int getSize() = 0;
+        virtual int getSize() = 0;
 
-    virtual std::string toString() override;
-
-};
+        virtual std::string toString() = 0;
+    };
+}

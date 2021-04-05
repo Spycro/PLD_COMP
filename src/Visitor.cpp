@@ -10,6 +10,7 @@
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
 #include "ast/expression/Unary.h"
+#include "type/TypeUtil.h"
 #include "type/Int.h"
 #include "type/Char.h"
 
@@ -18,12 +19,12 @@
 #define DEBUG
 
 #ifdef DEBUG
-  #define UNHANDLED { std::cout << "/!\\ unhandled function : " << __PRETTY_FUNCTION__ << std::endl; return 0 ; }
+  #define UNHANDLED { std::cerr << "/!\\ Unhandled operation : " << __PRETTY_FUNCTION__ << std::endl; return 0; }
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
   #define PRINT(x) std::cout << "[*] value : " << (x) << std::endl;
   #define PRINTM(m, x) std::cout << "[*] " << (m) << " : " << (x) << std::endl;
 #else
-  #define UNHANDLED { throw "Unhandled operation (__PRETTY_FUNCTION__)"; }
+  #define UNHANDLED { std::cerr << "/!\\Unhandled operation : " << __PRETTY_FUNCTION__ << std::endl; throw; }
   #define TRACCE ;
   #define PRINT(x) ;
   #define PRINTM(m, x) ;
@@ -55,10 +56,11 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
 }
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
+  // TODO : parameters
   TRACE
 
   // create corresponding AST node
-  this->scope->addFunction("main", new Int());
+  this->scope->addFunction("main", new VarType::Int());
   shared_ptr<Function> mainFunct = make_shared<Function>();
   
   // create links with the tree
@@ -77,7 +79,31 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   return antlrcpp::Any(mainFunct);
 }
 
-antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
+  // TODO : parameters
+  TRACE
+
+  // create corresponding AST node
+  std::string functionName = context->NAME()->getSymbol()->getText();
+  VarType::Type* functionType = VarType::getType(context->TYPE()->getSymbol()->getText());
+  this->scope->addFunction(functionName, functionType);
+  shared_ptr<Function> funct = make_shared<Function>();
+  
+  // create links with the tree
+  parentNode->getChildren().push_back(funct); // add the new node to it parent
+  funct->setParent(parentNode); // set the new node parent
+  
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = funct; //setting parent to current node before anything else
+  visitChildren(context);
+  parentNode = parent; //reseting parent node at the end of the call
+
+  // set current node attributes
+  funct->setCode(dynamic_pointer_cast<Block>(funct->getChildren()[0]));
+
+  return antlrcpp::Any(funct);
+}
 
 antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) {
   TRACE
@@ -85,9 +111,9 @@ antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationC
   // retrieve type
   string type = context->TYPE()->getSymbol()->getText();
   if (type == "int") {
-    declarationType = new Int();
+    declarationType = new VarType::Int();
   } else if (type == "char") {
-    declarationType = new Char();
+    declarationType = new VarType::Char();
   }
 
   // visit children
