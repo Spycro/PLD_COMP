@@ -1,6 +1,9 @@
 #include "ir/CFG.h"
 #include "ir/BasicBlock.h"
 #include "ir/IRInstr.h"
+#include "ir/operations/AddressOf.h"
+#include "ir/operations/Rmem.h"
+#include "ir/operations/Wmem.h"
 #include "ir/operations/Div.h"
 #include "ir/operations/Mul.h"
 #include "ir/operations/Add.h"
@@ -28,6 +31,27 @@
 Void VOIDTYPE;
 Int64 INTTYPE64;
 Int64 INTTYPE32;
+
+void test_pointers(){
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    BasicBlock bb0(firstCFG, nullptr);
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement a(&INTTYPE64, false, false,8);
+    SymbolTableElement pointer(&INTTYPE64, false, false,16);
+
+    AddressOf instr0(&bb0,a,pointer);
+    Wmem instr1(&bb0,constant1,pointer);
+    Rmem instr2(&bb0,pointer,RAX_REGISTER);
+    bb0.add_IRInstr(&instr0);
+    bb0.add_IRInstr(&instr1);
+    bb0.add_IRInstr(&instr2);
+
+    firstCFG->add_bb(&bb0);
+
+    firstCFG->gen_asm(std::cout);
+}
 
 void test_operations_mul_div(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
@@ -272,5 +296,6 @@ int main(){
     //test_operations();
     //test_cmp();
     //test_operations_sub_add();
-    test_operations_mul_div();
+    //test_operations_mul_div();
+    test_pointers();
 }
