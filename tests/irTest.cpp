@@ -4,6 +4,7 @@
 #include "ir/operations/Add.h"
 #include "ir/operations/Copy.h"
 #include "ir/operations/Call.h"
+#include "ir/operations/Add.h"
 #include "ir/operations/Jmp_cmp_eq.h"
 #include "type/Int64.h"
 #include "type/Void.h"
@@ -20,11 +21,10 @@ void test_operations(){
     BasicBlock bb0(firstCFG, nullptr);
 
     SymbolTableElement input1(&INTTYPE64, "2");
-    SymbolTableElement input2(&INTTYPE64, "2");
-    SymbolTableElement symbol2(&INTTYPE64, false, false,8);
-    SymbolTableElement output(&INTTYPE64, false, false,16);
+    SymbolTableElement input2(&INTTYPE64, "10");
+    SymbolTableElement output(&INTTYPE64, false, false,8);
 
-    Copy instr0(&bb0, input1,output);
+    Add instr0(&bb0, input1, input2, output);
     Copy instr1(&bb0, output,RAX_REGISTER);
     bb0.add_IRInstr(&instr0);
     bb0.add_IRInstr(&instr1);
