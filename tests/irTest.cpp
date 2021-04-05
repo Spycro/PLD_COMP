@@ -1,6 +1,7 @@
 #include "ir/CFG.h"
 #include "ir/BasicBlock.h"
 #include "ir/IRInstr.h"
+#include "ir/operations/Div.h"
 #include "ir/operations/Mul.h"
 #include "ir/operations/Add.h"
 #include "ir/operations/Cmp_eq.h"
@@ -39,8 +40,10 @@ void test_operations_mul_div(){
     SymbolTableElement output(&INTTYPE64, false, false,8);
 
     Mul instr0(&bb0, input1, input2, output);
+    Div instr1(&bb0, output, input3, output);
     Copy instr2(&bb0, output,RAX_REGISTER);
     bb0.add_IRInstr(&instr0);
+    bb0.add_IRInstr(&instr1);
     bb0.add_IRInstr(&instr2);
 
     firstCFG->add_bb(&bb0);
