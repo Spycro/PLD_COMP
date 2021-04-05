@@ -94,7 +94,7 @@ functionCall : NAME '(' (expression (',' expression)*)? ')' ;
  *    a program is a bunch of declarations (variables and functions),
  *    it may include the "main" function declaration
  */
-prog : (variableDeclaration | functionDeclaration)* ;
+prog : (variableDeclaration ';' | functionDeclaration)* ;
 
 
 functionDeclaration // TODO : add suport for parameters 
