@@ -9,7 +9,8 @@ typedef std::unordered_map<std::string, std::shared_ptr<SymbolTableElement>> Sym
 
 class SymbolTable{
 	public:
-		SymbolTable() {}
+		SymbolTable()
+			: elements(std::unique_ptr<SymbolMap>(new SymbolMap())) {}
 
 		virtual ~SymbolTable() {}
 		
@@ -18,12 +19,14 @@ class SymbolTable{
 			elements->emplace(name, symbol);
 		 }
 
-		 std::string create_new_tempvar(Type* t);
+		std::string create_new_tempvar(Type* t);
 		
 		int get_var_index(std::string name);
 		
 		Type* get_var_type(std::string name);
 
+		void addVariable (std::string variableName, Type* variableType);
+		void addFunction (std::string functionName, Type* functionReturnType);
 		//const std::unique_ptr<SymbolMap> & getElements() { return elements; }
 
 	private:

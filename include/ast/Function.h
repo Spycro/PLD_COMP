@@ -10,17 +10,24 @@
 
 using namespace std;
 
-class Function : public Node {
+//TODO ajouter nom/type ?
 
+class Function : public Node {
     public:
+        Function()
+            : code(nullptr) {}
+
+        Function(shared_ptr<Block> code) 
+            : code(code) {}
+
         Function(shared_ptr<Block> code, list<shared_ptr<Variable>> param)
             : code(code), parameters(param) { }
-
-        inline shared_ptr<Block> getCode() { return code; }
+            
+        inline void setCode(shared_ptr<Block> code) { this->code = code; }
+        inline shared_ptr<Block>& getCode() { return code; }
         inline list<shared_ptr<Variable>>& getParameters() { return parameters; }
-        void toString(int n);
+        virtual std::string toString() override;
     private:
         shared_ptr<Block> code;
         list<shared_ptr<Variable>> parameters;
-
 };

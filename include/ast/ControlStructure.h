@@ -17,11 +17,10 @@ class ControlStructure : public Instruction {
 
         inline shared_ptr<Expression> getTest() { return test; }
         inline shared_ptr<Instruction> getCode() { return code; }
-        virtual void toString(int n);
+        virtual std::string toString() override;
     private:
 
         shared_ptr<Expression> test;
         shared_ptr<Instruction> code;
-
 
 };

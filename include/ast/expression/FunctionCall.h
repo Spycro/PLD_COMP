@@ -8,6 +8,7 @@ using namespace std;
 class FunctionCall : public Expression {
 
     public:
+        FunctionCall() {}
 
         FunctionCall(string symbol, list<shared_ptr<Expression>> param) 
          : symbol(symbol), parameters(param) {}
@@ -15,7 +16,7 @@ class FunctionCall : public Expression {
         inline string& getSymbol() { return symbol; }
         inline list<shared_ptr<Expression>>& getParameters()  { return parameters; }
 
-        void toString(int n);
+        virtual std::string toString() override;
 
     private:
         string symbol;

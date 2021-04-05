@@ -94,7 +94,7 @@ functionCall : NAME '(' (expression (',' expression)*)? ')' ;
  *    a program is a bunch of declarations (variables and functions),
  *    it may include the "main" function declaration
  */
-prog : (variableDeclaration | functionDeclaration)* ;
+prog : (variableDeclaration ';' | functionDeclaration)* ;
 
 
 functionDeclaration // TODO : add suport for parameters 
@@ -104,7 +104,7 @@ functionDeclaration // TODO : add suport for parameters
 
 
 variableDeclaration : TYPE variableDeclarationList ;
-variableDeclarationList : NAME ('[' expression ']')? ('=' expression)? (',' variableDeclarationList)? ;
+variableDeclarationList : varName ('=' expression)? (',' variableDeclarationList)? ;
 
 
 
@@ -144,7 +144,7 @@ controlStructure
       ;
 
 
-expression
+expression 
       : CONST #const
       | varName #variable
       | functionCall #functCall
@@ -162,7 +162,7 @@ expression
       | '&' expression #addresOf
       | SIZEOF '(' TYPE ')' #sizeof
       | expression MULTDIVMOD expression #multiplicationDivisionModulo
-      | expression PLUSMINUS expression #plusMinus
+      | expression plusMinusSymbol expression #plusMinus
       | expression ('<<'|'>>') expression #bitwiseShift
       | expression ('<'|'<='|'>'|'>=') expression #lesserOrGreater
       | expression ('=='|'!=') expression #compare
@@ -187,4 +187,4 @@ expression
       ;
 
 MULTDIVMOD : '*' | '/' | '%' ; // remplacer par non terminal ? (en minuscules)
-PLUSMINUS : '+' | '-' ; // remplacer par non terminal ? (en minuscules)
+plusMinusSymbol : '+' | '-' ;

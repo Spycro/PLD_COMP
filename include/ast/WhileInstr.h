@@ -7,9 +7,8 @@ class WhileInstr : public ControlStructure {
     public:
         WhileInstr() { }
 
-        void toString(int n);
+        virtual std::string toString() override;
 
     private:
-
 
 };

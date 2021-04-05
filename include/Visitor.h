@@ -8,16 +8,19 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include "ast/Scope.h"
+#include "ast/Node.h"
 
 /**
  * This class provides an implementation of ifccVisitor, which can be
  * extended to create a visitor which only needs to handle a subset of the
  * available methods.
  */
-class Visitor : public ifccVisitor {
-	
+class Visitor : public ifccVisitor
+{
+
 public:
-	virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *context) override;
+    virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *context) override;
     virtual antlrcpp::Any visitVarName(ifccParser::VarNameContext *context) override;
     virtual antlrcpp::Any visitFunctionCall(ifccParser::FunctionCallContext *context) override;
     virtual antlrcpp::Any visitProg(ifccParser::ProgContext *context) override;
@@ -76,7 +79,20 @@ public:
     virtual antlrcpp::Any visitUnaryMinus(ifccParser::UnaryMinusContext *context) override;
     virtual antlrcpp::Any visitLogicalOr(ifccParser::LogicalOrContext *context) override;
     virtual antlrcpp::Any visitTernary(ifccParser::TernaryContext *context) override;
+    virtual antlrcpp::Any visitPlusMinusSymbol(ifccParser::PlusMinusSymbolContext *context) override;
+
+    inline shared_ptr<Node> getRootNode() { return rootNode; }
+    inline shared_ptr<Scope> getScope() { return scope; }
 
 private:
-	
+    shared_ptr<Scope> scope = make_shared<Scope>();
+
+    shared_ptr<Node> rootNode = make_shared<Node>();
+
+	shared_ptr<Node> parentNode;
+    Type* declarationType;
+
+    void pushScope();
+    void popScope();
+
 };

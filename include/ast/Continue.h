@@ -2,13 +2,12 @@
 
 #include "Instruction.h"
 
-class Continue : public Instruction {
-
+class Continue : public Instruction
+{
     public:
         Continue() { }
 
-        void toString(int n);
+        virtual std::string toString() override;
 
     private:
-
 };
