@@ -3,6 +3,7 @@
 #include "ast/Function.h"
 #include "ast/Return.h"
 #include "ast/NullInstr.h"
+#include "ast/WhileInstr.h"
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
@@ -65,13 +66,13 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = mainFunct; //setting parent to current node before anything else
-  antlrcpp::Any ret = visitChildren(context);
+  visitChildren(context);
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
   mainFunct->setCode(dynamic_pointer_cast<Block>(mainFunct->getChildren()[0]));
 
-  return ret;
+  return antlrcpp::Any(mainFunct);
 }
 
 antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) UNHANDLED
@@ -124,7 +125,6 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
     // set current node attributes
     shared_ptr<Expression> val = tmp.as<shared_ptr<Expression>>();
     affectation->setValue(move(val));
-    parentNode->getChildren().push_back(affectation);
 
     return antlrcpp::Any(affectation);
   }
@@ -232,7 +232,37 @@ antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
   return antlrcpp::Any(block);
 }
 
-antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<WhileInstr> whileInstr = make_shared<WhileInstr>();
+  
+  // create links with the tree
+  parentNode->getChildren().push_back(whileInstr); // add the new node to it parent
+  whileInstr->setParent(parentNode); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = whileInstr; //setting parent to current node before anything else
+  PRINT("visit test")
+  antlrcpp::Any test = visit(context->expression());
+  PRINT("visit code")
+  antlrcpp::Any code = visit(context->instruction()); // TODO : comprendre 
+  parentNode = parent; //reseting parent node at the end of the call
+
+  // set current node attributes
+  // expression
+  PRINT("cast test")
+  whileInstr->setTest(test.as<shared_ptr<Expression>>());
+  // code
+  PRINT("cast code")
+  PRINTM("typeid: ", typeid(code).name())
+  //whileInstr->setCode(code.as<shared_ptr<Instruction>>());
+  whileInstr->setCode(dynamic_pointer_cast<Instruction>(whileInstr->getChildren()[1]));
+
+  return antlrcpp::Any(whileInstr);
+}
 
 antlrcpp::Any Visitor::visitDoWhileInstr(ifccParser::DoWhileInstrContext *context) UNHANDLED
 

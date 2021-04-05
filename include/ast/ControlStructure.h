@@ -16,7 +16,9 @@ class ControlStructure : public Instruction {
         
 
         inline shared_ptr<Expression> getTest() { return test; }
+        inline void setTest(shared_ptr<Expression> test) { this->test = test; }
         inline shared_ptr<Instruction> getCode() { return code; }
+        inline void setCode(shared_ptr<Instruction> code) {this->code = code; }
         virtual std::string toString() override;
     private:
 
