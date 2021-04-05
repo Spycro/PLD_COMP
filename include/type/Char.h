@@ -2,13 +2,16 @@
 
 #include "Type.h"
 
-class Char : public Type {
-    public :
+namespace VarType
+{
+    class Char : public VarType::Type {
+        public :
 
-    int getSize() override {
-        return 4;
-    }
+        int getSize() override {
+            return 4;
+        }
 
-    virtual std::string toString() override { return "Char"; }
+        virtual std::string toString() override { return "Char"; }
 
-};
+    };
+}

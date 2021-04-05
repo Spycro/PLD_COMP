@@ -5,15 +5,15 @@
 
 
 typedef struct symbolTableElements{
-	Type* type;
+	VarType::Type* type;
 	bool isSet;
 	bool isUsed;
 	bool isFunction;
 	int memoryOffset;
 
-	symbolTableElements(Type* type, bool isFunction)
+	symbolTableElements(VarType::Type* type, bool isFunction)
 		: type(type), isSet(false), isUsed(false), isFunction(isFunction), memoryOffset(0) {}
-	symbolTableElements(Type* type, bool isSet, bool isUsed, bool isFunction, int memoryoffset) 
+	symbolTableElements(VarType::Type* type, bool isSet, bool isUsed, bool isFunction, int memoryoffset) 
 		: type(type), isSet(isSet), isUsed(isUsed), isFunction(isFunction), memoryOffset(memoryoffset) {} 
 } symbolTableElement;
 
@@ -31,8 +31,8 @@ class SymbolTable{
 			elements->emplace(name, symbol);
 		 }
 
-		void addVariable (std::string variableName, Type* variableType);
-		void addFunction (std::string functionName, Type* functionReturnType);
+		void addVariable (std::string variableName, VarType::Type* variableType);
+		void addFunction (std::string functionName, VarType::Type* functionReturnType);
 		//const std::unique_ptr<SymbolMap> & getElements() { return elements; }
 
 	private:

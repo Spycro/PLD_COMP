@@ -21,8 +21,8 @@ public:
 
     void setParentScope(shared_ptr<Scope> scope){ parentScope = scope; }
 
-    void addVariable(std::string name, Type *variableType);
-    void addFunction(std::string name, Type *functionType);
+    void addVariable(std::string name, VarType::Type *variableType);
+    void addFunction(std::string name, VarType::Type *functionType);
     virtual std::string toString();
 
 private:
