@@ -1,11 +1,11 @@
 #pragma once
 #include "../IRInstr.h"
 
-//Lesser than comparison instruction
-class Cmp_lt : public IRInstr
+//Lesser or equal comparison instruction
+class Cmp_ge : public IRInstr
 {
 public:
-    Cmp_lt(BasicBlock *bb, SymbolTableElement leftParameter, SymbolTableElement rightParameter, SymbolTableElement d);
+    Cmp_ge(BasicBlock *bb, SymbolTableElement leftParameter, SymbolTableElement rightParameter, SymbolTableElement d);
 
     void gen_asm(std::ostream &o) override;
 
