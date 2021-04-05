@@ -95,9 +95,7 @@ antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationC
 }
 
 antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarationListContext *context) {
-  // TODO : scope du bloc / fait ??
   // TODO : tableaux
-  // TODO : affectation au moment de la declaration
   // TODO : visite des déclarations multiples
   TRACE
 
@@ -168,7 +166,6 @@ antlrcpp::Any Visitor::visitReturnInstr(ifccParser::ReturnInstrContext *context)
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
-  //retExpr->setValue(dynamic_pointer_cast<Expression>(retExpr->getChildren()[0]));
   retExpr->setValue(expr.as<shared_ptr<Expression>>());
   
   return antlrcpp::Any(retExpr);
@@ -248,7 +245,7 @@ antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) {
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = whileInstr; //setting parent to current node before anything else
   antlrcpp::Any test = visit(context->expression());
-  antlrcpp::Any code = visit(context->instruction()); // TODO : comprendre 
+  antlrcpp::Any code = visit(context->instruction()); // TODO : comprendre pourquoi le retour n'est pas du bon type
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
@@ -421,10 +418,7 @@ antlrcpp::Any Visitor::visitDiv_assign(ifccParser::Div_assignContext *context) U
 antlrcpp::Any Visitor::visitBitwiseShift(ifccParser::BitwiseShiftContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) {
-  // TODO : vérifier type
   // TODO : tableaux
-  // TODO : vérifier que ça existe ?
-  // TODO : trouver la bonne table de symboles
   TRACE
 
   // create corresponding AST node
@@ -445,20 +439,6 @@ antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *cont
   affect->setValue(value.as<shared_ptr<Expression>>());
 
   return antlrcpp::Any(affect);
-
-  // TODO : supprimer ? 
-  /*
-    shared_ptr<Affectation> affectation = make_shared<Affectation>(name);
-
-    shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
-    parentNode = affectation; //setting parent node before anything else
-    antlrcpp::Any tmp = visit(context->expression());
-    parentNode = parent; //reseting parent node at the end of the call
-
-    shared_ptr<Expression> val = tmp.as<shared_ptr<Expression>>();
-    affectation->setValue(move(val));
-    parentNode->getChildren().push_back(affectation);
-  */
 }
 
 antlrcpp::Any Visitor::visitBitwiseOr(ifccParser::BitwiseOrContext *context) UNHANDLED
