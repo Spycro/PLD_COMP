@@ -21,6 +21,7 @@ class IRInstr {
 	virtual void gen_asm(std::ostream &o) = 0; /**< x86 assembly code generation for this IR instruction */
 	
  protected:
+ 	//this thing might be needed in the futur, so far it is not used
 	std::string asmAdaptInstruction(std::string instr, SymbolTableElement* el1, SymbolTableElement* el2, SymbolTableElement* el3);
 	BasicBlock* bb; /**< The BB this instruction belongs to, which provides a pointer to the CFG this instruction belong to */
 };

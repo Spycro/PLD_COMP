@@ -5,7 +5,7 @@ class Int32 : public Type {
     public :
 
     int getSize(){
-        return 8;
+        return 4;
     }
     
 };

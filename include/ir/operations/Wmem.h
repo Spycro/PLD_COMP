@@ -1,9 +1,14 @@
 #pragma once
 #include "../IRInstr.h"
+#include "SymbolTable.h"
 
-//Write in memory instruction
 class Wmem : public IRInstr
 {
-    
-};
+    public:
+        Wmem(BasicBlock *bb, SymbolTableElement ValueToWrite, SymbolTableElement address);
 
+        void gen_asm(std::ostream &o) override;
+
+    private:
+        SymbolTableElement ValueToWrite, address;
+};

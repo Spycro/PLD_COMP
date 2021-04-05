@@ -2,10 +2,10 @@
 #include "../IRInstr.h"
 #include "SymbolTable.h"
 
-class Sub : public IRInstr
+class Div : public IRInstr
 {
     public:
-        Sub(BasicBlock *bb, SymbolTableElement a, SymbolTableElement b, SymbolTableElement res);
+        Div(BasicBlock *bb, SymbolTableElement a, SymbolTableElement b, SymbolTableElement res);
 
         void gen_asm(std::ostream &o) override;
 
