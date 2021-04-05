@@ -12,6 +12,9 @@
 using namespace antlr4;
 using namespace std;
 
+void PrintAst(shared_ptr<Node> node, int count);
+void PrintScope(shared_ptr<Scope>, int count);
+
 class MyErrorListener : public BaseErrorListener {
 public:
   MyErrorListener() { error = false; }
@@ -55,5 +58,21 @@ int main(int argn, const char **argv) {
   Visitor visitor;
   visitor.visit(tree);
 
+  shared_ptr<Node> rootNode = visitor.getRootNode();
+  PrintAst(rootNode, 0);
+
   return 0;
+}
+
+
+void PrintAst(shared_ptr<Node> node, int count){
+  std::cout << std::string(count, ' ') << node->toString() << std::endl; 
+
+  for(auto childNode : node->getChildren()){
+    PrintAst(childNode, count+1);
+  }
+}
+
+void PrintScope(shared_ptr<Scope> scope, int count){
+  cout << "Scope at level : " << count << endl;
 }

@@ -2,12 +2,11 @@
 
 #include "Instruction.h"
 
-class NullInstr : public Instruction {
-
+class NullInstr : public Instruction
+{
     public:
         NullInstr( ) {}
-        void toString(int n);
+        virtual std::string toString() override;
 
     private:
-
 };

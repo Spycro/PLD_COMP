@@ -1,11 +1,16 @@
 #include "ast/Scope.h"
-#include <iostream>
 
-using namespace std;
+void Scope::addVariable(std::string name, Type *variableType)
+{
+    symbolicTable->addVariable(name, variableType);
+}
 
-void Scope::toString(int n) {
-    for(int i=0;i<n;i++){
-        cout<<"\t";
-     }
-    cout<<"Scope"<<endl;
+void Scope::addFunction(std::string name, Type *functionType)
+{
+    symbolicTable->addFunction(name, functionType);
+}
+
+std::string Scope::toString()
+{
+    return "Scope";
 }

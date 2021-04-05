@@ -1,13 +1,12 @@
 #pragma once
 #include "Node.h"
 
-class Instruction : public Node{
-
+class Instruction : public Node
+{
     public:
         Instruction() { }
 
-        virtual void toString(int n);
+        virtual std::string toString() override;
 
     private:
-
 };
