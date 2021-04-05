@@ -304,7 +304,7 @@ antlrcpp::Any Visitor::visitPlusMinus(ifccParser::PlusMinusContext *context) {
   shared_ptr<Expression> binary = make_shared<Binary>();
   binary->setParent(parentNode);
   parentNode->getChildren().push_back(binary);
-  std::string opString = context->PLUSMINUS()->getSymbol()->getText();
+  std::string opString = context->plusMinusSymbol()->getStart()->getText();
   BinaryOperator op;
   if(opString == "+")
     op = PLUS;
