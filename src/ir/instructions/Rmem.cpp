@@ -1,4 +1,4 @@
-#include "ir/operations/Rmem.h"
+#include "ir/instructions/Rmem.h"
 #include "ir/ASMConstants.h"
 
 Rmem::Rmem(BasicBlock *bb, SymbolTableElement addressToRead_, SymbolTableElement out_) : IRInstr(bb), addressToRead(addressToRead_), out(out_){}

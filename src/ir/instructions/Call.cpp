@@ -1,4 +1,4 @@
-#include "ir/operations/Call.h"
+#include "ir/instructions/Call.h"
 #include "ir/CFG.h"
 
 Call::Call(BasicBlock *bb_, std::shared_ptr<CFG> cfg_, std::vector<SymbolTableElement> params_ , SymbolTableElement output_):IRInstr(bb_),cfg(cfg_),params(params_),output(output_){}

@@ -1,4 +1,4 @@
-#include "ir/operations/Cmp_neq.h"
+#include "ir/instructions/Cmp_neq.h"
 
 #include "ir/BasicBlock.h"
 

@@ -1,4 +1,4 @@
-#include "ir/operations/Add.h"
+#include "ir/instructions/Add.h"
 #include "ir/ASMConstants.h"
 
 Add::Add(BasicBlock *bb, SymbolTableElement a_, SymbolTableElement b_, SymbolTableElement res_) : IRInstr(bb), a(a_), b(b_), res(res_){}

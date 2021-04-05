@@ -1,4 +1,4 @@
-#include "ir/operations/Mul.h"
+#include "ir/instructions/Mul.h"
 #include "ir/ASMConstants.h"
 
 Mul::Mul(BasicBlock *bb, SymbolTableElement a_, SymbolTableElement b_, SymbolTableElement res_) : IRInstr(bb), a(a_), b(b_), res(res_){}

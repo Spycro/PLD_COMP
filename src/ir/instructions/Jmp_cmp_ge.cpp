@@ -1,4 +1,4 @@
-#include "ir/operations/Jmp_cmp_ge.h"
+#include "ir/instructions/Jmp_cmp_ge.h"
 
 #include "ir/BasicBlock.h"
 

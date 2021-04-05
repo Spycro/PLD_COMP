@@ -1,4 +1,4 @@
-#include "ir/operations/Copy.h"
+#include "ir/instructions/Copy.h"
 
 Copy::Copy(BasicBlock* bb, SymbolTableElement inputX, SymbolTableElement inputD) : IRInstr(bb), d(inputD), x(inputX){}
 

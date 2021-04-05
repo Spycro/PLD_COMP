@@ -1,4 +1,4 @@
-#include "ir/operations/AddressOf.h"
+#include "ir/instructions/AddressOf.h"
 #include "ir/ASMConstants.h"
 
 AddressOf::AddressOf(BasicBlock *bb, SymbolTableElement variable_, SymbolTableElement pointer_) : IRInstr(bb), variable(variable_), pointer(pointer_){}

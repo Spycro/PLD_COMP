@@ -1,4 +1,4 @@
-#include "ir/operations/Div.h"
+#include "ir/instructions/Div.h"
 #include "ir/ASMConstants.h"
 
 Div::Div(BasicBlock *bb, SymbolTableElement a_, SymbolTableElement b_, SymbolTableElement res_) : IRInstr(bb), a(a_), b(b_), res(res_){}

@@ -1,6 +1,6 @@
 #include "ir/BasicBlock.h"
 #include "ir/CFG.h"
-#include "ir/operations/Cmp_eq.h"
+#include "ir/instructions/Cmp_eq.h"
 
 int BasicBlock::nextBBnumber = 0;
 
