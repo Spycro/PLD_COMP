@@ -50,8 +50,8 @@ void test_cmp(){
 
     BasicBlock bb0(firstCFG, nullptr);
 
-    //SymbolTableElement input1(&INTTYPE64, "15");
-    SymbolTableElement input1(&INTTYPE64,false, false, 8);
+    SymbolTableElement input1(&INTTYPE64, "15");
+    //SymbolTableElement input1(&INTTYPE64,false, false, 8);
 
     SymbolTableElement input2(&INTTYPE64, "14");
     SymbolTableElement dest(&INTTYPE64, false, false, 16);
