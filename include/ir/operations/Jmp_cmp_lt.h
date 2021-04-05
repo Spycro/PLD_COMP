@@ -5,10 +5,10 @@
 class Jmp_cmp_lt : public IRInstr
 {
 public:
-    Jmp_cmp_lt(BasicBlock *bb, symbolTableElement x, symbolTableElement y);
+    Jmp_cmp_lt(BasicBlock *bb, SymbolTableElement x, SymbolTableElement y);
 
     void gen_asm(std::ostream &o) override;
 
 private:
-    symbolTableElement x, y;
+    SymbolTableElement x, y;
 };

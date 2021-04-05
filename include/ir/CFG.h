@@ -20,14 +20,16 @@
  */
 class CFG {
  public:
-	CFG(Function* ast, std::string label_, Type* type, std::vector<symbolTableElement> params_ = std::vector<symbolTableElement>());
+	CFG(Function* ast, std::string label_, Type* type, std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>());
 
 	Function* ast; /**< The AST this CFG comes from */
 	std::string label; //TODO : a modifier!! -> Function
 	Type* type; //TODO : a modifier!! -> Function
-	std::vector<symbolTableElement> params;
+	std::vector<SymbolTableElement> params;
 	
 	void add_bb(BasicBlock* bb); 
+
+	void incrementVariableCount(int cnt);
 
 	// x86 code generation: could be encapsulated in a processor class in a retargetable compiler
 	void gen_asm(std::ostream& o);
@@ -42,4 +44,5 @@ private :
 
  protected:		
 	std::vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/	
+	int numberOfVariables = 0; //Number of temp variables in the function
 };

@@ -13,7 +13,7 @@ void BasicBlock::add_IRInstr(IRInstr* instruction){
 
 void BasicBlock::gen_asm(std::ostream &o) {
 
-    o << "." << label << std::endl;
+    o << "." << label << ":" << std::endl;
 
     for(auto& instr : instrs) {
         instr->gen_asm(o);

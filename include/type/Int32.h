@@ -1,13 +1,12 @@
 #pragma once
 
 #include "Type.h"
-class Void : public Type {
+class Int32 : public Type {
     public :
 
     int getSize(){
-        return 0;
+        return 8;
     }
     
 };
-
-extern Void VOIDTYPE;
+extern Int32 INTTYPE32;

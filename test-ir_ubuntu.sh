@@ -1,4 +1,4 @@
-make test_ir ANTLR4_BINDIR=/usr/bin ANTLR4_LIBDIR=/shares/public/tp/ANTLR4-CPP/lib ANTLR4_INCDIR=/shares/public/tp/ANTLR4-CPP/antlr4-runtime
+make test_ir ANTLR4_BINDIR=/usr/bin  ANTLR4_INCDIR=/usr/include/antlr4-runtime ANTLR4_LIBDIR=/usr/lib/x86_64-linux-gnu/
 ./build/test_ir
 
 rm ./build/test_ir.s

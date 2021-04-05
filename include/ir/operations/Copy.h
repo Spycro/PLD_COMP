@@ -5,10 +5,10 @@
 class Copy : public IRInstr
 {
 public:
-    Copy(BasicBlock *bb, symbolTableElement x, symbolTableElement d);
+    Copy(BasicBlock *bb, SymbolTableElement x, SymbolTableElement d);
 
     void gen_asm(std::ostream &o) override;
 
 private:
-    symbolTableElement x, d;
+    SymbolTableElement x, d;
 };

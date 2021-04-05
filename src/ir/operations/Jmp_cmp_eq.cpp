@@ -2,27 +2,18 @@
 
 #include "ir/BasicBlock.h"
 
-Jmp_cmp_eq::Jmp_cmp_eq(BasicBlock* bb_, symbolTableElement x_, symbolTableElement y_) : IRInstr(bb_), x(x_), y(y_){}
+Jmp_cmp_eq::Jmp_cmp_eq(BasicBlock* bb_, SymbolTableElement x_, SymbolTableElement y_) : IRInstr(bb_), x(x_), y(y_){}
 
 
 void Jmp_cmp_eq::gen_asm(std::ostream &o) {
 
     std::string valX, valY;
 
-    if(x.isConst){
-        valX = "$" + x.constValue;
-    }
-    else{
-        valX = "-" + std::to_string(x.memoryOffset) + "(%rbp)";
-    }
+    valX = x.getAsm();
 
-    if(y.isConst) {
-        valY = "$" + y.constValue;
-    }
-    else{
-        valY = "-" + std::to_string(y.memoryOffset) + "(%rbp)";
-    }
+    valY = y.getAsm();
 
-    o << "\tcmpl " << valX << ", " << valY << std::endl;
+    o << "\tmovq " << valY << ", %rax" << std::endl; // We need one parameter to be a register
+    o << "\tcmpq " << valX << ", %rax" << std::endl;
     o << "\tjne " << '.' << bb->exit_false->label << std::endl; 
 }

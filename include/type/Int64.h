@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Type.h"
-
 class Int64 : public Type {
     public :
 
@@ -10,3 +9,4 @@ class Int64 : public Type {
     }
     
 };
+extern Int64 INTTYPE64;
