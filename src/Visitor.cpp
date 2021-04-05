@@ -334,7 +334,20 @@ antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) UNHANDL
 
 antlrcpp::Any Visitor::visitSizeof(ifccParser::SizeofContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitPostDecr(ifccParser::PostDecrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitPostDecr(ifccParser::PostDecrContext *context) {
+  TRACE
+  shared_ptr<Expression> unary = make_shared<Unary>();
+  parentNode->getChildren().push_back(unary);
+  unary->setParent(parentNode);
+
+  unary->setOp(POSTDECR);
+  shared_ptr<Expression> operand = make_shared<Variable>();
+  operand->setParent(unary);
+  unary->getChildren().push_back(operand);
+  operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
+
+  return antlrcpp::Any(unary);
+}
 
 antlrcpp::Any Visitor::visitLogicalAnd(ifccParser::LogicalAndContext *context) UNHANDLED
 
