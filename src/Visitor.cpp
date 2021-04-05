@@ -4,6 +4,7 @@
 #include "ast/Return.h"
 #include "ast/NullInstr.h"
 #include "ast/WhileInstr.h"
+#include "ast/IfInstr.h"
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
@@ -245,19 +246,14 @@ antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) {
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = whileInstr; //setting parent to current node before anything else
-  PRINT("visit test")
   antlrcpp::Any test = visit(context->expression());
-  PRINT("visit code")
   antlrcpp::Any code = visit(context->instruction()); // TODO : comprendre 
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
   // expression
-  PRINT("cast test")
   whileInstr->setTest(test.as<shared_ptr<Expression>>());
   // code
-  PRINT("cast code")
-  PRINTM("typeid: ", typeid(code).name())
   //whileInstr->setCode(code.as<shared_ptr<Instruction>>());
   whileInstr->setCode(dynamic_pointer_cast<Instruction>(whileInstr->getChildren()[1]));
 
@@ -266,7 +262,45 @@ antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) {
 
 antlrcpp::Any Visitor::visitDoWhileInstr(ifccParser::DoWhileInstrContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<IfInstr> ifInstr = make_shared<IfInstr>();
+
+  // create links with the tree
+  parentNode->getChildren().push_back(ifInstr); // add the new node to it parent
+  ifInstr->setParent(parentNode); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = ifInstr; //setting parent to current node before anything else
+  antlrcpp::Any test = visit(context->expression());
+  antlrcpp::Any ifCode = visit(context->instruction()[0]); // TODO : comprendre
+  antlrcpp::Any elseCode;
+  if (context->instruction()[1] != nullptr) { // else code
+    elseCode = visit(context->instruction()[1]); 
+  } else { // no else code
+    // create corresponding AST node
+    shared_ptr<Instruction> elseCodeInstr = make_shared<NullInstr>();
+
+    // create links with the tree
+    ifInstr->getChildren().push_back(elseCodeInstr); // add the new node to it parent
+    elseCodeInstr->setParent(ifInstr); // set the new node parent
+    elseCode = elseCodeInstr;
+  }
+  parentNode = parent; //reseting parent node at the end of the call
+
+  // set current node attributes
+  // expression
+  ifInstr->setTest(test.as<shared_ptr<Expression>>());
+  // ifcode
+  ifInstr->setCode(dynamic_pointer_cast<Instruction>(ifInstr->getChildren()[1]));
+  // elsecode
+  ifInstr->setCode(dynamic_pointer_cast<Instruction>(ifInstr->getChildren()[2]));
+
+  return antlrcpp::Any(ifInstr);
+}
 
 antlrcpp::Any Visitor::visitForInstr(ifccParser::ForInstrContext *context) UNHANDLED
 
