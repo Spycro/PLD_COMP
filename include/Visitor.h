@@ -79,6 +79,7 @@ public:
     virtual antlrcpp::Any visitUnaryMinus(ifccParser::UnaryMinusContext *context) override;
     virtual antlrcpp::Any visitLogicalOr(ifccParser::LogicalOrContext *context) override;
     virtual antlrcpp::Any visitTernary(ifccParser::TernaryContext *context) override;
+    virtual antlrcpp::Any visitPlusMinusSymbol(ifccParser::PlusMinusSymbolContext *context) override;
 
     inline shared_ptr<Node> getRootNode() { return rootNode; }
     inline shared_ptr<Scope> getScope() { return scope; }

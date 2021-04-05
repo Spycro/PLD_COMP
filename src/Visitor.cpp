@@ -370,6 +370,8 @@ antlrcpp::Any Visitor::visitLogicalOr(ifccParser::LogicalOrContext *context) UNH
 
 antlrcpp::Any Visitor::visitTernary(ifccParser::TernaryContext *context) UNHANDLED
 
+antlrcpp::Any Visitor::visitPlusMinusSymbol(ifccParser::PlusMinusSymbolContext *context) UNHANDLED;
+
 
 void Visitor::pushScope() {
   TRACE

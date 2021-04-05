@@ -162,7 +162,7 @@ expression
       | '&' expression #addresOf
       | SIZEOF '(' TYPE ')' #sizeof
       | expression MULTDIVMOD expression #multiplicationDivisionModulo
-      | expression PLUSMINUS expression #plusMinus
+      | expression plusMinusSymbol expression #plusMinus
       | expression ('<<'|'>>') expression #bitwiseShift
       | expression ('<'|'<='|'>'|'>=') expression #lesserOrGreater
       | expression ('=='|'!=') expression #compare
@@ -187,4 +187,4 @@ expression
       ;
 
 MULTDIVMOD : '*' | '/' | '%' ; // remplacer par non terminal ? (en minuscules)
-PLUSMINUS : '+' | '-' ; // remplacer par non terminal ? (en minuscules)
+plusMinusSymbol : '+' | '-' ; // remplacer par non terminal ? (en minuscules)
