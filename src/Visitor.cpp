@@ -2,6 +2,7 @@
 #include "ast/Node.h"
 #include "ast/Function.h"
 #include "ast/Return.h"
+#include "ast/NullInstr.h"
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
@@ -59,10 +60,7 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   return ret;
 }
 
-antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
-  TRACE
-  return 0;
-}
+antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) {
   TRACE
@@ -104,7 +102,15 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
   return 0;
 }
 
-antlrcpp::Any Visitor::visitNullInstr(ifccParser::NullInstrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitNullInstr(ifccParser::NullInstrContext *context) {
+  TRACE
+
+  shared_ptr<NullInstr> nullinstr = make_shared<NullInstr>();
+  nullinstr->setParent(parentNode);
+  parentNode->getChildren().push_back(nullinstr);
+
+  return 0;
+}
 
 antlrcpp::Any Visitor::visitBreakInstr(ifccParser::BreakInstrContext *context) UNHANDLED
 
