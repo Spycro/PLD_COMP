@@ -1,25 +1,7 @@
 #pragma once
 
 #include "Expression.h"
-typedef enum
-{
-    PLUS,
-    MINUS,
-    MULT,
-    DIV,
-    EQUAL,
-    NE,
-    GTE,
-    LTE,
-    GT,
-    LT,
-    BINAND,
-    LOGAND,
-    BINOR,
-    LOGOR,
-    BINXOR,
-    LOGXOR
-} BinaryOperator;
+
 
 using namespace std;
 
@@ -36,6 +18,10 @@ public:
     inline shared_ptr<Expression> getOperand1() { return operand1; }
     inline shared_ptr<Expression> getOperand2() { return operand2; }
     inline BinaryOperator getOp() { return op; }
+    void setOperand1(shared_ptr<Expression> op1) override { operand1 = op1; }
+    void setOperand2(shared_ptr<Expression> op2) override { operand2 = op2; }
+    void setBinaryOperator(BinaryOperator bop) override { op = bop; }
+
     virtual std::string toString() override;
     
 private:

@@ -4,6 +4,7 @@
 #include "ast/Return.h"
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
+#include "ast/expression/Binary.h"
 #include "type/Int.h"
 #include "type/Char.h"
 #include <iostream>
@@ -59,7 +60,6 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
 
 antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
   TRACE
-  std::cout<<"visitAnyFunction"<<std::endl;
   return 0;
 }
 
@@ -234,7 +234,33 @@ antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *cont
 
 antlrcpp::Any Visitor::visitBitwiseOr(ifccParser::BitwiseOrContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitMultiplicationDivisionModulo(ifccParser::MultiplicationDivisionModuloContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitMultiplicationDivisionModulo(ifccParser::MultiplicationDivisionModuloContext *context) {
+  TRACE
+  shared_ptr<Expression> binary = make_shared<Binary>();
+  binary->setParent(parentNode);
+  parentNode->getChildren().push_back(binary);
+  std::string opString = context->MULTDIVMOD()->getSymbol()->getText();
+  BinaryOperator op;
+  if(opString == "*")
+    op = MULT;
+  else if(opString == "/")
+    op = DIV;
+  else if(opString == "%")
+    op = MOD;
+  
+  binary->setBinaryOperator(op);
+
+  shared_ptr<Node> tmp = parentNode;
+  parentNode = binary;
+
+  antlrcpp::Any op1 = visit(context->expression(0));
+  antlrcpp::Any op2 = visit(context->expression(1));
+  parentNode = tmp;
+  binary->setOperand1(op1.as<shared_ptr<Expression>>());
+  binary->setOperand2(op2.as<shared_ptr<Expression>>());
+
+  return antlrcpp::Any(binary);
+}
 
 antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *context) UNHANDLED
 
@@ -242,7 +268,32 @@ antlrcpp::Any Visitor::visitBitwiseLeftShift_assign(ifccParser::BitwiseLeftShift
 
 antlrcpp::Any Visitor::visitLogicalNot(ifccParser::LogicalNotContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitPlusMinus(ifccParser::PlusMinusContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitPlusMinus(ifccParser::PlusMinusContext *context) {
+  TRACE
+  shared_ptr<Expression> binary = make_shared<Binary>();
+  binary->setParent(parentNode);
+  parentNode->getChildren().push_back(binary);
+  std::string opString = context->PLUSMINUs()->getSymbol()->getText();
+  BinaryOperator op;
+  if(opString == "+")
+    op = PLUS;
+  else if(opString == "-")
+    op = MINUS;
+  
+  binary->setBinaryOperator(op);
+
+  shared_ptr<Node> tmp = parentNode;
+  parentNode = binary;
+
+  antlrcpp::Any op1 = visit(context->expression(0));
+  antlrcpp::Any op2 = visit(context->expression(1));
+  parentNode = tmp;
+  binary->setOperand1(op1.as<shared_ptr<Expression>>());
+  binary->setOperand2(op2.as<shared_ptr<Expression>>());
+
+  return antlrcpp::Any(binary);
+
+}
 
 antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) UNHANDLED
 
@@ -277,8 +328,6 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
 
 
   return antlrcpp::Any(tmp);
-
-
 }
 
 antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) UNHANDLED
