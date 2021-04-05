@@ -209,6 +209,8 @@ antlrcpp::Any Visitor::visitPostIncr(ifccParser::PostIncrContext *context) {
 
   unary->setOp(POSTINCR);
   shared_ptr<Expression> operand = make_shared<Variable>();
+  operand->setParent(unary);
+  unary->getChildren().push_back(operand);
   operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
 
   return antlrcpp::Any(unary);
@@ -370,8 +372,7 @@ antlrcpp::Any Visitor::visitLogicalOr(ifccParser::LogicalOrContext *context) UNH
 
 antlrcpp::Any Visitor::visitTernary(ifccParser::TernaryContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitPlusMinusSymbol(ifccParser::PlusMinusSymbolContext *context) UNHANDLED;
-
+antlrcpp::Any Visitor::visitPlusMinusSymbol(ifccParser::PlusMinusSymbolContext *context) UNHANDLED
 
 void Visitor::pushScope() {
   TRACE
