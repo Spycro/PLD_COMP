@@ -359,7 +359,38 @@ antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) {
   return antlrcpp::Any(unary);
 }
 
-antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Expression> binary = make_shared<Binary>();
+
+  // create links with the tree
+  binary->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(binary); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = binary; //setting parent to current node before anything else
+  antlrcpp::Any op1 = visit(context->expression(0));
+  antlrcpp::Any op2 = visit(context->expression(1));
+  parentNode = parent; //reseting parent node at the end of the call
+
+  // set current node attributes
+  // operator
+  std::string opString = context->getStart()->getText();
+  BinaryOperator op;
+  if(opString == "==")
+    op = EQUAL;
+  else if(opString == "!=")
+    op = NE;
+  binary->setBinaryOperator(op);
+  // operands
+  binary->setOperand1(op1.as<shared_ptr<Expression>>());
+  binary->setOperand2(op2.as<shared_ptr<Expression>>());
+
+  return antlrcpp::Any(binary);
+}
 
 antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *context) {
   TRACE
