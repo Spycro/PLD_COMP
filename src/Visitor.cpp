@@ -5,6 +5,7 @@
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
+#include "ast/expression/Unary.h"
 #include "type/Int.h"
 #include "type/Char.h"
 #include <iostream>
@@ -200,7 +201,19 @@ antlrcpp::Any Visitor::visitBitwiseAnd(ifccParser::BitwiseAndContext *context) U
 
 antlrcpp::Any Visitor::visitAddresOf(ifccParser::AddresOfContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitPostIncr(ifccParser::PostIncrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitPostIncr(ifccParser::PostIncrContext *context) {
+  TRACE
+  shared_ptr<Expression> unary = make_shared<Unary>();
+  parentNode->getChildren().push_back(unary);
+  unary->setParent(parentNode);
+
+  unary->setOp(POSTINCR);
+  shared_ptr<Expression> operand = make_shared<Variable>();
+  operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
+
+  return antlrcpp::Any(unary);
+
+}
 
 antlrcpp::Any Visitor::visitBitwiseNot(ifccParser::BitwiseNotContext *context) UNHANDLED
 

@@ -15,6 +15,8 @@ class Variable : public Expression {
         
         inline string& getSymbol() { return symbol; }
 
+        void setSymbol(std::string symb) { symbol = symb; }
+
         virtual std::string toString() override;
 
     private:

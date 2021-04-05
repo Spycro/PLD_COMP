@@ -47,6 +47,7 @@ class Expression : public Instruction {
         void setOperand(shared_ptr<Expression>) {}
         void setOp(UnaryOperator) {}
 
+        void setSymbol(std::string) {} 
 
         virtual void setValue(int value) {}
         virtual void setValue(shared_ptr<Expression> value) {}
