@@ -5,5 +5,5 @@ int main() {
    b = 5 / (3 * 7);
    //int c = a+b;
    
-   return 8;
+   return a % c;
 }

@@ -1,16 +1,6 @@
 #pragma once
 
 #include "Expression.h"
-typedef enum
-{
-    PREINCR,
-    POSTINCR,
-    PREDECR,
-    POSTDECR,
-    PARENTHESIS,
-    TILD,
-    NOT
-} UnaryOperator;
 
 using namespace std;
 
@@ -25,6 +15,8 @@ class Unary : public Expression
 
         inline shared_ptr<Expression> getOperand() { return operand; }
         inline UnaryOperator getOp() { return op; }
+        void setOperand(shared_ptr<Expression> op) { operand = op; }
+        void setOp(UnaryOperator o) { op = o; }
 
         virtual std::string toString() override;
 
