@@ -187,4 +187,4 @@ expression
       ;
 
 MULTDIVMOD : '*' | '/' | '%' ; // remplacer par non terminal ? (en minuscules)
-plusMinusSymbol : '+' | '-' ; // remplacer par non terminal ? (en minuscules)
+plusMinusSymbol : '+' | '-' ;
