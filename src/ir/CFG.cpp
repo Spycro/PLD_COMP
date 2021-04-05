@@ -1,9 +1,37 @@
 #include "../../include/ir/CFG.h"
 
+#include "ast/expression/Affectation.h"
+#include "ast/expression/Const.h"
+#include <memory>
+#include "ir/instructions/Copy.h"
+#include "type/Int64.h"
 
 CFG::CFG(Function* ast_, std::string label_, Type* type_, std::vector<SymbolTableElement> params_) : ast(ast_), label(label_), type(type_), params(params_) {}
 
-void CFG::add_bb(BasicBlock* bb){
+CFG::CFG(shared_ptr<Function> function){
+    label = "main"; // todo
+    type = &INTTYPE64; //todo
+
+    shared_ptr<Block> block = function->getCode();
+    list<shared_ptr<Variable>> parameters = function->getParameters();
+    shared_ptr<Scope> scope = block->getScope();
+    for(auto var : parameters){
+        myParams.push_back(scope->getSymbolicTable()->getSymbol(var->getSymbol()));
+        incrementVariableCount(1);
+    }
+
+    current_bb = std::shared_ptr<BasicBlock>(new BasicBlock(this, scope));
+    bbs.push_back(current_bb);
+    std::cout<< block->getInstructions().size() <<std::endl;
+    for(auto instr : block->getInstructions()){
+        inspectInstruction(instr);
+    }
+}
+
+
+
+
+void CFG::add_bb(shared_ptr<BasicBlock> bb){
     bbs.push_back(bb);    
 }
 void CFG::incrementVariableCount(int cnt){
@@ -13,9 +41,8 @@ void CFG::incrementVariableCount(int cnt){
 void CFG::gen_asm(std::ostream& o){
     gen_asm_prologue(o);
 
-    vector<BasicBlock*>::iterator it;
-    for(it = bbs.begin(); it != bbs.end(); it++){
-        (*it)->gen_asm(o);
+    for(auto it : bbs){
+        it->gen_asm(o);
     }
 
     gen_asm_epilogue(o);
@@ -72,4 +99,25 @@ void CFG::gen_asm_epilogue(std::ostream& o) {
     o << "\taddq $" << (numberOfVariables)*8 << ", %rsp #remove all local variables from stack"<< std::endl
         << "\tpopq %rbp #restore rbp from stack\n"
         << "\tret\n";
+}
+
+std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Instruction> instr){
+    std::string instrType = instr->toString();//todo please make this an enum
+    if(instrType == "Affectation"){
+        shared_ptr<Affectation> affectation = std::dynamic_pointer_cast<Affectation>(instr);
+        std::string symbol = affectation->getSymbol();
+        shared_ptr<Expression> value = affectation->getValue();
+        shared_ptr<Copy> copy (new Copy(nullptr,*inspectInstruction(value),*current_bb->getScope()->getSymbolicTable()->getSymbol(symbol)));
+        current_bb->add_IRInstr(copy);
+    }else if(instrType == "Unary"){
+
+    }else if(instrType == "Const"){
+        shared_ptr<Const> myConst = std::dynamic_pointer_cast<Const>(instr);
+        return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getValue())));
+    }else if(instrType == "Variable"){
+
+    }else{
+        
+    }
+    return nullptr;
 }

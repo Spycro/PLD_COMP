@@ -8,6 +8,7 @@
 #include "antlr4-generated/ifccLexer.h"
 #include "antlr4-generated/ifccParser.h"
 #include "antlr4-runtime.h"
+#include "ir/IR.h"
 
 using namespace antlr4;
 using namespace std;
@@ -60,6 +61,10 @@ int main(int argn, const char **argv) {
 
   shared_ptr<Node> rootNode = visitor.getRootNode();
   PrintAst(rootNode, 0);
+  
+  //IR
+  IR myIR(rootNode);
+  
 
   return 0;
 }

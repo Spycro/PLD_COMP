@@ -28,9 +28,6 @@
 #include "SymbolTable.h"
 #include "ir/ASMConstants.h"
 
-Void VOIDTYPE;
-Int64 INTTYPE64;
-Int64 INTTYPE32;
 
 void test_pointers(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));

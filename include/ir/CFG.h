@@ -7,6 +7,7 @@
 #include "type/Type.h"
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 /** The class for the control flow graph, also includes the symbol table */
@@ -21,13 +22,14 @@
 class CFG {
  public:
 	CFG(Function* ast, std::string label_, Type* type, std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>());
+	CFG(shared_ptr<Function>  function);
 
 	Function* ast; /**< The AST this CFG comes from */
 	std::string label; //TODO : a modifier!! -> Function
 	Type* type; //TODO : a modifier!! -> Function
-	std::vector<SymbolTableElement> params;
+	std::vector<SymbolTableElement> params; //todo dont forget Richard to remove
 	
-	void add_bb(BasicBlock* bb); 
+	void add_bb(shared_ptr<BasicBlock> bb); 
 
 	void incrementVariableCount(int cnt);
 
@@ -36,13 +38,14 @@ class CFG {
 	std::string IR_reg_to_asm(std::string reg); /**< helper method: inputs a IR reg or input variable, returns e.g. "-24(%rbp)" for the proper value of 24 */	;
 
 	// basic block management
-	BasicBlock* current_bb;
+	std::shared_ptr<BasicBlock> current_bb;
 
 private :
 	void gen_asm_prologue(std::ostream& o);
 	void gen_asm_epilogue(std::ostream& o);
-
- protected:		
-	std::vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/	
+	std::shared_ptr<SymbolTableElement> inspectInstruction(shared_ptr<Instruction>);
+ protected:	
+	std::list<shared_ptr<SymbolTableElement>> myParams;
+	std::list <std::shared_ptr<BasicBlock>> bbs; /**< all the basic blocks of this CFG*/	
 	int numberOfVariables = 0; //Number of temp variables in the function
 };
