@@ -23,6 +23,7 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
                 return "-" + std::to_string(memoryOffset) + "(%rbp)";
             }
         }
+        int getSize(){return type->getSize();}
     private:
         Type* type;
         bool isSet;

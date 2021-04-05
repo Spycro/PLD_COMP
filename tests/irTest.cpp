@@ -8,9 +8,31 @@
 #include "type/Int64.h"
 #include "type/Void.h"
 #include "SymbolTable.h"
+#include "ir/ASMConstants.h"
 
 Void VOIDTYPE;
 Int64 INTTYPE64;
+Int64 INTTYPE32;
+
+void test_operations(){
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    BasicBlock bb0(firstCFG, nullptr);
+
+    SymbolTableElement input1(&INTTYPE64, "2");
+    SymbolTableElement input2(&INTTYPE64, "2");
+    SymbolTableElement symbol2(&INTTYPE64, false, false,8);
+    SymbolTableElement output(&INTTYPE64, false, false,16);
+
+    Copy instr0(&bb0, input1,output);
+    Copy instr1(&bb0, output,RAX_REGISTER);
+    bb0.add_IRInstr(&instr0);
+    bb0.add_IRInstr(&instr1);
+
+    firstCFG->add_bb(&bb0);
+
+    firstCFG->gen_asm(std::cout);
+}
 
 void test_call_many_params(){
     SymbolTableElement param1(&INTTYPE64, "1");
@@ -39,7 +61,7 @@ void test_call_many_params(){
     SymbolTableElement tempOutput(&INTTYPE64,true,true,8);
     BasicBlock bb0(firstCFG, nullptr);
     Call callInstr(&bb0, secondCFG,params, tempOutput);
-    Copy copyInstrReturnMain(&bb0,tempOutput ,SymbolTableElement(&INTTYPE64, "eax", true));
+    Copy copyInstrReturnMain(&bb0,tempOutput ,RAX_REGISTER);
     bb0.add_IRInstr(&callInstr);
     bb0.add_IRInstr(&copyInstrReturnMain);
 
@@ -47,7 +69,7 @@ void test_call_many_params(){
     firstCFG->incrementVariableCount(1);
 
     BasicBlock bb1(secondCFG,nullptr);
-    Copy copyInstr(&bb0,funParam7 ,SymbolTableElement(&INTTYPE64, "eax", true));
+    Copy copyInstr(&bb0,funParam7 ,RAX_REGISTER);
     bb1.add_IRInstr(&copyInstr);
 
     secondCFG->add_bb(&bb1);
@@ -180,5 +202,6 @@ int main(){
     //test_if_condition();
     //test_if_else_condition();
     //test_call();
-    test_call_many_params();
+    //test_call_many_params();
+    test_operations();
 }

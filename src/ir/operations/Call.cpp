@@ -14,22 +14,22 @@ void Call::gen_asm(std::ostream &o){
     while(i >=0){
         switch(i){
             case 0 :
-                o   << "\tmovl " << params.at(i).getAsm() << ", %edi" <<std::endl;
+                o   << "\tmovq " << params.at(i).getAsm() << ", %rdi" <<std::endl;
                 break;
             case 1 :
-                o   << "\tmovl " << params.at(i).getAsm() << ", %esi" <<std::endl;
+                o   << "\tmovq " << params.at(i).getAsm() << ", %rsi" <<std::endl;
                 break;
             case 2 :
-                o   << "\tmovl " << params.at(i).getAsm() << ", %edx" <<std::endl;
+                o   << "\tmovq " << params.at(i).getAsm() << ", %rdx" <<std::endl;
                 break;
             case 3 :
-                o   << "\tmovl " << params.at(i).getAsm() << ", %ecx" <<std::endl;
+                o   << "\tmovq " << params.at(i).getAsm() << ", %rcx" <<std::endl;
                 break;
             case 4 :
-                o   << "\tmovl " << params.at(i).getAsm() << ", %r8d" <<std::endl;
+                o   << "\tmovq " << params.at(i).getAsm() << ", %r8" <<std::endl;
                 break;
             case 5:
-                o   << "\tmovl " << params.at(i).getAsm() << ", %r9d" <<std::endl;
+                o   << "\tmovq " << params.at(i).getAsm() << ", %r9" <<std::endl;
                 break;
         }
         --i;

@@ -33,8 +33,8 @@ void CFG::gen_asm_prologue(std::ostream& o) {
 
     int stackPointer = 16 + (i-6)*8;
     while(i>=6){
-        o << "\tmovl " << stackPointer<< "(%rbp), %eax" << std::endl;
-        o << "\tmovl %eax, " << params.at(i).getAsm()<<std::endl;
+        o << "\tmovq " << stackPointer<< "(%rbp), %rax" << std::endl;
+        o << "\tmovq %rax, " << params.at(i).getAsm()<<std::endl;
         stackPointer -= 8;
         --i;
     }
@@ -42,22 +42,22 @@ void CFG::gen_asm_prologue(std::ostream& o) {
     while(i >=0){
         switch(i){
             case 0 :
-                o   << "\tmovl %edi, "  << params.at(i).getAsm() <<std::endl;
+                o   << "\tmovq %rdi, "  << params.at(i).getAsm() <<std::endl;
                 break;
             case 1 :
-                o   << "\tmovl %esi, "  << params.at(i).getAsm() <<std::endl;
+                o   << "\tmovq %rsi, "  << params.at(i).getAsm() <<std::endl;
                 break;
             case 2 :
-                o   << "\tmovl %edx, "  << params.at(i).getAsm() <<std::endl;
+                o   << "\tmovq %rdx, "  << params.at(i).getAsm() <<std::endl;
                 break;
             case 3 :
-                o   << "\tmovl %ecx, "  << params.at(i).getAsm() <<std::endl;
+                o   << "\tmovq %rcx, "  << params.at(i).getAsm() <<std::endl;
                 break;
             case 4 :
-                o   << "\tmovl %r8d, "  << params.at(i).getAsm() <<std::endl;
+                o   << "\tmovq %r8, "  << params.at(i).getAsm() <<std::endl;
                 break;
             case 5:
-                o   << "\tmovl %r9d, "  << params.at(i).getAsm() <<std::endl;
+                o   << "\tmovq %r9, "  << params.at(i).getAsm() <<std::endl;
                 break;
         }
         --i;

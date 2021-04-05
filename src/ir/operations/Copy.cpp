@@ -11,6 +11,6 @@ void Copy::gen_asm(std::ostream &o) {
     dest = d.getAsm();
 
 
-    o << "\tmovl " << val << ", " << dest << std::endl;
+    o << "\tmovq " << val << ", " << dest << std::endl;
 
 }
