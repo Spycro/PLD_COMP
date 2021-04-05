@@ -174,7 +174,20 @@ antlrcpp::Any Visitor::visitForInstr(ifccParser::ForInstrContext *context) UNHAN
 
 antlrcpp::Any Visitor::visitBitwiseAnd_assign(ifccParser::BitwiseAnd_assignContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) {
+  TRACE
+  shared_ptr<Expression> unary = make_shared<Unary>();
+  parentNode->getChildren().push_back(unary);
+  unary->setParent(parentNode);
+
+  unary->setOp(PREDECR);
+  shared_ptr<Expression> operand = make_shared<Variable>();
+  operand->setParent(unary);
+  unary->getChildren().push_back(operand);
+  operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
+
+  return antlrcpp::Any(unary);
+}
 
 antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) UNHANDLED
 
@@ -330,7 +343,20 @@ antlrcpp::Any Visitor::visitPlusMinus(ifccParser::PlusMinusContext *context) {
 
 antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) {
+  TRACE
+  shared_ptr<Expression> unary = make_shared<Unary>();
+  parentNode->getChildren().push_back(unary);
+  unary->setParent(parentNode);
+
+  unary->setOp(PREINCR);
+  shared_ptr<Expression> operand = make_shared<Variable>();
+  operand->setParent(unary);
+  unary->getChildren().push_back(operand);
+  operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
+
+  return antlrcpp::Any(unary);
+}
 
 antlrcpp::Any Visitor::visitSizeof(ifccParser::SizeofContext *context) UNHANDLED
 

@@ -5,5 +5,7 @@ int main() {
    b = 5 / (3 + 7);
    //int c = a+b;
    b--;
+   --b;
+   --a;
    return a++;
 }
