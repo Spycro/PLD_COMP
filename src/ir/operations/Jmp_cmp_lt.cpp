@@ -2,16 +2,16 @@
 
 #include "ir/BasicBlock.h"
 
-Jmp_cmp_lt::Jmp_cmp_lt(BasicBlock* bb_, SymbolTableElement rightParameter_, SymbolTableElement leftParameter_) : IRInstr(bb_), rightParameter(rightParameter_), leftParameter(leftParameter_){}
+Jmp_cmp_lt::Jmp_cmp_lt(BasicBlock* bb_, SymbolTableElement leftParameter_, SymbolTableElement rightParameter_) : IRInstr(bb_), leftParameter(leftParameter_), rightParameter(rightParameter_){}
 
 
 void Jmp_cmp_lt::gen_asm(std::ostream &o) {
-
-    std::string valRightParameter, valLeftParameter;
-
-    valRightParameter = rightParameter.getAsm();
+    
+    std::string valLeftParameter, valRightParameter;
 
     valLeftParameter = leftParameter.getAsm();
+
+    valRightParameter = rightParameter.getAsm();   
 
     o << "\tmovq " << valLeftParameter << ", %rax" << std::endl; // We need one parameter to be a register
     o << "\tcmpq " << valRightParameter << ", %rax" << std::endl;

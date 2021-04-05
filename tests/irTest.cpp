@@ -101,16 +101,16 @@ void test_cmp(){
 
     BasicBlock bb0(firstCFG, nullptr);
 
-    SymbolTableElement input1(&INTTYPE64, "10");
+    SymbolTableElement input1(&INTTYPE64, "15");
     //SymbolTableElement input1(&INTTYPE64,false, false, 8);
 
-    SymbolTableElement input2(&INTTYPE64, "11");
+    SymbolTableElement input2(&INTTYPE64, "14");
     SymbolTableElement dest(&INTTYPE64, false, false, 16);
 
-    /* Copy instr0(&bb0, input2, input1);
+    /* Copy instr0(&bb0, SymbolTableElement(&INTTYPE64,"15"), input1);
     bb0.add_IRInstr(&instr0); */
 
-    Cmp_gt instr1(&bb0,input1, input2, dest);
+    Cmp_ge instr1(&bb0,input1, input2, dest);
     Copy instr2(&bb0, dest, RAX_REGISTER);    
     bb0.add_IRInstr(&instr1);
     bb0.add_IRInstr(&instr2);
@@ -229,7 +229,7 @@ void test_if_condition() {
 
     SymbolTableElement res(&INTTYPE64, false, false, 8);
 
-    Jmp_cmp_gt condJmp1(&bb0, SymbolTableElement(&INTTYPE64, "6"), SymbolTableElement(&INTTYPE64, "8"));
+    Jmp_cmp_le condJmp1(&bb0, SymbolTableElement(&INTTYPE64, "8"), SymbolTableElement(&INTTYPE64, "10"));
     Copy copyInstr1(&bb1, SymbolTableElement(&INTTYPE64, "2"), res);
     Copy copyInstr2(&bb2, res, RAX_REGISTER);
 
@@ -298,4 +298,5 @@ int main(){
     //test_operations_sub_add();
     //test_operations_mul_div();
     test_pointers();
+    //test_cmp();
 }

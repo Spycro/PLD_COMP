@@ -2,16 +2,16 @@
 
 #include "ir/BasicBlock.h"
 
-Cmp_lt::Cmp_lt(BasicBlock* bb_, SymbolTableElement rightParameter_, SymbolTableElement leftParameter_, SymbolTableElement d_) : IRInstr(bb_), rightParameter(rightParameter_), leftParameter(leftParameter_), d(d_){}
+Cmp_lt::Cmp_lt(BasicBlock* bb_, SymbolTableElement leftParameter_, SymbolTableElement rightParameter_, SymbolTableElement d_) : IRInstr(bb_), leftParameter(leftParameter_), rightParameter(rightParameter_), d(d_){}
 
 
 void Cmp_lt::gen_asm(std::ostream &o) {
 
-    std::string valRightParameter, valLeftParameter, valD;
-
-    valRightParameter = rightParameter.getAsm();
+    std::string valLeftParameter, valRightParameter, valD;
 
     valLeftParameter = leftParameter.getAsm();
+
+    valRightParameter = rightParameter.getAsm();  
 
     valD = d.getAsm();
     o << "\tmovq " << valLeftParameter << ", %rax" << std::endl; // We need one parameter to be a register

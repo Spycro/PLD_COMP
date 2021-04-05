@@ -5,10 +5,10 @@
 class Cmp_gt : public IRInstr
 {
 public:
-    Cmp_gt(BasicBlock *bb, SymbolTableElement rightParameter, SymbolTableElement leftParameter, SymbolTableElement d);
+    Cmp_gt(BasicBlock *bb, SymbolTableElement leftParameter, SymbolTableElement rightParameter, SymbolTableElement d);
 
     void gen_asm(std::ostream &o) override;
 
 private:
-    SymbolTableElement rightParameter, leftParameter, d; //rightParameter the reference value, y the value to compare to de reference value, d the destination value
+    SymbolTableElement leftParameter, rightParameter, d; //leftParameter the value to compare to de reference value, rightParameter the reference value, d the destination value
 };
