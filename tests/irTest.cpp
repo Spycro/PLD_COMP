@@ -8,6 +8,7 @@
 #include "ir/operations/Cmp_gt.h"
 #include "ir/operations/Cmp_le.h"
 #include "ir/operations/Cmp_lt.h"
+#include "ir/operations/Sub.h"
 #include "ir/operations/Copy.h"
 #include "ir/operations/Call.h"
 #include "ir/operations/Add.h"
@@ -33,12 +34,15 @@ void test_operations(){
 
     SymbolTableElement input1(&INTTYPE64, "2");
     SymbolTableElement input2(&INTTYPE64, "10");
+    SymbolTableElement input3(&INTTYPE64, "4");
     SymbolTableElement output(&INTTYPE64, false, false,8);
 
     Add instr0(&bb0, input1, input2, output);
-    Copy instr1(&bb0, output,RAX_REGISTER);
+    Sub instr1(&bb0, output, input3, output);
+    Copy instr2(&bb0, output,RAX_REGISTER);
     bb0.add_IRInstr(&instr0);
     bb0.add_IRInstr(&instr1);
+    bb0.add_IRInstr(&instr2);
 
     firstCFG->add_bb(&bb0);
 
