@@ -107,7 +107,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Instructi
         shared_ptr<Affectation> affectation = std::dynamic_pointer_cast<Affectation>(instr);
         std::string symbol = affectation->getSymbol();
         shared_ptr<Expression> value = affectation->getValue();
-        shared_ptr<Copy> copy (new Copy(nullptr,*inspectInstruction(value),*current_bb->getScope()->getSymbolicTable()->getSymbol(symbol)));
+        shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(value),*current_bb->getScope()->getSymbolicTable()->getSymbol(symbol)));
         current_bb->add_IRInstr(copy);
     }else if(instrType == "Unary"){
 
