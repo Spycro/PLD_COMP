@@ -21,6 +21,8 @@ public:
     void setParentScope(shared_ptr<Scope> scope){ parentScope = scope; }
 
     std::shared_ptr<SymbolTableElement> getSymbol(std::string name);
+
+    shared_ptr<SymbolTableElement> addTempVariable(Type * variableType);
     void addVariable(std::string name, Type *variableType);
     void addFunction(std::string name, Type *functionType);
     virtual std::string toString();

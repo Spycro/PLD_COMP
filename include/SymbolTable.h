@@ -16,18 +16,18 @@ class SymbolTable{
 		
 		std::shared_ptr<SymbolTableElement> getSymbol(std::string name) { return elements->at(name) ; }
 		bool symbolInTable(std::string name){return elements->find(name) != elements->end();}
+		/*
 		void putSymbol(std::string name, std::shared_ptr<SymbolTableElement> symbol) { 
 			elements->emplace(name, symbol);
-		 }
+		}*/
 
-		std::string create_new_tempvar(Type* t);
 		
 		int get_var_index(std::string name);
 		
 		Type* get_var_type(std::string name);
 
-		void addVariable (std::string variableName, Type* variableType, int mem64);
-		void addFunction (std::string functionName, Type* functionReturnType, int mem64);
+		std::shared_ptr<SymbolTableElement> addVariable (std::string variableName, Type* variableType, int mem64);
+		std::shared_ptr<SymbolTableElement> addFunction (std::string functionName, Type* functionReturnType, int mem64);
 		//const std::unique_ptr<SymbolMap> & getElements() { return elements; }
 
 	private:
