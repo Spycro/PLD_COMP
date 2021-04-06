@@ -2,9 +2,11 @@
 
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
+#include "ast/expression/Binary.h"
 #include <memory>
 #include "ir/instructions/Copy.h"
 #include "type/Int64.h"
+#include "ir/ASMConstants.h"
 
 CFG::CFG(Function* ast_, std::string label_, Type* type_, std::vector<SymbolTableElement> params_) : ast(ast_), label(label_), type(type_){}
 
@@ -120,10 +122,29 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Instructi
         shared_ptr<Const> myConst = std::dynamic_pointer_cast<Const>(instr);
         return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getValue())));
     }else if(instrType == "Variable"){
-
+        shared_ptr<Variable> myVar = std::dynamic_pointer_cast<Variable>(instr);
+        return current_bb->getScope()->getSymbol(myVar->getSymbol());
     }else if(instrType == "Binary"){
+        shared_ptr<Binary> binary = std::dynamic_pointer_cast<Binary>(instr);
+        shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(&INTTYPE64);
+        shared_ptr<SymbolTableElement> leftOp;//todo get left
+        shared_ptr<SymbolTableElement> rightOp;//todo get right
+        //do binary
+        return res;
+    }else if (instrType == "Return"){
+        shared_ptr<Instruction> instr; //todo get instruction for return
+        shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(instr),RAX_REGISTER));
+        current_bb->add_IRInstr(copy);
 
-    
+    }else if (instrType == "Block"){
+        shared_ptr<Scope> scope; //todo get scope
+        current_bb->setExit_true(std::shared_ptr<BasicBlock>(new BasicBlock(this, scope)));
+        current_bb = current_bb->getExit_true();
+        bbs.push_back(current_bb);
+        /*for(auto instr : nullptr){ //todo go through instructions
+            inspectInstruction(instr);
+        }*/
+
     }else{
         
     }

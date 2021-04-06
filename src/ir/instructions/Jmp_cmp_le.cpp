@@ -15,5 +15,5 @@ void Jmp_cmp_le::gen_asm(std::ostream &o) {
 
     o << "\tmovq " << valLeftParameter << ", %rax" << std::endl; // We need one parameter to be a register
     o << "\tcmpq " << valRightParameter << ", %rax" << std::endl;
-    o << "\tjg " << '.' << bb->exit_false->label << std::endl; 
+    o << "\tjg " << '.' << bb->getExit_false()->label << std::endl; 
 }

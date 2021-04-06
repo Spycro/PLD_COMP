@@ -15,7 +15,7 @@ std::shared_ptr<SymbolTableElement> Scope::getSymbol(std::string name){
 
 shared_ptr<SymbolTableElement> Scope::addTempVariable(Type* variableType){
     int mem64 = getMemoryCounter64AndIncrement();
-    return symbolicTable->addVariable("t" + std::to_string(mem64), variableType, mem64);
+    return symbolicTable->addVariable(std::to_string(mem64), variableType, mem64);
 }
 
 void Scope::addVariable(std::string name, Type *variableType)

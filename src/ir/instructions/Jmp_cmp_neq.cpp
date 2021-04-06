@@ -15,5 +15,5 @@ void Jmp_cmp_neq::gen_asm(std::ostream &o) {
 
     o << "\tmovq " << valY << ", %rax" << std::endl; // We need one parameter to be a register
     o << "\tcmpq " << valX << ", %rax" << std::endl;
-    o << "\tje " << '.' << bb->exit_false->label << std::endl; 
+    o << "\tje " << '.' << bb->getExit_false()->label << std::endl; 
 }

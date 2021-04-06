@@ -49,9 +49,13 @@ class BasicBlock {
 
 	std::shared_ptr<Scope> getScope();
 
+	const std::shared_ptr<BasicBlock> getExit_true();
+	const std::shared_ptr<BasicBlock> getExit_false();
+
+	void setExit_true(std::shared_ptr<BasicBlock> exit_true);
+	void setExit_false(std::shared_ptr<BasicBlock> exit_false);
+
 	// No encapsulation whatsoever here. Feel free to do better.
-	BasicBlock* exit_true;  /**< pointer to the next basic block, true branch. If nullptr, return from procedure */ 
-	BasicBlock* exit_false; /**< pointer to the next basic block, false branch. If null_ptr, the basic block ends with an unconditional jump */
 	std::string label; /**< label of the BB, also will be the label in the generated code */
 	CFG* cfg; /** < the CFG where this block belongs */
 	std::vector<shared_ptr<IRInstr>> instrs; /** < the instructions themselves. */
@@ -64,6 +68,8 @@ class BasicBlock {
 
 	bool needJmp;
  
+ 	std::shared_ptr<BasicBlock> exit_true =nullptr;  /**< pointer to the next basic block, true branch. If nullptr, return from procedure */ 
+	std::shared_ptr<BasicBlock> exit_false = nullptr; /**< pointer to the next basic block, false branch. If null_ptr, the basic block ends with an unconditional jump */
 
  
 };

@@ -14,6 +14,20 @@ void BasicBlock::add_IRInstr(shared_ptr<IRInstr> instruction){
 std::shared_ptr<Scope> BasicBlock::getScope(){
     return scope;
 }
+const std::shared_ptr<BasicBlock> BasicBlock::getExit_true(){
+    return exit_true;
+}
+const std::shared_ptr<BasicBlock> BasicBlock::getExit_false(){
+    return exit_false;
+}
+
+void BasicBlock::setExit_true(std::shared_ptr<BasicBlock> exit_true_){
+    exit_true = exit_true_;
+}
+void BasicBlock::setExit_false(std::shared_ptr<BasicBlock> exit_false_){
+    exit_false = exit_false_;
+}
+
 
 void BasicBlock::gen_asm(std::ostream &o) {
 
