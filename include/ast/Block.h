@@ -17,7 +17,7 @@ class Block : public Instruction
          : instructions(instr), scope(scope) {}
 
         inline shared_ptr<Scope> getScope() { return scope; }
-        inline vector<shared_ptr<Instruction>> getInstructions() { return instructions; }
+        inline vector<shared_ptr<Instruction>>& getInstructions() { return instructions; }
 
         void setScope(shared_ptr<Scope> s) { scope = s; }
 

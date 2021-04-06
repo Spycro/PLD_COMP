@@ -246,6 +246,7 @@ antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
+  block->getInstructions().reserve(block->getChildren().size());
   for (shared_ptr<Node> child : block->getChildren()) {
     shared_ptr<Instruction> instr = dynamic_pointer_cast<Instruction>(child);
     block->getInstructions().push_back(instr);
