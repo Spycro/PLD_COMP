@@ -41,7 +41,7 @@ void printASTRecursive(shared_ptr<Node> node, int n, ostream &o)
         printASTRecursive(child, n + 1, o);
     }
 }
-/*
+
 int main(int argn, const char **argv)
 {
     stringstream in;
@@ -81,4 +81,3 @@ int main(int argn, const char **argv)
 
     return 0;
 }
-*/
