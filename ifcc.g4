@@ -60,7 +60,7 @@ WS    : [ \t\r\n] -> channel(HIDDEN) ;
 /*
  *    keywords
  */
-TYPE : 'int' ; // TODO : add char
+TYPE : 'int' | 'char';
 VOID : 'void' ;
 BREAK : 'break' ;
 CONTINUE : 'continue' ;
