@@ -4,7 +4,7 @@
 class Break : public Instruction
 {
     public:        
-        Break() { }
+        Break() { type=BREAK; }
         
         virtual std::string toString() override;
 

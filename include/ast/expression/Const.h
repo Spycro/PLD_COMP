@@ -6,15 +6,15 @@ class Const : public Expression
 {
 
     public:
-        Const() : value(0) {}
+        Const() : constValue(0) {type=CONST;}
 
-        Const(int value) : value(value) {}
+        Const(int value) : constValue(value) {}
 
-        inline int getValue() { return value; }
-        void setValue(int value) override { this->value = value; }
+        inline int getConstValue() override { return constValue; }
+        void setConstValue(int value) override { this->constValue = value; }
         virtual std::string toString() override;
 
     private:
-        int value;
+        int constValue;
 
 };

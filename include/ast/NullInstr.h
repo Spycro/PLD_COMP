@@ -5,7 +5,7 @@
 class NullInstr : public Instruction
 {
     public:
-        NullInstr( ) {}
+        NullInstr( ) { type=NULLINSTR; }
         virtual std::string toString() override;
 
     private:
