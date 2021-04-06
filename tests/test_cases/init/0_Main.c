@@ -3,7 +3,7 @@ int main() {
    int b = 5;
    int c = a;
    a == b;
-   while(a==b){
+   while(a&&b){
       int a = 2;
    }
    //int c = a+b;
