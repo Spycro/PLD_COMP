@@ -1,12 +1,18 @@
 #pragma once
 
 #include "Type.h"
-class Int64 : public Type {
-    public :
 
-    int getSize(){
-        return 8;
-    }
-    
-};
-extern Int64 INTTYPE64;
+namespace VarType
+{
+    class Int64 : public Type {
+        public :
+
+        int getSize() override {
+            return 8;
+        }
+
+        virtual std::string toString() override { return "Int"; }
+        
+    };
+}
+extern VarType::Int64 INTTYPE64;

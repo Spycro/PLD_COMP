@@ -90,7 +90,7 @@ private:
     shared_ptr<Node> rootNode = make_shared<Node>();
 
 	shared_ptr<Node> parentNode;
-    Type* declarationType;
+    VarType::Type* declarationType;
 
     void pushScope();
     void popScope();

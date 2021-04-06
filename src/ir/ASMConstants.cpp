@@ -2,9 +2,9 @@
 #include "type/Int64.h"
 #include "type/Int32.h"
 
-Void VOIDTYPE;
-Int64 INTTYPE64;
-Int32 INTTYPE32;
+VarType::Void VOIDTYPE;
+VarType::Int64 INTTYPE64;
+VarType::Int32 INTTYPE32;
 
 SymbolTableElement RAX_REGISTER (&INTTYPE64, "rax", true);
 SymbolTableElement RBX_REGISTER (&INTTYPE64, "rbx", true);

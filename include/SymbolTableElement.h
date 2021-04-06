@@ -8,16 +8,16 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
     public:
         SymbolTableElement():type(&VOIDTYPE), isSet(false), isUsed(false), memoryOffset(0), isConst(false), constValue(""), isReg(false), regValue(""){}
 
-        SymbolTableElement(Type* type, bool isSet, bool isUsed, int isFunction, int memoryoffset) 
+        SymbolTableElement(VarType::Type* type, bool isSet, bool isUsed, int isFunction, int memoryoffset) 
 		    : type(type), isSet(isSet), isUsed(isUsed), isFunction(isFunction), memoryOffset(memoryoffset), isConst(false),constValue(""), isReg(false), regValue(""){} 
 
-        SymbolTableElement(Type* type, bool isSet, bool isUsed, int memoryoffset) 
+        SymbolTableElement(VarType::Type* type, bool isSet, bool isUsed, int memoryoffset) 
 		    : type(type), isSet(isSet), isUsed(isUsed), memoryOffset(memoryoffset), isConst(false),constValue(""), isReg(false), regValue(""){} 
 
-	    SymbolTableElement(Type* _type, std::string _constValue)
+	    SymbolTableElement(VarType::Type* _type, std::string _constValue)
 		    : type(_type), isSet(false), isUsed(false), memoryOffset(false), isConst(true), constValue(_constValue), isReg(false), regValue(""){}
 
-        SymbolTableElement(Type* _type, std::string _regValue, bool _isReg)
+        SymbolTableElement(VarType::Type* _type, std::string _regValue, bool _isReg)
 		    : type(_type), isSet(false), isUsed(false), memoryOffset(false), isConst(false), constValue(""), isReg(_isReg), regValue(_regValue){}
 
         std::string getAsm(){
@@ -31,7 +31,7 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
         }
         int getSize(){return type->getSize();}
     private:
-        Type* type;
+        VarType::Type* type;
         bool isSet;
         bool isUsed;
         int memoryOffset;

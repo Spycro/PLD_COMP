@@ -21,8 +21,8 @@
  */
 class CFG {
  public:
-	CFG(Function* ast, std::string label_, Type* type, std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>());
-	CFG(shared_ptr<Function>  function);
+	CFG(Function* ast, std::string label_, VarType::Type* type, std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>());
+	CFG(shared_ptr<Node>  function);
 
 	
 	
@@ -45,7 +45,7 @@ class CFG {
 private :
 	void gen_asm_prologue(std::ostream& o);
 	void gen_asm_epilogue(std::ostream& o);
-	std::shared_ptr<SymbolTableElement> inspectInstruction(shared_ptr<Instruction>);
+	std::shared_ptr<SymbolTableElement> inspectInstruction(shared_ptr<Node>);
  protected:	
 	std::vector<shared_ptr<SymbolTableElement>> myParams;
 	std::list <std::shared_ptr<BasicBlock>> bbs; /**< all the basic blocks of this CFG*/	
@@ -53,5 +53,5 @@ private :
 	int numberOfVariables = 0; //Number of temp variables in the function
 	Function* ast; /**< The AST this CFG comes from */
 	std::string label; //TODO : a modifier!! -> Function
-	Type* type; //TODO : a modifier!! -> Function
+	VarType::Type* type; //TODO : a modifier!! -> Function
 };

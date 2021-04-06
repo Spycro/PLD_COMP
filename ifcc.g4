@@ -70,6 +70,7 @@ WHILE : 'while' ;
 IF : 'if' ;
 ELSE : 'else' ;
 FOR : 'for' ;
+SWITCH : 'switch' ;
 MAIN : 'main' ;
 SIZEOF : 'sizeof' ;
 
@@ -77,7 +78,7 @@ SIZEOF : 'sizeof' ;
 /*
  *    names and numbers
  */
-CONST : [0-9]+ ; // TODO : add chars ('a', '\0', '\n' ...)
+CONST : [0-9]+ ; // TODO : add chars ('a', '\0', '\n' ...), add type modifier
 NAME : [a-zA-Z_][a-zA-Z0-9_]* ;
 varName : NAME ('[' expression ']')? ;
 functionCall : NAME '(' (expression (',' expression)*)? ')' ;
@@ -97,8 +98,8 @@ functionCall : NAME '(' (expression (',' expression)*)? ')' ;
 prog : (variableDeclaration ';' | functionDeclaration)* ;
 
 
-functionDeclaration // TODO : add suport for parameters 
-      : (TYPE|VOID) MAIN '(' VOID? ')' block #mainFunction
+functionDeclaration // TODO : add suport for parameters
+      : 'int' MAIN '(' VOID? ')' block #mainFunction
       | (TYPE|VOID) NAME '(' VOID? ')' block #anyFunction 
       ;
 
@@ -140,7 +141,8 @@ controlStructure
       : WHILE '(' expression ')' instruction #whileInstr
       | DO instruction WHILE '(' expression ')' ';' #doWhileInstr
       | IF '(' expression ')' instruction (ELSE instruction)? #ifInstr
-      | FOR '(' expression? ';' expression? ';' expression? ')' instruction #forInstr
+      | FOR '(' expression ';' expression ';' expression ')' instruction #forInstr // TODO : add support for expression?
+      // TODO : add switch
       ;
 
 

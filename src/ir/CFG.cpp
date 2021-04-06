@@ -8,14 +8,14 @@
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
-CFG::CFG(Function* ast_, std::string label_, Type* type_, std::vector<SymbolTableElement> params_) : ast(ast_), label(label_), type(type_){}
+CFG::CFG(Function* ast_, std::string label_, VarType::Type* type_, std::vector<SymbolTableElement> params_) : ast(ast_), label(label_), type(type_){}
 
-CFG::CFG(shared_ptr<Function> function){
+CFG::CFG(shared_ptr<Node> function){
     label = "main"; // todo
     type = &INTTYPE64; //todo
 
-    shared_ptr<Block> block = function->getCode();
-    list<shared_ptr<Variable>> parameters = function->getParameters();
+    shared_ptr<Node> block = function->getCode();
+    list<shared_ptr<Node>> parameters = function->getParameters();
     shared_ptr<Scope> scope = block->getScope();
     for(auto var : parameters){
         myParams.push_back(scope->getSymbol(var->getSymbol()));
@@ -108,19 +108,29 @@ void CFG::gen_asm_epilogue(std::ostream& o) {
         << "\tret\n";
 }
 
-std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Instruction> instr){
+std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> instr){
     std::string instrType = instr->toString();//todo please make this an enum
+
+
+    std::cout<< instrType << std::endl;
+
     if(instrType == "Affectation"){
-        shared_ptr<Affectation> affectation = std::dynamic_pointer_cast<Affectation>(instr);
-        std::string symbol = affectation->getSymbol();
-        shared_ptr<Expression> value = affectation->getValue();
-        shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(value),*current_bb->getScope()->getSymbol(symbol)));
+        std::string symbol = instr->getSymbol();
+        shared_ptr<Node> value = instr->getValue();
+
+        std::shared_ptr<SymbolTableElement> input = inspectInstruction(value);
+
+        
+        Copy* c = new Copy(current_bb.get(),* input,*(current_bb->getScope()->getSymbol(symbol)));
+
+        shared_ptr<Copy> copy (c);
         current_bb->add_IRInstr(copy);
     }else if(instrType == "Unary"){
 
     }else if(instrType == "Const"){
         shared_ptr<Const> myConst = std::dynamic_pointer_cast<Const>(instr);
-        return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getValue())));
+        std::cout<< myConst->getConstValue()<< std::endl;
+        return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getConstValue())));
     }else if(instrType == "Variable"){
         shared_ptr<Variable> myVar = std::dynamic_pointer_cast<Variable>(instr);
         return current_bb->getScope()->getSymbol(myVar->getSymbol());
@@ -132,8 +142,8 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Instructi
         //do binary
         return res;
     }else if (instrType == "Return"){
-        shared_ptr<Instruction> instr; //todo get instruction for return
-        shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(instr),RAX_REGISTER));
+        shared_ptr<Node> valToReturn = instr->getValue(); //todo get instruction for return
+        shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(valToReturn),RAX_REGISTER));
         current_bb->add_IRInstr(copy);
 
     }else if (instrType == "Block"){

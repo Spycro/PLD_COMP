@@ -1,11 +1,11 @@
 int main() {
    int a = 5;
-   int b = a;
-   int c = b * a;
-   b = 5 / (3 + 7);
+   int b = 5;
+   int c = a;
+   a == b;
+   while(a==b){
+      int a = 2;
+   }
    //int c = a+b;
-   b--;
-   --b;
-   --a;
    return a++;
 }

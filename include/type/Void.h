@@ -1,13 +1,17 @@
 #pragma once
 
 #include "Type.h"
-class Void : public Type {
-    public :
+namespace VarType
+{
+    class Void : public Type {
+        public :
 
-    int getSize(){
-        return 0;
-    }
-    
-};
+        int getSize() override {
+            return 0;
+        }
 
-extern Void VOIDTYPE;
+        virtual std::string toString() override { return "Void"; }
+        
+    };
+}
+extern VarType::Void VOIDTYPE;
