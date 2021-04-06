@@ -105,10 +105,6 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   return antlrcpp::Any(funct);
 }
 
-antlrcpp::Any Visitor::visitParamDeclaration(ifccParser::ParamDeclarationContext *context) UNHANDLED
-
-antlrcpp::Any Visitor::visitParamDeclarationList(ifccParser::ParamDeclarationListContext *context) UNHANDLED
-
 antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) {
   TRACE
 
@@ -674,8 +670,6 @@ antlrcpp::Any Visitor::visitLogicalOr(ifccParser::LogicalOrContext *context) UNH
 antlrcpp::Any Visitor::visitTernary(ifccParser::TernaryContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitPlusMinusSymbol(ifccParser::PlusMinusSymbolContext *context) UNHANDLED
-
-
 
 void Visitor::pushScope() {
   TRACE

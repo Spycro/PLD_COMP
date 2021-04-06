@@ -26,8 +26,6 @@ public:
     virtual antlrcpp::Any visitProg(ifccParser::ProgContext *context) override;
     virtual antlrcpp::Any visitMainFunction(ifccParser::MainFunctionContext *context) override;
     virtual antlrcpp::Any visitAnyFunction(ifccParser::AnyFunctionContext *context) override;
-    virtual antlrcpp::Any visitParamDeclaration(ifccParser::ParamDeclarationContext *context) override;
-    virtual antlrcpp::Any visitParamDeclarationList(ifccParser::ParamDeclarationListContext *context) override;
     virtual antlrcpp::Any visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) override;
     virtual antlrcpp::Any visitVariableDeclarationList(ifccParser::VariableDeclarationListContext *context) override;
     virtual antlrcpp::Any visitNullInstr(ifccParser::NullInstrContext *context) override;
