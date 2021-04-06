@@ -17,7 +17,7 @@ class Block : public Instruction
          : instructions(instr), scope(scope) {}
 
         inline shared_ptr<Scope> getScope() override { return scope; }
-        inline vector<shared_ptr<Node>> getInstructions() override { return instructions; }
+        inline vector<shared_ptr<Node>>& getInstructions() override { return instructions; }
 
         void setScope(shared_ptr<Scope> s) override { scope = s; }
 
