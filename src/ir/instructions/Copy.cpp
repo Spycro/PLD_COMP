@@ -49,7 +49,7 @@ void Copy::gen_asm(std::ostream &o) {
             o << "\tmovl \%eax, " << dest << std::endl;
         } else if(dest.size() == 8) {
             // Extend to 64 bits with zeroes and copy in dest
-            o << "\tmovzwq " << val << ", \%rax" << std::endl;
+            o << "\tmovswq " << val << ", \%rax" << std::endl;
             o << "\tmovq \%rax, " << dest << std::endl;
         }
 
@@ -67,7 +67,7 @@ void Copy::gen_asm(std::ostream &o) {
             o << "\tmovl " << val << ", \%eax" << std::endl;
             o << "\tmovl \%eax, " << dest << std::endl;
         } else if(dest.size() == 8) {
-            o << "\tmovzwq " << val << ", \%eax" << std::endl;
+            o << "\tmovl " << val << ", \%eax" << std::endl;
             o << "\tcltq" << std::endl; // sign-extends eax to a quadword
             o << "\tmovq \%rax, " << dest << std::endl;
         }
