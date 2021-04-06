@@ -1,7 +1,7 @@
 int main() {
-    int a = 1;
-    /*if(a){
+    int a = 0;
+    if(a){
         a = 1;
-    }*/
+    }
     return a;
 }

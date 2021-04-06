@@ -9,6 +9,7 @@
 #include "ir/instructions/Mul.h"
 #include "ir/instructions/Div.h"
 #include "ir/instructions/Copy.h"
+#include "ir/instructions/Jmp_cmp_eq.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -29,13 +30,10 @@ CFG::CFG(shared_ptr<Node> function){
 
     current_bb = std::shared_ptr<BasicBlock>(new BasicBlock(this, scope));
     bbs.push_back(current_bb);
-    std::cout<< block->getInstructions().size() <<std::endl;
     for(auto instr : block->getInstructions()){
         inspectInstruction(instr);
     }
-    std::cout<< "ok " << memorySpacer<<std::endl;
     incrementSpacer(scope->getMemoryCounter64()); 
-    std::cout<< "ok " << memorySpacer<<std::endl;
 }
 
 
@@ -194,48 +192,51 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<Node> mainBlock = instr->getCode();
             shared_ptr<Node> elseBlock = instr->getCodeElse();
 
- 
-            shared_ptr<BasicBlock> startBlock = current_bb;
+            
 
-            std::cout<< mainBlock->toString()<<std::endl;
-            shared_ptr<Scope> scp = mainBlock->getScope();
-            std::cout<< mainBlock->toString()<<std::endl;
+            //create blocks
+            shared_ptr<BasicBlock> startBlock = current_bb;
             shared_ptr<BasicBlock> mainBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
             shared_ptr<BasicBlock> endBlock(new BasicBlock(this, current_bb->getScope()));
             
-
+            //bind blocks
             startBlock->setExit_true(mainBasicBlock);
-            
-            
             mainBasicBlock->setExit_true(endBlock);
-
-            if(elseBlock == nullptr){
+            if(elseBlock->getType() == NodeType::NULLINSTR){
                 startBlock->setExit_false(endBlock);
             }else if(elseBlock->getType() == NodeType::BLOCK){
                 shared_ptr<BasicBlock> elseBasicBlock(new BasicBlock(this,elseBlock->getScope(),true));
-
                 startBlock->setExit_false(elseBasicBlock);
                 elseBasicBlock->setExit_true(endBlock);
+            }else{
+                shared_ptr<BasicBlock> elseBasicBlock(new BasicBlock(this,elseBlock->getScope(),true));
+                startBlock->setExit_false(elseBasicBlock);
+            }
 
-                add_bb(mainBasicBlock);
+            //instruction
+            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(startBlock.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
+            current_bb->add_IRInstr(jmpCmp);
 
+            //deal with else
+            if(elseBlock->getType() == NodeType::NULLINSTR){
+            }else if(elseBlock->getType() == NodeType::BLOCK){
+                add_bb(startBlock->getExit_false());
                 for(auto InstrInBlock : elseBlock->getInstructions()){ 
                     inspectInstruction(InstrInBlock);
                 }
             }else{
-                shared_ptr<BasicBlock> elseBasicBlock(new BasicBlock(this,elseBlock->getScope(),true));
-                startBlock->setExit_false(elseBasicBlock);
-                add_bb(elseBasicBlock);
+                add_bb(startBlock->getExit_false());
                 inspectInstruction(elseBlock);
                 current_bb->setExit_true(endBlock);
             }
 
+            //run main block
             add_bb(mainBasicBlock);
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
                 inspectInstruction(InstrInBlock);
             }
 
-
+            //switch to end block
             add_bb(endBlock);
         }
         break;
