@@ -39,7 +39,11 @@ antlrcpp::Any Visitor::visitAxiom(ifccParser::AxiomContext *context) {
   return visitChildren(context);
 }
 
-antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) {
+  TRACE
+
+  return visitChildren(context);
+}
 
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDLED
 
@@ -98,7 +102,7 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = funct; //setting parent to current node before anything else
-  visitChildren(context);
+  visit(context->block()); //TODO : visitchildren
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
