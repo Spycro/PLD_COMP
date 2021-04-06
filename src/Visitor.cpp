@@ -150,6 +150,9 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
 
     // set current node attributes
     shared_ptr<Node> val = tmp.as<shared_ptr<Node>>();
+    cout<<"TESTING VALUE WE GET TO CHECK SMT" << endl;
+    PRINT(val->getConstValue())
+    PRINT(val->getSymbol())
     affectation->setValue(move(val));
 
     return antlrcpp::Any(affectation);
