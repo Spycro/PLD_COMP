@@ -9,21 +9,21 @@ class Block : public Instruction
 {
     public:
         Block() 
-        : scope(nullptr) {}
+        : scope(nullptr) { type=BLOCK; }
 
         Block(shared_ptr<Scope> scope) 
             : scope(move(scope)) {}
-        Block( shared_ptr<Scope> scope, vector<shared_ptr<Instruction>> instr) 
+        Block( shared_ptr<Scope> scope, vector<shared_ptr<Node>> instr) 
          : instructions(instr), scope(scope) {}
 
-        inline shared_ptr<Scope> getScope() { return scope; }
-        inline vector<shared_ptr<Instruction>>& getInstructions() { return instructions; }
+        inline shared_ptr<Scope> getScope() override { return scope; }
+        inline vector<shared_ptr<Node>>& getInstructions() override { return instructions; }
 
-        void setScope(shared_ptr<Scope> s) { scope = s; }
+        void setScope(shared_ptr<Scope> s) override { scope = s; }
 
         virtual std::string toString() override;
-        inline bool isBlock() override { return true; }
     private:
-        vector<shared_ptr<Instruction>> instructions;
+        vector<shared_ptr<Node>> instructions;
         shared_ptr<Scope> scope;
+
 };

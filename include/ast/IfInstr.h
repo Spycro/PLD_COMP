@@ -8,13 +8,13 @@ class IfInstr : public ControlStructure
 {
     public:
         IfInstr() 
-            : codeElse(nullptr) {}
+            : codeElse(nullptr) { type=INFINSTR; }
 
-        IfInstr( shared_ptr<Instruction> codeElse ) 
+        IfInstr( shared_ptr<Node> codeElse ) 
             : codeElse(codeElse) { }
 
-        inline shared_ptr<Instruction>& getCodeElse() { return codeElse; }
+        inline shared_ptr<Node> getCodeElse() override { return codeElse; }
         virtual std::string toString() override;
     private:
-        shared_ptr<Instruction> codeElse;
+        shared_ptr<Node> codeElse;
 };

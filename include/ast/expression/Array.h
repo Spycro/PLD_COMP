@@ -10,16 +10,16 @@ class Array : public Expression
 
 public:
     Array() 
-        : position(nullptr) {}
+        : position(nullptr) {type=ARRAY;}
 
-    Array(string symbol, shared_ptr<Expression> position) : symbol(symbol), position(position) {}
+    Array(string symbol, shared_ptr<Node> position) : symbol(symbol), position(position) {}
 
 
-    inline string& getSymbol() { return symbol; }
-    inline shared_ptr<Expression> getPosition() { return position; }
+    inline string& getSymbol() override { return symbol; }
+    inline shared_ptr<Node> getPosition() override { return position; }
     virtual std::string toString() override;
 
 private:
     string symbol;
-    shared_ptr<Expression> position;
+    shared_ptr<Node> position;
 };

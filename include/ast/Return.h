@@ -9,14 +9,14 @@ using namespace std;
 class Return : public Instruction
 {
     public:
-        Return() : value(nullptr) {}
+        Return() : value(nullptr) { type=RETURN; }
 
-        Return(shared_ptr<Expression> value) : value(value) { }
+        Return(shared_ptr<Node> value) : value(value) { }
 
-        shared_ptr<Expression> getValue() { return value; }
-        inline void setValue(shared_ptr<Expression> value) { this->value = value; }
+        shared_ptr<Node> getValue() override { return value; }
+        inline void setValue(shared_ptr<Node> value) override { this->value = value; }
         virtual std::string toString() override;
     private:
-        shared_ptr<Expression> value;
+        shared_ptr<Node> value;
 
 };
