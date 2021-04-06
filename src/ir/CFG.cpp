@@ -16,7 +16,7 @@ CFG::CFG(shared_ptr<Function> function){
     list<shared_ptr<Variable>> parameters = function->getParameters();
     shared_ptr<Scope> scope = block->getScope();
     for(auto var : parameters){
-        myParams.push_back(scope->getSymbolicTable()->getSymbol(var->getSymbol()));
+        myParams.push_back(scope->getSymbol(var->getSymbol()));
         incrementVariableCount(1);
     }
 
@@ -112,7 +112,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Instructi
         shared_ptr<Affectation> affectation = std::dynamic_pointer_cast<Affectation>(instr);
         std::string symbol = affectation->getSymbol();
         shared_ptr<Expression> value = affectation->getValue();
-        shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(value),*current_bb->getScope()->getSymbolicTable()->getSymbol(symbol)));
+        shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(value),*current_bb->getScope()->getSymbol(symbol)));
         current_bb->add_IRInstr(copy);
     }else if(instrType == "Unary"){
 
@@ -121,6 +121,9 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Instructi
         return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getValue())));
     }else if(instrType == "Variable"){
 
+    }else if(instrType == "Binary"){
+
+    
     }else{
         
     }

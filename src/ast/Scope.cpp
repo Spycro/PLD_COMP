@@ -1,16 +1,38 @@
 #include "ast/Scope.h"
 
+
+std::shared_ptr<SymbolTableElement> Scope::getSymbol(std::string name){
+    std::shared_ptr<SymbolTableElement> el;
+    if(symbolicTable->symbolInTable(name)){
+        return symbolicTable->getSymbol(name);
+    }else if(parentScope == nullptr){
+        return nullptr;
+    }else{
+        return parentScope->getSymbol(name);
+    }
+    
+}
+
 void Scope::addVariable(std::string name, Type *variableType)
 {
-    symbolicTable->addVariable(name, variableType);
+    
+    symbolicTable->addVariable(name, variableType, getMemoryCounter64AndIncrement());
 }
 
 void Scope::addFunction(std::string name, Type *functionType)
 {
-    symbolicTable->addFunction(name, functionType);
+    symbolicTable->addFunction(name, functionType, getMemoryCounter64AndIncrement());
 }
 
 std::string Scope::toString()
 {
     return "Scope";
+}
+
+int Scope::getMemoryCounter64AndIncrement(){
+    if(parentScope != nullptr){
+        return parentScope->getMemoryCounter64AndIncrement();
+    }
+    memoryCounter64 += 8;
+    return memoryCounter64;
 }
