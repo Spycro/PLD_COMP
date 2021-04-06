@@ -160,6 +160,8 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<SymbolTableElement> rightOp = inspectInstruction(instr->getOperand2());
             shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(&INTTYPE64);
             shared_ptr<IRInstr> op;
+            std::cout << instr->getOp() <<std::endl;
+
             switch (instr->getOp())
             {
             case BinaryOperator::PLUS:
@@ -182,7 +184,53 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             return res;
         }
         break;
+    case NodeType::INFINSTR:
+        {
+            shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
+            shared_ptr<Node> mainBlock = instr->getCode();
+            shared_ptr<Node> elseBlock = instr->getCodeElse();
 
+ 
+            shared_ptr<BasicBlock> startBlock = current_bb;
+            shared_ptr<BasicBlock> mainBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
+            shared_ptr<BasicBlock> endBlock(new BasicBlock(this, current_bb->getScope()));
+            
+
+            startBlock->setExit_true(mainBasicBlock);
+            
+            
+            mainBasicBlock->setExit_true(endBlock);
+
+            if(elseBlock == nullptr){
+                startBlock->setExit_false(endBlock);
+            }else if(elseBlock->getType() == NodeType::BLOCK){
+                shared_ptr<BasicBlock> elseBasicBlock(new BasicBlock(this,elseBlock->getScope(),true));
+
+                startBlock->setExit_false(elseBasicBlock);
+                elseBasicBlock->setExit_true(endBlock);
+
+                add_bb(mainBasicBlock);
+
+                for(auto InstrInBlock : elseBlock->getInstructions()){ 
+                    inspectInstruction(InstrInBlock);
+                }
+            }else{
+                shared_ptr<BasicBlock> elseBasicBlock(new BasicBlock(this,elseBlock->getScope(),true));
+                startBlock->setExit_false(elseBasicBlock);
+                add_bb(elseBasicBlock);
+                inspectInstruction(elseBlock);
+                current_bb->setExit_true(endBlock);
+            }
+
+            add_bb(mainBasicBlock);
+            for(auto InstrInBlock : mainBlock->getInstructions()){ 
+                inspectInstruction(InstrInBlock);
+            }
+
+
+            add_bb(endBlock);
+        }
+        break;
     case NodeType::BLOCK:
         {
             shared_ptr<Scope> scope = instr->getScope(); //todo get scope
