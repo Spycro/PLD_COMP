@@ -81,7 +81,12 @@ SIZEOF : 'sizeof' ;
 CONST : [0-9]+ ; // TODO : add chars ('a', '\0', '\n' ...), add type modifier
 NAME : [a-zA-Z_][a-zA-Z0-9_]* ;
 varName : NAME ('[' expression ']')? ;
-functionCall : NAME '(' (expression (',' expression)*)? ')' ;
+functionCall 
+      : 'putchar(' expression ')' #putchar
+      | 'getchar(' ')' #getchar
+      | NAME '(' (expression (',' expression)*)? ')' #functionCalling
+      ;
+
 
 
 

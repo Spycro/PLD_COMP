@@ -47,7 +47,11 @@ antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) {
 
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitFunctionCall(ifccParser::FunctionCallContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitPutchar(ifccParser::PutcharContext *context) UNHANDLED
+
+antlrcpp::Any Visitor::visitGetchar(ifccParser::GetcharContext *context) UNHANDLED
+
+antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
   TRACE
@@ -687,7 +691,11 @@ antlrcpp::Any Visitor::visitPlusMinus(ifccParser::PlusMinusContext *context) {
   return antlrcpp::Any(binary);
 }
 
-antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) {
+  TRACE
+  
+  return visitChildren(context);
+}
 
 antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) {
   TRACE
