@@ -60,7 +60,7 @@ WS    : [ \t\r\n] -> channel(HIDDEN) ;
 /*
  *    keywords
  */
-TYPE : 'int' ; // TODO : add char
+type : 'int'|'char';
 VOID : 'void' ;
 BREAK : 'break' ;
 CONTINUE : 'continue' ;
@@ -100,11 +100,11 @@ prog : (variableDeclaration ';' | functionDeclaration)* ;
 
 functionDeclaration // TODO : add suport for parameters
       : 'int' MAIN '(' VOID? ')' block #mainFunction
-      | (TYPE|VOID) NAME '(' VOID? ')' block #anyFunction 
+      | (type|VOID) NAME '(' (VOID?| functionParametersDeclaration ) ')' block #anyFunction 
       ;
+functionParametersDeclaration : type NAME (',' type NAME)* ;
 
-
-variableDeclaration : TYPE variableDeclarationList ;
+variableDeclaration : type variableDeclarationList ;
 variableDeclarationList : varName ('=' expression)? (',' variableDeclarationList)? ;
 
 
@@ -160,16 +160,16 @@ expression
       | '+' expression #unaryPlus
       | ('!'|'not') expression #logicalNot
       | ('~'|'compl') expression #bitwiseNot
-      | '(' TYPE ')' expression #cast
+      | '(' type ')' expression #cast
       | '&' expression #addresOf
-      | SIZEOF '(' TYPE ')' #sizeof
+      | SIZEOF '(' type ')' #sizeof
       | expression MULTDIVMOD expression #multiplicationDivisionModulo
       | expression plusMinusSymbol expression #plusMinus
       | expression ('<<'|'>>') expression #bitwiseShift
       | expression ('<'|'<='|'>'|'>=') expression #lesserOrGreater
       | expression ('=='|'!=') expression #compare
       | expression ('&'|'bitand') expression #bitwiseAnd
-      | expression ('^'|'bitor') expression #bitwiseXor
+      | expression ('^'|'bitxor') expression #bitwiseXor
       | expression ('|'|'bitor') expression #bitwiseOr
       | expression ('&&'|'and') expression #logicalAnd
       | expression ('||'|'or') expression #logicalOr

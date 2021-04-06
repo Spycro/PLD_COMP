@@ -39,6 +39,8 @@ antlrcpp::Any Visitor::visitAxiom(ifccParser::AxiomContext *context) {
   return visitChildren(context);
 }
 
+antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) UNHANDLED
+
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitFunctionCall(ifccParser::FunctionCallContext *context) UNHANDLED
@@ -84,8 +86,8 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   TRACE
 
   // create corresponding AST node
-  std::string functionName = context->NAME()->getSymbol()->getText();
-  VarType::Type* functionType = VarType::getType(context->TYPE()->getSymbol()->getText());
+  std::string functionName = context->type()->getStart()->getText();
+  VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
   this->scope->addFunction(functionName, functionType);
   shared_ptr<Node> funct = make_shared<Function>();
   
@@ -100,16 +102,18 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
-  funct->setCode(dynamic_pointer_cast<Block>(funct->getChildren()[0]));
+  funct->setCode(funct->getChildren()[0]);
 
   return antlrcpp::Any(funct);
 }
+
+antlrcpp::Any Visitor::visitFunctionParametersDeclaration(ifccParser::FunctionParametersDeclarationContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) {
   TRACE
 
   // retrieve type
-  string type = context->TYPE()->getSymbol()->getText();
+  string type = context->type()->getStart()->getText();
   if (type == "int") {
     declarationType = new VarType::Int();
   } else if (type == "char") {
