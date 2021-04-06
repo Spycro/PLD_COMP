@@ -10,6 +10,7 @@
 #include "ir/instructions/Div.h"
 #include "ir/instructions/Copy.h"
 #include "ir/instructions/Jmp_cmp_eq.h"
+#include "ir/instructions/Jmp_cmp_neq.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -239,6 +240,35 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
 
             //switch to end block
             add_bb(endBlock);
+        }
+        break;
+    case NodeType::WHILEINSTR:
+        {
+            shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
+            shared_ptr<Node> mainBlock = instr->getCode();
+
+            //create blocks
+            shared_ptr<BasicBlock> startBlock = current_bb;
+            shared_ptr<BasicBlock> mainBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
+            shared_ptr<BasicBlock> endBlock(new BasicBlock(this, current_bb->getScope()));
+
+            //bind blocks
+            startBlock->setExit_true(mainBasicBlock);
+            mainBasicBlock->setExit_true(mainBasicBlock);
+            mainBasicBlock->setExit_false(endBlock);
+
+            //instruction
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(mainBasicBlock.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
+            mainBasicBlock->add_IRInstr(jmpCmp);
+
+            //run main block
+            add_bb(mainBasicBlock);
+            for(auto InstrInBlock : mainBlock->getInstructions()){ 
+                inspectInstruction(InstrInBlock);
+            }
+            //switch to end block
+            add_bb(endBlock);
+
         }
         break;
     case NodeType::BLOCK:
