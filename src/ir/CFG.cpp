@@ -22,8 +22,9 @@ CFG::CFG(shared_ptr<Node> function){
     list<shared_ptr<Node>> parameters = function->getParameters();
     shared_ptr<Scope> scope = block->getScope();
     for(auto var : parameters){
-        myParams.push_back(scope->getSymbol(var->getSymbol()));
-        incrementVariableCount(1);
+        shared_ptr<SymbolTableElement> param = scope->getSymbol(var->getSymbol());
+        myParams.push_back(param);
+        incrementSpacer(param->getSize());
     }
 
     current_bb = std::shared_ptr<BasicBlock>(new BasicBlock(this, scope));
@@ -32,6 +33,9 @@ CFG::CFG(shared_ptr<Node> function){
     for(auto instr : block->getInstructions()){
         inspectInstruction(instr);
     }
+    std::cout<< "ok " << memorySpacer<<std::endl;
+    incrementSpacer(scope->getMemoryCounter64()); 
+    std::cout<< "ok " << memorySpacer<<std::endl;
 }
 
 
@@ -41,8 +45,8 @@ void CFG::add_bb(shared_ptr<BasicBlock> bb){
     current_bb = bb;
     bbs.push_back(bb);    
 }
-void CFG::incrementVariableCount(int cnt){
-    numberOfVariables += cnt;
+void CFG::incrementSpacer(int cnt){
+    memorySpacer += cnt;
 }
 
 
@@ -66,7 +70,7 @@ void CFG::gen_asm_prologue(std::ostream& o) {
                << "#prologue" << std::endl //prologue
                << "\tpushq %rbp #save rbp on stack" << std::endl
                << "\tmovq %rsp, %rbp #define rbp for current function" << std::endl
-               << "\tsubq $" << (numberOfVariables)*8 << ", %rsp #Make room for "<< numberOfVariables  << " variables"<< std::endl; 
+               << "\tsubq $" << (memorySpacer) << ", %rsp #Make room for "<< memorySpacer/8  << " variables"<< std::endl; 
 
     int i = myParams.size()-1;
 
@@ -108,7 +112,7 @@ void CFG::gen_asm_epilogue(std::ostream& o) {
     if(type==&VOIDTYPE){
         o << "\tnop\n";
     }
-    o << "\taddq $" << (numberOfVariables)*8 << ", %rsp #remove all local variables from stack"<< std::endl
+    o << "\taddq $" << (memorySpacer) << ", %rsp #remove all local variables from stack"<< std::endl
         << "\tpopq %rbp #restore rbp from stack\n"
         << "\tret\n";
 }
@@ -192,6 +196,10 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
 
  
             shared_ptr<BasicBlock> startBlock = current_bb;
+
+            std::cout<< mainBlock->toString()<<std::endl;
+            shared_ptr<Scope> scp = mainBlock->getScope();
+            std::cout<< mainBlock->toString()<<std::endl;
             shared_ptr<BasicBlock> mainBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
             shared_ptr<BasicBlock> endBlock(new BasicBlock(this, current_bb->getScope()));
             

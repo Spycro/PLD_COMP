@@ -18,7 +18,9 @@ public:
 
     inline shared_ptr<Scope> getParentScope() { return parentScope; }
 
-    void setParentScope(shared_ptr<Scope> scope){ parentScope = scope; }
+    int getMemoryCounter64();
+
+    inline void setParentScope(shared_ptr<Scope> scope){ parentScope = scope; }
 
     std::shared_ptr<SymbolTableElement> getSymbol(std::string name);
 

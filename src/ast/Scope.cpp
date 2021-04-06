@@ -28,7 +28,14 @@ void Scope::addVariable(std::string name, VarType::Type *variableType)
 
 void Scope::addFunction(std::string name, VarType::Type *functionType)
 {
-    symbolicTable->addFunction(name, functionType, getMemoryCounter64AndIncrement());
+    symbolicTable->addFunction(name, functionType, 0);
+}
+
+int Scope::getMemoryCounter64(){
+    if(parentScope != nullptr){
+      return parentScope->getMemoryCounter64();
+    }
+    return memoryCounter64;
 }
 
 std::string Scope::toString()
