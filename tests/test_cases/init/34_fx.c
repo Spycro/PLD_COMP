@@ -10,9 +10,9 @@ int main() {
     return 0;
 }
 
-int doNotUseMe() {
+int doNotUseMe(int a, char b) {
 	while (1);
-	return 0;
+	return a-b;
 }
 
 int one() { return 1; }
