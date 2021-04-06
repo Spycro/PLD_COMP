@@ -81,7 +81,7 @@ public:
     
     virtual std::string toString();
     virtual bool isBlock() THROW
-    virtual NodeType getType() THROW
+    virtual NodeType getType() { return type; }
 
     /***************BLOCK*****************/
     virtual inline shared_ptr<Scope> getScope() THROW
