@@ -5,7 +5,7 @@
 class WhileInstr : public ControlStructure {
 
     public:
-        WhileInstr() { }
+        WhileInstr() { type=WHILEINSTR;}
 
         virtual std::string toString() override;
 

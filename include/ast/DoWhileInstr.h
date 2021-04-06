@@ -5,7 +5,7 @@
 class DoWhileInstr : public ControlStructure
 {
     public:        
-        DoWhileInstr() { }
+        DoWhileInstr() { type=DOWHILEINSTR; }
 
         virtual std::string toString() override;
 

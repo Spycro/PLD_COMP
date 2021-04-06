@@ -5,7 +5,7 @@
 class Continue : public Instruction
 {
     public:
-        Continue() { }
+        Continue() { type = CONTINUE; }
 
         virtual std::string toString() override;
 
