@@ -4,6 +4,10 @@ int main() {
    int c = a;
    a == b;
    a || b;
+   a ^ b;
+   a | b;
+   a & b;
+   !a;
    while(a&&b){
       int a = 2;
    }

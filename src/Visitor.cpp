@@ -624,7 +624,27 @@ antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *
 
 antlrcpp::Any Visitor::visitBitwiseLeftShift_assign(ifccParser::BitwiseLeftShift_assignContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitLogicalNot(ifccParser::LogicalNotContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitLogicalNot(ifccParser::LogicalNotContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> unary = make_shared<Unary>();
+
+  // create links with the tree
+  unary->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(unary); // set the new node parent
+
+  // set current node attributes
+  // operator
+  unary->setOp(NOT);
+  // operand
+  antlrcpp::Any tmp = visit(context->expression()); 
+  shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
+  operand->setParent(unary);
+  unary->getChildren().push_back(operand);
+
+  return antlrcpp::Any(unary);
+}
 
 antlrcpp::Any Visitor::visitPlusMinus(ifccParser::PlusMinusContext *context) {
   TRACE
