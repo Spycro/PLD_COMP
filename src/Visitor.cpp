@@ -323,12 +323,11 @@ antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
 
   // set current node attributes
   // expression
-  ifInstr->setTest(test.as<shared_ptr<Node>>());
+  ifInstr->setTest(ifInstr->getChildren()[0]);
   // ifcode
-  //ifInstr->setCode(dynamic_pointer_cast<Instruction>(ifInstr->getChildren()[1]));
-  ifInstr->setCode(ifCode.as<shared_ptr<Node>>());
+  ifInstr->setCode(ifInstr->getChildren()[1]);
   // elsecode
-  ifInstr->setCode(ifInstr->getChildren()[2]);
+  ifInstr->setCodeElse(ifInstr->getChildren()[2]);
 
   return antlrcpp::Any(ifInstr);
 }
