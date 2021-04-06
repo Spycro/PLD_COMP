@@ -209,7 +209,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
                 startBlock->setExit_false(elseBasicBlock);
                 elseBasicBlock->setExit_true(endBlock);
             }else{
-                shared_ptr<BasicBlock> elseBasicBlock(new BasicBlock(this,elseBlock->getScope(),true));
+                shared_ptr<BasicBlock> elseBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
                 startBlock->setExit_false(elseBasicBlock);
             }
 
@@ -217,23 +217,24 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(startBlock.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
             current_bb->add_IRInstr(jmpCmp);
 
-            //deal with else
-            if(elseBlock->getType() == NodeType::NULLINSTR){
-            }else if(elseBlock->getType() == NodeType::BLOCK){
-                add_bb(startBlock->getExit_false());
-                for(auto InstrInBlock : elseBlock->getInstructions()){ 
-                    inspectInstruction(InstrInBlock);
-                }
-            }else{
-                add_bb(startBlock->getExit_false());
-                inspectInstruction(elseBlock);
-                current_bb->setExit_true(endBlock);
-            }
+
 
             //run main block
             add_bb(mainBasicBlock);
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
                 inspectInstruction(InstrInBlock);
+            }
+
+            //deal with else
+            if(elseBlock->getType() == NodeType::BLOCK){
+                add_bb(startBlock->getExit_false());
+                for(auto InstrInBlock : elseBlock->getInstructions()){ 
+                    inspectInstruction(InstrInBlock);
+                }
+            }else if(elseBlock->getType() != NodeType::NULLINSTR){
+                add_bb(startBlock->getExit_false());
+                inspectInstruction(elseBlock);
+                current_bb->setExit_true(endBlock);
             }
 
             //switch to end block
