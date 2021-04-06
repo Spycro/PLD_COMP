@@ -110,6 +110,7 @@ public:
 
     /**************IFINSTR************/
     virtual inline shared_ptr<Node> getCodeElse() THROW
+    virtual inline void setCodeElse(shared_ptr<Node> code) THROW 
     /*********************************/
 
     /**************RETURN*************/

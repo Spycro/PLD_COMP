@@ -14,6 +14,8 @@ class IfInstr : public ControlStructure
             : codeElse(codeElse) { }
 
         inline shared_ptr<Node> getCodeElse() override { return codeElse; }
+        inline void setCodeElse(shared_ptr<Node> codeElse) override { this->codeElse = codeElse; } 
+
         virtual std::string toString() override;
     private:
         shared_ptr<Node> codeElse;
