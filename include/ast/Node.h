@@ -6,6 +6,8 @@
 #include "Scope.h"
 using namespace std;
 
+#define THROW { throw; }
+
 typedef enum {
     BLOCK,
     BREAK,
@@ -78,79 +80,79 @@ public:
     }
     
     virtual std::string toString();
-    virtual bool isBlock() { return false; }
-    virtual NodeType getType() { return type;}
+    virtual bool isBlock() THROW
+    virtual NodeType getType() THROW
 
     /***************BLOCK*****************/
-    virtual inline shared_ptr<Scope> getScope() {return nullptr;};
-    virtual inline vector<shared_ptr<Node>> getInstructions() {return vector<shared_ptr<Node>>();}
+    virtual inline shared_ptr<Scope> getScope() THROW
+    virtual inline vector<shared_ptr<Node>> getInstructions() THROW
 
-    virtual void setScope(shared_ptr<Scope> s) {}
+    virtual void setScope(shared_ptr<Scope> s) THROW
     /**************************************/
 
     /*************CONTROLSTRUCT************/
-    virtual inline shared_ptr<Node> getTest() {return nullptr;}
-    virtual inline void setTest(shared_ptr<Node> test) {}
-    virtual inline shared_ptr<Node> getCode() {return nullptr;} //For function too
-    virtual inline void setCode(shared_ptr<Node> code) {} //For function too
+    virtual inline shared_ptr<Node> getTest() THROW
+    virtual inline void setTest(shared_ptr<Node> test) THROW
+    virtual inline shared_ptr<Node> getCode() THROW //For function too
+    virtual inline void setCode(shared_ptr<Node> code) THROW //For function too
     /**************************************/
 
     /*************FORINSTR*************/
-    virtual inline shared_ptr<Node> getInitialisation() {return nullptr;}
-    virtual inline void setInitialisation(shared_ptr<Node>) {}
-    virtual inline shared_ptr<Node> getStep() {return nullptr;}
-    virtual inline void setStep(shared_ptr<Node>) {}
+    virtual inline shared_ptr<Node> getInitialisation() THROW
+    virtual inline void setInitialisation(shared_ptr<Node>) THROW
+    virtual inline shared_ptr<Node> getStep() THROW
+    virtual inline void setStep(shared_ptr<Node>) THROW
     /**************************************/
 
     /**************FUNCTION************/
-    virtual inline list<shared_ptr<Node>> getParameters() {return list<shared_ptr<Node>>();}
+    virtual inline list<shared_ptr<Node>> getParameters() THROW
     /*********************************/
 
     /**************IFINSTR************/
-    virtual inline shared_ptr<Node> getCodeElse() { return nullptr; }
+    virtual inline shared_ptr<Node> getCodeElse() THROW
     /*********************************/
 
     /**************RETURN*************/
-    virtual shared_ptr<Node> getValue() { return nullptr; } //for affecation
-    virtual inline void setValue(shared_ptr<Node>) { } //for affecation
+    virtual shared_ptr<Node> getValue() THROW //for affecation
+    virtual inline void setValue(shared_ptr<Node>) THROW //for affecation
     /*********************************/
     
     
     /************AFFECTATION************/
-    virtual inline string& getSymbol() { return placeholder; }
+    virtual inline string& getSymbol() THROW
     /*********************************/
     
     /************ARRAY************/
-    virtual inline shared_ptr<Node> getPosition() { return nullptr; }
+    virtual inline shared_ptr<Node> getPosition() THROW
     /*********************************/
 
     /***********BINARY**********************/ //and part Tenary too
-    virtual inline shared_ptr<Node> getOperand1() { return nullptr; }
-    virtual inline shared_ptr<Node> getOperand2() { return nullptr; }
-    virtual inline BinaryOperator getOp() { return PLUS; }
-    virtual void setOperand1(shared_ptr<Node> op1) {}
-    virtual void setOperand2(shared_ptr<Node> op2) {}
-    virtual void setBinaryOperator(BinaryOperator bop) {}
+    virtual inline shared_ptr<Node> getOperand1() THROW
+    virtual inline shared_ptr<Node> getOperand2() THROW
+    virtual inline BinaryOperator getOp() THROW
+    virtual void setOperand1(shared_ptr<Node> op1) THROW
+    virtual void setOperand2(shared_ptr<Node> op2) THROW
+    virtual void setBinaryOperator(BinaryOperator bop) THROW
     /***************************************/
 
     /***********TERNARY*********************/
-    virtual inline shared_ptr<Node> getOperand3() { return nullptr; }
+    virtual inline shared_ptr<Node> getOperand3() THROW
     /*****************************************/
     
-    /*UNARY*/
-    virtual inline shared_ptr<Node> getOperand() { return nullptr; }
-    virtual inline UnaryOperator getUnaryOp() { return POSTDECR; }
-    virtual void setOperand(shared_ptr<Node> op) {}
-    virtual void setOp(UnaryOperator o) {}
+    /************UNARY************************/
+    virtual inline shared_ptr<Node> getOperand() THROW
+    virtual inline UnaryOperator getUnaryOp() THROW
+    virtual void setOperand(shared_ptr<Node> op) THROW
+    virtual void setOp(UnaryOperator o) THROW
     /*****************************************/
 
     /****************VARIABLE***********/
-    virtual void setSymbol(std::string) { }
+    virtual void setSymbol(std::string) THROW
     /**************************************/
 
     /**************CONST**************/
-    virtual inline int getConstValue() { return 0; }
-    virtual void setConstValue(int value) { }
+    virtual inline int getConstValue() THROW
+    virtual void setConstValue(int value) THROW
     /*********************************/
 
 
