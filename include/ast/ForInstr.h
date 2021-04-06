@@ -9,10 +9,10 @@ class ForInstr : public ControlStructure
 {
     public:
         ForInstr()
-            : initialisation(nullptr), step(nullptr) {}
+            : initialisation(nullptr), step(nullptr) {type=FORINSTR;}
 
         ForInstr(shared_ptr<Node> initialisation, shared_ptr<Node> step) 
-            : initialisation(move(initialisation)), step(step) {}
+            : initialisation(move(initialisation)), step(step) {type=FORINSTR;}
 
         inline shared_ptr<Node> getInitialisation() override { return initialisation; }
         inline void setInitialisation(shared_ptr<Node> initialisation) override { this->initialisation = initialisation; }

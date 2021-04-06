@@ -244,7 +244,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::WHILEINSTR:
         {
-            shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
+            
             shared_ptr<Node> mainBlock = instr->getCode();
 
             //create blocks
@@ -257,15 +257,52 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             mainBasicBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_false(endBlock);
 
-            //instruction
-            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(mainBasicBlock.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
-            mainBasicBlock->add_IRInstr(jmpCmp);
+            
 
             //run main block
+            //instruction
             add_bb(mainBasicBlock);
+            shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
+            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
+            current_bb->add_IRInstr(jmpCmp);
+
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
                 inspectInstruction(InstrInBlock);
             }
+            //switch to end block
+            add_bb(endBlock);
+
+        }
+        break;
+    case NodeType::FORINSTR:
+        {
+            shared_ptr<Node> init = instr->getInitialisation();
+            shared_ptr<Node> step = instr->getStep();
+            shared_ptr<Node> mainBlock = instr->getCode();
+
+            //create blocks
+            shared_ptr<BasicBlock> startBlock = current_bb;
+            shared_ptr<BasicBlock> mainBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
+            shared_ptr<BasicBlock> endBlock(new BasicBlock(this, current_bb->getScope()));
+
+            //bind blocks
+            startBlock->setExit_true(mainBasicBlock);
+            mainBasicBlock->setExit_true(mainBasicBlock);
+            mainBasicBlock->setExit_false(endBlock);
+
+            inspectInstruction(init);
+
+            //run main block
+            //instruction
+            add_bb(mainBasicBlock);
+            shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
+            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
+            current_bb->add_IRInstr(jmpCmp);
+            for(auto InstrInBlock : mainBlock->getInstructions()){ 
+                inspectInstruction(InstrInBlock);
+            } 
+            inspectInstruction(step);
+
             //switch to end block
             add_bb(endBlock);
 
