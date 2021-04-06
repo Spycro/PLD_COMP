@@ -100,9 +100,10 @@ prog : (variableDeclaration ';' | functionDeclaration)* ;
 
 functionDeclaration // TODO : add suport for parameters
       : 'int' MAIN '(' VOID? ')' block #mainFunction
-      | (TYPE|VOID) NAME '(' VOID? ')' block #anyFunction 
+      | (TYPE|VOID) NAME '(' ( (VOID?) | paramDeclarationList ) ')' block #anyFunction 
       ;
-
+paramDeclaration : TYPE NAME ; // varName isn't suitable : it can be an array
+paramDeclarationList : paramDeclaration (',' paramDeclaration)* ;
 
 variableDeclaration : TYPE variableDeclarationList ;
 variableDeclarationList : varName ('=' expression)? (',' variableDeclarationList)? ;
@@ -152,6 +153,7 @@ expression
       | functionCall #functCall
       | '(' expression ')' #parenthesis
       // https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
+      // on a line, each action is of the same priority
       | varName '++' #postIncr
       | varName '--' #postDecr
       | '++' varName #preIncr
@@ -169,7 +171,7 @@ expression
       | expression ('<'|'<='|'>'|'>=') expression #lesserOrGreater
       | expression ('=='|'!=') expression #compare
       | expression ('&'|'bitand') expression #bitwiseAnd
-      | expression ('^'|'bitor') expression #bitwiseXor
+      | expression ('^'|'bitxor') expression #bitwiseXor
       | expression ('|'|'bitor') expression #bitwiseOr
       | expression ('&&'|'and') expression #logicalAnd
       | expression ('||'|'or') expression #logicalOr
