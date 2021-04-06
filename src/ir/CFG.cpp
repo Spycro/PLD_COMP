@@ -111,52 +111,65 @@ void CFG::gen_asm_epilogue(std::ostream& o) {
 std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> instr){
     std::string instrType = instr->toString();//todo please make this an enum
 
+    switch (instr->getType())
+    {
+    case NodeType::AFFECTATION:
+        {
+            std::string symbol = instr->getSymbol();
+            shared_ptr<Node> value = instr->getValue();
 
-    std::cout<< instrType << std::endl;
+            std::shared_ptr<SymbolTableElement> input = inspectInstruction(value);
 
-    if(instrType == "Affectation"){
-        std::string symbol = instr->getSymbol();
-        shared_ptr<Node> value = instr->getValue();
+            
+            Copy* c = new Copy(current_bb.get(),* input,*(current_bb->getScope()->getSymbol(symbol)));
 
-        std::shared_ptr<SymbolTableElement> input = inspectInstruction(value);
+            shared_ptr<Copy> copy (c);
+            current_bb->add_IRInstr(copy);
+        }
+        break;
 
-        
-        Copy* c = new Copy(current_bb.get(),* input,*(current_bb->getScope()->getSymbol(symbol)));
+    case NodeType::CONST:
+        {
+            shared_ptr<Const> myConst = std::dynamic_pointer_cast<Const>(instr);
+            std::cout<< myConst->getConstValue()<< std::endl;
+            return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getConstValue())));
+        }
+        break;
+    
+    case NodeType::VARIABLE:
+        {
+            shared_ptr<Variable> myVar = std::dynamic_pointer_cast<Variable>(instr);
+            return current_bb->getScope()->getSymbol(myVar->getSymbol());
+        }
+        break;
 
-        shared_ptr<Copy> copy (c);
-        current_bb->add_IRInstr(copy);
-    }else if(instrType == "Unary"){
+    case NodeType::RETURN:
+        {
+            shared_ptr<Node> valToReturn = instr->getValue(); //todo get instruction for return
+            shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(valToReturn),RAX_REGISTER));
+            current_bb->add_IRInstr(copy);
+        }
+        break;
 
-    }else if(instrType == "Const"){
-        shared_ptr<Const> myConst = std::dynamic_pointer_cast<Const>(instr);
-        std::cout<< myConst->getConstValue()<< std::endl;
-        return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getConstValue())));
-    }else if(instrType == "Variable"){
-        shared_ptr<Variable> myVar = std::dynamic_pointer_cast<Variable>(instr);
-        return current_bb->getScope()->getSymbol(myVar->getSymbol());
-    }else if(instrType == "Binary"){
-        shared_ptr<Binary> binary = std::dynamic_pointer_cast<Binary>(instr);
-        shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(&INTTYPE64);
-        shared_ptr<SymbolTableElement> leftOp;//todo get left
-        shared_ptr<SymbolTableElement> rightOp;//todo get right
-        //do binary
-        return res;
-    }else if (instrType == "Return"){
-        shared_ptr<Node> valToReturn = instr->getValue(); //todo get instruction for return
-        shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(valToReturn),RAX_REGISTER));
-        current_bb->add_IRInstr(copy);
+    case NodeType::BINARY:
 
-    }else if (instrType == "Block"){
-        shared_ptr<Scope> scope; //todo get scope
-        current_bb->setExit_true(std::shared_ptr<BasicBlock>(new BasicBlock(this, scope)));
-        current_bb = current_bb->getExit_true();
-        bbs.push_back(current_bb);
-        /*for(auto instr : nullptr){ //todo go through instructions
-            inspectInstruction(instr);
-        }*/
+        break;
 
-    }else{
-        
+    case NodeType::BLOCK:
+        {
+            shared_ptr<Scope> scope; //todo get scope
+            current_bb->setExit_true(std::shared_ptr<BasicBlock>(new BasicBlock(this, scope)));
+            current_bb = current_bb->getExit_true();
+            bbs.push_back(current_bb);
+            /*for(auto instr : nullptr){ //todo go through instructions
+                inspectInstruction(instr);
+            }*/
+        }
+        break;
+
+    default:
+        break;
     }
+
     return nullptr;
 }
