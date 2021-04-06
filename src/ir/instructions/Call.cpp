@@ -34,7 +34,7 @@ void Call::gen_asm(std::ostream &o){
         }
         --i;
     }
-    o << "\tcall " << cfg->label << std::endl
+    o << "\tcall " << cfg->getLabel() << std::endl
         << "\taddq $" << redimCounter * 8 << ", %rsp"<< std::endl
         << "\tmovl %eax, "  << output.getAsm() <<std::endl;
 }

@@ -24,10 +24,7 @@ class CFG {
 	CFG(Function* ast, std::string label_, Type* type, std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>());
 	CFG(shared_ptr<Function>  function);
 
-	Function* ast; /**< The AST this CFG comes from */
-	std::string label; //TODO : a modifier!! -> Function
-	Type* type; //TODO : a modifier!! -> Function
-	std::vector<SymbolTableElement> params; //todo dont forget Richard to remove
+	
 	
 	void add_bb(shared_ptr<BasicBlock> bb); 
 
@@ -35,17 +32,26 @@ class CFG {
 
 	// x86 code generation: could be encapsulated in a processor class in a retargetable compiler
 	void gen_asm(std::ostream& o);
-	std::string IR_reg_to_asm(std::string reg); /**< helper method: inputs a IR reg or input variable, returns e.g. "-24(%rbp)" for the proper value of 24 */	;
+	//std::string IR_reg_to_asm(std::string reg); /**< helper method: inputs a IR reg or input variable, returns e.g. "-24(%rbp)" for the proper value of 24 */	;
+
+	std::string getLabel();
+
 
 	// basic block management
 	std::shared_ptr<BasicBlock> current_bb;
+
+	
 
 private :
 	void gen_asm_prologue(std::ostream& o);
 	void gen_asm_epilogue(std::ostream& o);
 	std::shared_ptr<SymbolTableElement> inspectInstruction(shared_ptr<Instruction>);
  protected:	
-	std::list<shared_ptr<SymbolTableElement>> myParams;
+	std::vector<shared_ptr<SymbolTableElement>> myParams;
 	std::list <std::shared_ptr<BasicBlock>> bbs; /**< all the basic blocks of this CFG*/	
+
 	int numberOfVariables = 0; //Number of temp variables in the function
+	Function* ast; /**< The AST this CFG comes from */
+	std::string label; //TODO : a modifier!! -> Function
+	Type* type; //TODO : a modifier!! -> Function
 };

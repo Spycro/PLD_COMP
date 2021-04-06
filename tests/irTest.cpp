@@ -32,24 +32,25 @@
 void test_pointers(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
-    BasicBlock bb0(firstCFG, nullptr);
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
 
     SymbolTableElement constant1(&INTTYPE64,"2");
     SymbolTableElement a(&INTTYPE64, false, false,8);
     SymbolTableElement pointer(&INTTYPE64, false, false,16);
 
-    AddressOf instr0(&bb0,a,pointer);
-    Wmem instr1(&bb0,constant1,pointer);
-    Rmem instr2(&bb0,pointer,RAX_REGISTER);
-    bb0.add_IRInstr(&instr0);
-    bb0.add_IRInstr(&instr1);
-    bb0.add_IRInstr(&instr2);
+    shared_ptr<AddressOf> instr0(new AddressOf(bb0.get(),a,pointer));
+    shared_ptr<Wmem> instr1(new Wmem (bb0.get(),constant1,pointer));
+    shared_ptr<Rmem> instr2(new Rmem(bb0.get(),pointer,RAX_REGISTER));
+    bb0->add_IRInstr(instr0);
+    bb0->add_IRInstr(instr1);
+    bb0->add_IRInstr(instr2);
 
-    firstCFG->add_bb(&bb0);
+    firstCFG->add_bb(bb0);
 
     firstCFG->gen_asm(std::cout);
 }
 
+/*
 void test_operations_mul_div(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
@@ -71,6 +72,8 @@ void test_operations_mul_div(){
 
     firstCFG->gen_asm(std::cout);
 }
+*/
+/*
 void test_operations_sub_add(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
@@ -92,7 +95,8 @@ void test_operations_sub_add(){
 
     firstCFG->gen_asm(std::cout);
 }
-
+*/
+/*
 void test_cmp(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
@@ -104,8 +108,8 @@ void test_cmp(){
     SymbolTableElement input2(&INTTYPE64, "14");
     SymbolTableElement dest(&INTTYPE64, false, false, 16);
 
-    /* Copy instr0(&bb0, SymbolTableElement(&INTTYPE64,"15"), input1);
-    bb0.add_IRInstr(&instr0); */
+    // Copy instr0(&bb0, SymbolTableElement(&INTTYPE64,"15"), input1);
+   // bb0.add_IRInstr(&instr0); 
 
     Cmp_ge instr1(&bb0,input1, input2, dest);
     Copy instr2(&bb0, dest, RAX_REGISTER);    
@@ -116,7 +120,8 @@ void test_cmp(){
 
     firstCFG->gen_asm(std::cout);
 }
-
+*/
+/*
 void test_call_many_params(){
     SymbolTableElement param1(&INTTYPE64, "1");
     SymbolTableElement param2(&INTTYPE64, "2");
@@ -161,7 +166,8 @@ void test_call_many_params(){
     firstCFG->gen_asm(std::cout);
     secondCFG->gen_asm(std::cout);
 }
-
+*/
+/*
 void test_call(){
     SymbolTableElement param1(&INTTYPE64, "1");
     SymbolTableElement param2(&INTTYPE64, "2");
@@ -184,7 +190,8 @@ void test_call(){
     firstCFG->gen_asm(std::cout);
     secondCFG->gen_asm(std::cout);
 }
-
+*/
+/*
 void test_if_else_condition() {
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
@@ -216,7 +223,8 @@ void test_if_else_condition() {
 
     firstCFG->gen_asm(std::cout);
 }
-
+*/
+/*
 void test_if_condition() {
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
@@ -247,7 +255,8 @@ void test_if_condition() {
 
     firstCFG->gen_asm(std::cout);
 }
-
+*/
+/*
 void test_following_blocks() {
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
@@ -266,7 +275,8 @@ void test_following_blocks() {
 
     firstCFG->gen_asm(std::cout);
 }
-
+*/
+/*
 void test_single_block() {
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
@@ -282,7 +292,7 @@ void test_single_block() {
 
     firstCFG->gen_asm(std::cout);
 }
-
+*/
 int main(){
     //test_single_block();
     //test_following_blocks();
