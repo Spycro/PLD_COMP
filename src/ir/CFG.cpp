@@ -4,6 +4,10 @@
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
 #include <memory>
+#include "ir/instructions/Add.h"
+#include "ir/instructions/Sub.h"
+#include "ir/instructions/Mul.h"
+#include "ir/instructions/Div.h"
 #include "ir/instructions/Copy.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
@@ -34,6 +38,7 @@ CFG::CFG(shared_ptr<Node> function){
 
 
 void CFG::add_bb(shared_ptr<BasicBlock> bb){
+    current_bb = bb;
     bbs.push_back(bb);    
 }
 void CFG::incrementVariableCount(int cnt){
@@ -109,8 +114,7 @@ void CFG::gen_asm_epilogue(std::ostream& o) {
 }
 
 std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> instr){
-    std::string instrType = instr->toString();//todo please make this an enum
-
+    std::cout<<instr->toString() << " enum: " << instr->getType()<<std::endl;
     switch (instr->getType())
     {
     case NodeType::AFFECTATION:
@@ -119,19 +123,18 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<Node> value = instr->getValue();
 
             std::shared_ptr<SymbolTableElement> input = inspectInstruction(value);
+            std::shared_ptr<SymbolTableElement> output = current_bb->getScope()->getSymbol(symbol);
 
-            
-            Copy* c = new Copy(current_bb.get(),* input,*(current_bb->getScope()->getSymbol(symbol)));
-
-            shared_ptr<Copy> copy (c);
+            shared_ptr<Copy> copy (new Copy(current_bb.get(),*input,*output));
             current_bb->add_IRInstr(copy);
+            return output;
         }
         break;
 
     case NodeType::CONST:
         {
             shared_ptr<Const> myConst = std::dynamic_pointer_cast<Const>(instr);
-            std::cout<< myConst->getConstValue()<< std::endl;
+            std::cout<< "Const value: " << myConst->getConstValue()<< std::endl;
             return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getConstValue())));
         }
         break;
@@ -152,18 +155,44 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
 
     case NodeType::BINARY:
-
+        {
+            shared_ptr<SymbolTableElement> leftOp= inspectInstruction(instr->getOperand1());
+            shared_ptr<SymbolTableElement> rightOp = inspectInstruction(instr->getOperand2());
+            shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(&INTTYPE64);
+            shared_ptr<IRInstr> op;
+            switch (instr->getOp())
+            {
+            case BinaryOperator::PLUS:
+                op = shared_ptr<Add>(new Add(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::MINUS:
+                op = shared_ptr<Sub>(new Sub(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::MULT:
+                op = shared_ptr<Mul>(new Mul(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::DIV:
+                op = shared_ptr<Div>(new Div(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            
+            default:
+                break;
+            }
+            current_bb->add_IRInstr(op);
+            return res;
+        }
         break;
 
     case NodeType::BLOCK:
         {
-            shared_ptr<Scope> scope; //todo get scope
+            shared_ptr<Scope> scope = instr->getScope(); //todo get scope
             current_bb->setExit_true(std::shared_ptr<BasicBlock>(new BasicBlock(this, scope)));
-            current_bb = current_bb->getExit_true();
-            bbs.push_back(current_bb);
-            /*for(auto instr : nullptr){ //todo go through instructions
-                inspectInstruction(instr);
-            }*/
+            add_bb(current_bb->getExit_true());
+            for(auto InstrInBlock : instr->getInstructions()){ //todo go through instructions
+                inspectInstruction(InstrInBlock);
+            }
+            current_bb->setExit_true(std::shared_ptr<BasicBlock>(new BasicBlock(this, scope->getParentScope())));
+            add_bb(current_bb->getExit_true());
         }
         break;
 

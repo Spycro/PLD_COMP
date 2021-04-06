@@ -13,10 +13,10 @@ class Affectation : public Expression
             : value(nullptr) {type=AFFECTATION;}
         
         Affectation(string symbol)
-            : symbol(symbol), value(nullptr) {} 
+            : symbol(symbol), value(nullptr) {type=AFFECTATION;} 
 
         Affectation(string symbol, shared_ptr<Node> value)
-            : symbol(symbol), value(value) {}
+            : symbol(symbol), value(value) {type=AFFECTATION;}
         
         inline void setSymbol(string symbol_) override {symbol = symbol_;}
         inline string& getSymbol() override { return symbol; }
