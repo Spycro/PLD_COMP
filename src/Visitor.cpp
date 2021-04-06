@@ -280,8 +280,8 @@ antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) {
   // expression
   whileInstr->setTest(test.as<shared_ptr<Node>>());
   // code
-  //whileInstr->setCode(code.as<shared_ptr<Instruction>>());
-  whileInstr->setCode(dynamic_pointer_cast<Instruction>(whileInstr->getChildren()[1]));
+  whileInstr->setCode(code.as<shared_ptr<Node>>());
+  //whileInstr->setCode(dynamic_pointer_cast<Instruction>(whileInstr->getChildren()[1]));
 
   return antlrcpp::Any(whileInstr);
 }
@@ -321,9 +321,10 @@ antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
   // expression
   ifInstr->setTest(test.as<shared_ptr<Node>>());
   // ifcode
-  ifInstr->setCode(dynamic_pointer_cast<Instruction>(ifInstr->getChildren()[1]));
+  //ifInstr->setCode(dynamic_pointer_cast<Instruction>(ifInstr->getChildren()[1]));
+  ifInstr->setCode(ifCode.as<shared_ptr<Node>>());
   // elsecode
-  ifInstr->setCode(dynamic_pointer_cast<Instruction>(ifInstr->getChildren()[2]));
+  ifInstr->setCode(ifInstr->getChildren()[2]);
 
   return antlrcpp::Any(ifInstr);
 }
@@ -355,7 +356,7 @@ antlrcpp::Any Visitor::visitForInstr(ifccParser::ForInstrContext *context) {
   // step
   forInstr->setStep(expr2.as<shared_ptr<Node>>());
   // code
-  forInstr->setCode(dynamic_pointer_cast<Instruction>(forInstr->getChildren()[3]));
+  forInstr->setCode(forInstr->getChildren()[3]);
 
   return antlrcpp::Any(forInstr);
 }
