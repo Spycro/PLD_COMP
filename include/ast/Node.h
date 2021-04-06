@@ -85,7 +85,7 @@ public:
 
     /***************BLOCK*****************/
     virtual inline shared_ptr<Scope> getScope() THROW
-    virtual inline vector<shared_ptr<Node>> getInstructions() THROW
+    virtual inline vector<shared_ptr<Node>>& getInstructions() THROW
 
     virtual void setScope(shared_ptr<Scope> s) THROW
     /**************************************/
