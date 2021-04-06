@@ -27,7 +27,9 @@ typedef enum {
     TERNARY,
     UNARY,
     VARIABLE,
-    WHILEINSTR
+    WHILEINSTR,
+    PUTCHARINSTR,
+    GETCHARINSTR,
 } NodeType;
 
 typedef enum
