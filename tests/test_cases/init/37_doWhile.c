@@ -1,6 +1,6 @@
 int main() {
-    int a = 1;
+    int a = 2;
     do{
-        a++;
-    }while(a+1);
+        a--;
+    }while(a);
 }

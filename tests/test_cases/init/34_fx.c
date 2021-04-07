@@ -11,7 +11,7 @@ int main() {
 }
 
 int doNotUseMe(int a, char b) {
-	while (1);
+
 	return a-b;
 }
 
