@@ -127,6 +127,7 @@ antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *
   // create corresponding AST node
   shared_ptr<Node> functionCall = make_shared<FunctionCall>();
   std::string symbol = context->getStart()->getText();
+  functionCall->setSymbol(symbol);
   // PRINT(symbol)
   verifySymbol(symbol);
   // create links with the tree
