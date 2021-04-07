@@ -16,62 +16,74 @@ using namespace std;
 void PrintAst(shared_ptr<Node> node, int count);
 void PrintScope(shared_ptr<Scope>, int count);
 
-class MyErrorListener : public BaseErrorListener {
+class ErrorListener : public BaseErrorListener {
 public:
-  MyErrorListener() { error = false; }
-  bool Error() { return error; }
-  virtual void syntaxError(Recognizer *recognizer, Token *offendingSymbol,
-                           size_t line, size_t charPositionInLine,
-                           const std::string &msg, std::exception_ptr e) {
-    cout << "Error on position " << line << ":" << charPositionInLine << endl;
-    error = true;
-  }
+    ErrorListener() { error = false; }
+    bool hasError() { return error; }
+    virtual void syntaxError(Recognizer *recognizer, Token *offendingSymbol,
+                            size_t line, size_t charPositionInLine,
+                            const std::string &msg, std::exception_ptr e) {
+        cerr << "Error at " << line << ":" << charPositionInLine << endl;
+        error = true;
+    }
 
 protected:
-  bool error;
+    bool error;
 };
 
 int main(int argn, const char **argv) {
-  stringstream in;
-  if (argn == 2) {
-    ifstream lecture(argv[1]);
-    in << lecture.rdbuf();
-  }
-  ANTLRInputStream input(in.str());
-  ifccLexer lexer(&input);
-  CommonTokenStream tokens(&lexer);
 
-  tokens.fill();
-  //  for (auto token : tokens.getTokens()) {
-  //    std::cout << token->toString() << std::endl;
-  //  }
+    stringstream in;
 
-  ifccParser parser(&tokens);
+    if (argn == 2) {
+        ifstream lecture(argv[1]);
+        in << lecture.rdbuf();
+    }
 
-  MyErrorListener errorlistener;
-  parser.removeErrorListeners();
-  parser.addErrorListener(&errorlistener);
+    ANTLRInputStream input(in.str());
+    ifccLexer lexer(&input);
 
-  tree::ParseTree *tree = parser.axiom();
-  if (errorlistener.Error())
-    return 1;
+    ErrorListener errorListener;
 
-  Visitor visitor;
-  visitor.visit(tree);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(&errorListener);
 
-  shared_ptr<Node> rootNode = visitor.getRootNode();
-  PrintAst(rootNode, 0);
-  
-  if(visitor.getErrorFlag()){
-    std::cerr << visitor.getErrorTrace() << std::endl;
-    return 1;
-  }
+    CommonTokenStream tokens(&lexer);
 
-  //IR
-  IR myIR(rootNode);
-  
+    tokens.fill();
 
-  return 0;
+    if (errorListener.hasError())
+        return 1;
+
+    ifccParser parser(&tokens);
+
+    parser.removeErrorListeners();
+    parser.addErrorListener(&errorListener);
+
+    tree::ParseTree *tree = parser.axiom();
+    
+    if (errorListener.hasError())
+        return 1;
+
+    Visitor visitor;
+    visitor.visit(tree);
+
+    shared_ptr<Node> rootNode = visitor.getRootNode();
+
+    #ifdef DEBUG
+    PrintAst(rootNode, 0);
+    #endif
+    
+    if(visitor.getErrorFlag()){
+        std::cerr << visitor.getErrorTrace() << std::endl;
+        return 1;
+    }
+
+    //IR
+    IR myIR(rootNode);
+    
+
+    return 0;
 }
 
 

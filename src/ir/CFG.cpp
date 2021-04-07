@@ -1,9 +1,10 @@
-#include "../../include/ir/CFG.h"
+#include <memory>
+
+#include "ir/CFG.h"
 
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
-#include <memory>
 #include "ir/instructions/Add.h"
 #include "ir/instructions/Sub.h"
 #include "ir/instructions/Mul.h"
@@ -26,7 +27,10 @@
 #include "ir/instructions/Jmp_return.h"
 #include "type/Int64.h"
 #include "type/Char.h"
+#include "ir/ASMx86Utils.h"
 #include "ir/ASMConstants.h"
+
+using namespace ASMx86Utils;
 
 CFG::CFG(Function* ast_, std::string label_, VarType::Type* type_, std::vector<SymbolTableElement> params_) : label(label_), type(type_){}
 
@@ -95,37 +99,24 @@ void CFG::gen_asm_prologue(std::ostream& o) {
                << "\tmovq %rsp, %rbp #define rbp for current function" << std::endl
                << "\tsubq $" << (memorySpacer) << ", %rsp #Make room for "<< memorySpacer/8  << " variables"<< std::endl; 
 
-    int i = myParams.size()-1;
 
-    int stackPointer = 16 + (i-6)*8;
-    while(i>=6){
-        o << "\tmovq " << stackPointer<< "(%rbp), %rax" << std::endl;
-        o << "\tmovq %rax, " << myParams.at(i)->getAsm()<<std::endl;
+
+    int i = myParams.size() - 1;
+
+    //Offset: 8 bytes for rbp (stack base pointer) + 8 bytes for return address (not sure about this one?)
+    int stackPointer = 16 + (i - 6) * 8;
+
+    while(i >= 6) {
+        o << "\tmovq " << stackPointer << "(%rbp), " << RAX_REGISTER.getAsm() << std::endl;
+        o << moveTo(RAX_REGISTER, *myParams.at(i)) << std::endl;
         stackPointer -= 8;
         --i;
     }
 
-    while(i >=0){
-        switch(i){
-            case 0 :
-                o   << "\tmovq %rdi, "  << myParams.at(i)->getAsm() <<std::endl;
-                break;
-            case 1 :
-                o   << "\tmovq %rsi, "  << myParams.at(i)->getAsm() <<std::endl;
-                break;
-            case 2 :
-                o   << "\tmovq %rdx, "  << myParams.at(i)->getAsm() <<std::endl;
-                break;
-            case 3 :
-                o   << "\tmovq %rcx, "  << myParams.at(i)->getAsm() <<std::endl;
-                break;
-            case 4 :
-                o   << "\tmovq %r8, "  << myParams.at(i)->getAsm() <<std::endl;
-                break;
-            case 5:
-                o   << "\tmovq %r9, "  << myParams.at(i)->getAsm() <<std::endl;
-                break;
-        }
+    SymbolTableElement* reg[] = {&RDI_REGISTER, &RSI_REGISTER, &RDX_REGISTER, &RCX_REGISTER, &R8_REGISTER, &R9_REGISTER};
+
+    while(i >= 0){
+        o << moveTo(*reg[i], *myParams.at(i)) << std::endl;
         --i;
     }
 }

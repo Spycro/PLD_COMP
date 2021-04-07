@@ -23,11 +23,160 @@
 #include "ir/instructions/Jmp_cmp_le.h"
 #include "ir/instructions/Jmp_cmp_gt.h"
 #include "ir/instructions/Jmp_cmp_ge.h"
+#include "type/Int32.h"
 #include "type/Int64.h"
 #include "type/Void.h"
 #include "SymbolTable.h"
 #include "ir/ASMConstants.h"
 
+
+void test_cmp_neq() {
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant0(&INTTYPE64, "2");
+    SymbolTableElement constant1(&INTTYPE64, "3");
+    SymbolTableElement a(&INTTYPE64, false, false, 8);
+    SymbolTableElement b(&INTTYPE64, false, false, 16);
+    SymbolTableElement c(&INTTYPE64, false, false, 24);
+
+    shared_ptr<Copy> copy0(new Copy(bb0.get(), constant0, a));
+    shared_ptr<Copy> copy1(new Copy(bb0.get(), constant1, b));
+
+    shared_ptr<Cmp_neq> cmp_neq(new Cmp_neq(bb0.get(), a, b, c));
+
+    bb0->add_IRInstr(copy0);
+    bb0->add_IRInstr(copy1);
+    bb0->add_IRInstr(cmp_neq);
+
+    firstCFG->add_bb(bb0);
+
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
+void test_jmp_cmp_neq() {
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+    shared_ptr<BasicBlock> bb1( new BasicBlock(firstCFG.get(), nullptr));
+    shared_ptr<BasicBlock> bb2( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant0(&INTTYPE64, "2");
+    SymbolTableElement constant1(&INTTYPE64, "3");
+    SymbolTableElement a(&INTTYPE64, false, false, 8);
+    SymbolTableElement b(&INTTYPE64, false, false, 16);
+
+    shared_ptr<Copy> copy0(new Copy(bb0.get(), constant0, a));
+    shared_ptr<Copy> copy1(new Copy(bb0.get(), constant1, b));
+
+    shared_ptr<Jmp_cmp_neq> jmp_cmp_neq(new Jmp_cmp_neq(bb0.get(), a, b));
+
+    bb0->add_IRInstr(copy0);
+    bb0->add_IRInstr(copy1);
+    bb0->add_IRInstr(jmp_cmp_neq);
+
+    bb0->setExit_true(bb1);
+
+    // if branch
+    bb0->setExit_true(bb1);
+    bb0->setExit_false(bb2);
+
+    // final block in common for if and else
+    bb1->setExit_true(bb2);
+
+    firstCFG->add_bb(bb0);
+    firstCFG->add_bb(bb1);
+    firstCFG->add_bb(bb2);
+
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
+void test_div() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "5");
+    SymbolTableElement constant2(&INTTYPE64, "2");
+    SymbolTableElement dest(&INTTYPE64, false, false, 8);
+
+    shared_ptr<Div> instr0(new Div(bb0.get(), constant1, constant2, dest));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
+void test_mul() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement constant2(&INTTYPE64, "3");
+    SymbolTableElement dest(&INTTYPE64, false, false, 8);
+
+    shared_ptr<Mul> instr0(new Mul(bb0.get(), constant1, constant2, dest));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
+void test_copy() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement a(&INTTYPE64, false, false, 8);
+
+    shared_ptr<Copy> instr0(new Copy(bb0.get(), constant1, a));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
+void test_sub() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement constant2(&INTTYPE64, "3");
+    SymbolTableElement a(&INTTYPE32, false, false, 8);
+
+    shared_ptr<Sub> instr0(new Sub(bb0.get(), constant1, constant2, a));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
+void test_add() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement constant2(&INTTYPE64, "3");
+    SymbolTableElement a(&INTTYPE32, false, false, 8);
+
+    shared_ptr<Add> instr0(new Add(bb0.get(), constant1, constant2, a));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
 
 void test_pointers(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
@@ -48,6 +197,7 @@ void test_pointers(){
     firstCFG->add_bb(bb0);
 
     firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
 }
 
 /*
@@ -167,7 +317,7 @@ void test_call_many_params(){
     secondCFG->gen_asm(std::cout);
 }
 */
-/*
+
 void test_call(){
     SymbolTableElement param1(&INTTYPE64, "1");
     SymbolTableElement param2(&INTTYPE64, "2");
@@ -180,17 +330,17 @@ void test_call(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
     std::shared_ptr<CFG> secondCFG(new CFG(nullptr, "fct", &VOIDTYPE, funParams));
 
-    BasicBlock bb0(firstCFG, nullptr);
-    Call callInstr(&bb0, secondCFG,params,SymbolTableElement(&INTTYPE64,true,true,8));
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+    shared_ptr<Call> callInstr(new Call(bb0.get(), secondCFG.get(), params, SymbolTableElement(&INTTYPE64,true,true,8)));
 
-    bb0.add_IRInstr(&callInstr);
+    bb0->add_IRInstr(callInstr);
 
-    firstCFG->add_bb(&bb0);
+    firstCFG->add_bb(bb0);
 
     firstCFG->gen_asm(std::cout);
     secondCFG->gen_asm(std::cout);
 }
-*/
+
 /*
 void test_if_else_condition() {
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
@@ -209,12 +359,12 @@ void test_if_else_condition() {
     bb2.add_IRInstr(&copyInstr2);
 
     // if branch
-    bb0.exit_true = &bb1;
-    bb0.exit_false = &bb2;
+    bb0.getExit_true() = &bb1;
+    bb0.getExit_false() = &bb2;
 
     // final block in common for if and else
-    bb1.exit_true = &bb3;
-    bb2.exit_true = &bb3;
+    bb1.getExit_true() = &bb3;
+    bb2.getExit_true() = &bb3;
 
     firstCFG->add_bb(&bb0);
     firstCFG->add_bb(&bb1);
@@ -243,11 +393,11 @@ void test_if_condition() {
     bb2.add_IRInstr(&copyInstr2);
 
     // if branch
-    bb0.exit_true = &bb1;
-    bb0.exit_false = &bb2;
+    bb0.getExit_true() = &bb1;
+    bb0.getExit_false() = &bb2;
 
     // final block in common for if and else
-    bb1.exit_true = &bb2;
+    bb1.getExit_true() = &bb2;
 
     firstCFG->add_bb(&bb0);
     firstCFG->add_bb(&bb1);
@@ -268,7 +418,7 @@ void test_following_blocks() {
 
     bb0.add_IRInstr(&instr1);
     bb1.add_IRInstr(&instr2);
-    bb0.exit_true = &bb1;
+    bb0.getExit_true() = &bb1;
 
     firstCFG->add_bb(&bb0);
     firstCFG->add_bb(&bb1);
@@ -298,10 +448,20 @@ int main(){
     //test_following_blocks();
     //test_if_condition();
     //test_if_else_condition();
-    //test_call();
+    test_call();
     //test_call_many_params();
     //test_operations_sub_add();
     //test_operations_mul_div();
-    test_pointers();
+    //test_pointers();
     //test_cmp();
+    
+    /*
+    test_copy();
+    test_sub();
+    test_add();
+    test_mul();
+    test_div();
+    test_jmp_cmp_neq();
+    test_cmp_neq();
+    */
 }

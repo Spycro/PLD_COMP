@@ -8,6 +8,8 @@ import sys
 import subprocess
 import filecmp
 
+from functools import cmp_to_key
+
 class colors:
     reset='\033[0m'
     bold='\033[01m'
@@ -198,7 +200,13 @@ for inputfilename in inputfilenames:
     else:
         # each test-case gets copied and processed in its own subdirectory:
         # ../somedir/subdir/file.c becomes ./pld-test-output/somedir-subdir-file/input.c
-        subdir = DEST+'/'+inputfilename.strip("./")[:-2].replace('/', '-')
+
+        clean_str = inputfilename.strip("./")[:-2]
+        test_name = clean_str[clean_str.rindex("/")+1:]
+        test_dir = clean_str[:clean_str.rindex("/")]
+
+        subdir = DEST+'/' + test_name + "_" + test_dir.replace('/', '-')
+
         if not os.path.isdir(subdir):
             os.mkdir(subdir)
             shutil.copyfile(inputfilename, subdir+'/input.c')
@@ -230,6 +238,17 @@ jobfailed = False
 # AST TESTS
 
 print("\n" + colors.bold + colors.bg.blue + "➞ AST tests" + colors.reset + "\n")
+
+print(jobs)
+
+def job_name_compare(job1, job2):
+    j1 = job1.replace(DEST + "/", '').replace("./", '')
+    j2 = job2.replace(DEST + "/", '').replace("./", '')
+    j1_ = int(j1[:j1.index("_")])
+    j2_ = int(j2[:j2.index("_")])
+    return j1_ - j2_
+
+jobs = sorted(jobs, key=cmp_to_key(job_name_compare))
 
 for jobname in jobs:
 
