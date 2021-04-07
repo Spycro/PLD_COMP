@@ -1,8 +1,5 @@
 #include "SymbolTableElement.h"
-#include "type/Int64.h"
-#include "type/Int32.h"
-#include "type/Int16.h"
-#include "type/Char.h"
+#include "ir/ASMConstants.h"
 
 VarType::Void VOIDTYPE;
 VarType::Int64 INTTYPE64;
@@ -12,8 +9,6 @@ SymbolTableElement RAX_REGISTER (&INTTYPE64, "rax", true);
 SymbolTableElement RBX_REGISTER (&INTTYPE64, "rbx", true);
 SymbolTableElement RCX_REGISTER (&INTTYPE64, "rcx", true);
 SymbolTableElement RDX_REGISTER (&INTTYPE64, "rdx", true);
-SymbolTableElement R8_REGISTER (&INTTYPE64, "r8", true);
-SymbolTableElement R9_REGISTER (&INTTYPE64, "r9", true);
 
 SymbolTableElement EAX_REGISTER (&INTTYPE32, "eax", true);
 SymbolTableElement EBX_REGISTER (&INTTYPE32, "ebx", true);
@@ -30,5 +25,10 @@ SymbolTableElement BL_REGISTER (&CHARTYPE, "bl", true);
 SymbolTableElement CL_REGISTER (&CHARTYPE, "cl", true);
 SymbolTableElement DL_REGISTER (&CHARTYPE, "dl", true);
 
+SymbolTableElement R8_REGISTER (&INTTYPE64, "r8", true);
+SymbolTableElement R9_REGISTER (&INTTYPE64, "r9", true);
 SymbolTableElement R8D_REGISTER (&INTTYPE32, "r8d", true);
 SymbolTableElement R9D_REGISTER (&INTTYPE32, "r9d", true);
+
+SymbolTableElement RDI_REGISTER (&INTTYPE64, "rdi", true);
+SymbolTableElement RSI_REGISTER (&INTTYPE64, "rsi", true);
