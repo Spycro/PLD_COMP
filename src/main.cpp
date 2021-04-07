@@ -62,6 +62,11 @@ int main(int argn, const char **argv) {
   shared_ptr<Node> rootNode = visitor.getRootNode();
   PrintAst(rootNode, 0);
   
+  if(visitor.getErrorFlag()){
+    std::cerr << visitor.getErrorTrace() << std::endl;
+    return 1;
+  }
+
   //IR
   IR myIR(rootNode);
   

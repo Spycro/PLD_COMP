@@ -88,8 +88,9 @@ antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *
    TRACE
   // create corresponding AST node
   shared_ptr<Node> functionCall = make_shared<FunctionCall>();
-  
-
+  std::string symbol = context->getStart()->getText();
+  // PRINT(symbol)
+  verifySymbol(symbol);
   // create links with the tree
   functionCall->setParent(parentNode); // add the new node to it parent
   parentNode->getChildren().push_back(functionCall); // set the new node parent
@@ -460,7 +461,7 @@ antlrcpp::Any Visitor::visitBitwiseAnd_assign(ifccParser::BitwiseAnd_assignConte
 
 antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) {
   TRACE
-
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
 
@@ -603,6 +604,7 @@ antlrcpp::Any Visitor::visitAddresOf(ifccParser::AddresOfContext *context) UNHAN
 
 antlrcpp::Any Visitor::visitPostIncr(ifccParser::PostIncrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -636,6 +638,7 @@ antlrcpp::Any Visitor::visitBitwiseShift(ifccParser::BitwiseShiftContext *contex
 antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) {
   // TODO : tableaux
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> affect = make_shared<Affectation>();
@@ -827,6 +830,7 @@ antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) {
 
 antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -851,6 +855,8 @@ antlrcpp::Any Visitor::visitSizeof(ifccParser::SizeofContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitPostDecr(ifccParser::PostDecrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
+
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
 
@@ -946,6 +952,8 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   std::string symbol = context->varName()->NAME()->getSymbol()->getText();
   PRINT(symbol)
 
+  verifySymbol(symbol);
+
   // create corresponding AST node
   shared_ptr<Node> variable = make_shared<Variable>(symbol);
 
@@ -1027,3 +1035,19 @@ void Visitor::popScope() {
 
   scope = scope->getParentScope();
 }
+
+bool Visitor::verifySymbol(std::string symbol){
+  auto p = scope->getSymbol(symbol);
+  if(!p){
+    setFail();
+    std::string trace = "[!] ERROR : Symbol named \"" + symbol + "\" is used when not declared.\n";
+    addToErrorTrace(trace); 
+    return false; 
+  }
+  return true;
+}
+
+void Visitor::addToErrorTrace(std::string str){
+  errorTrace += str;
+}
+
