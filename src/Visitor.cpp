@@ -26,15 +26,15 @@
 
 #define DEBUG
 
+#define UNHANDLED { setFail(); addToErrorTrace("[!] Unhandled operation : "); addToErrorTrace(__PRETTY_FUNCTION__); addToErrorTrace("\r\n"); return 0; }
+#define FORBIDEN(x) { setFail(); addToErrorTrace("[!] Forbiden operation : "); addToErrorTrace(x); addToErrorTrace("\r\n"); }
+#define UNDECLARED(x) { setFail(); addToErrorTrace("[!] Error : Symbol named \""); addToErrorTrace(x); addToErrorTrace("\" is used but not declared.\r\n"); }
+ 
 #ifdef DEBUG
-  #define UNHANDLED { std::cerr << "/!\\ Unhandled operation : " << __PRETTY_FUNCTION__ << std::endl; return 0; }
-  #define FORBIDEN(x) { std::cerr << "/!\\ Forbiden operation : " << (x) << std::endl; return 0; }
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
   #define PRINT(x) std::cout << "[*] value : " << (x) << std::endl;
   #define PRINTM(m, x) std::cout << "[*] " << (m) << " : " << (x) << std::endl;
 #else
-  #define UNHANDLED { std::cerr << "/!\\Unhandled operation : " << __PRETTY_FUNCTION__ << std::endl; throw; }
-  #define FORBIDEN(x) { std::cerr << "/!\\ Forbiden operation : " << (x) << std::endl; throw; }
   #define TRACCE ;
   #define PRINT(x) ;
   #define PRINTM(m, x) ;
@@ -1180,9 +1180,7 @@ void Visitor::popScope() {
 bool Visitor::verifySymbol(std::string symbol){
   auto p = scope->getSymbol(symbol);
   if(!p){
-    setFail();
-    std::string trace = "[!] ERROR : Symbol named \"" + symbol + "\" is used when not declared.\n";
-    addToErrorTrace(trace); 
+    UNDECLARED(symbol)
     return false; 
   }
   return true;
