@@ -180,6 +180,7 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = mainFunct; //setting parent to current node before anything else
+  isBaseBlock = true;
   visit(context->block()); // TODO : parameters
   parentNode = parent; //reseting parent node at the end of the call
 
@@ -420,15 +421,16 @@ antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
 
   // create corresponding AST node
   shared_ptr<Node> block = make_shared<Block>();
-  if (isBaseBlock) {
-    block->getScope()->setFunctionBaseScope(true);
-    isBaseBlock = false;
-  }
+
 
   // create links with the tree
   block->setParent(parentNode); // add the new node to it parent
   parentNode->getChildren().push_back(block); // set the new node parent
   block->setScope(scope); // setting scope to new scope
+  if (isBaseBlock) {
+    block->getScope()->setFunctionBaseScope(true);
+    isBaseBlock = false;
+  }
 
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
