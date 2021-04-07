@@ -60,7 +60,10 @@ int main(int argn, const char **argv) {
   visitor.visit(tree);
 
   shared_ptr<Node> rootNode = visitor.getRootNode();
+
+  #ifdef DEBUG
   PrintAst(rootNode, 0);
+  #endif
   
   if(visitor.getErrorFlag()){
     std::cerr << visitor.getErrorTrace() << std::endl;
