@@ -24,7 +24,8 @@
 #include "ir/instructions/Jmp_return.h"
 #include "ir/instructions/putChar.h"
 #include "ir/instructions/getChar.h"
-#include "ir/instructions/Jmp_return.h"
+#include "ir/instructions/BinaryOr.h"
+#include "ir/instructions/BinaryAnd.h"
 #include "type/Int64.h"
 #include "type/Char.h"
 #include "ir/ASMx86Utils.h"
@@ -219,6 +220,12 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
                 break;
             case BinaryOperator::LOGOR:
                 op = shared_ptr<Add>(new Add(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::BINAND:
+                op = shared_ptr<BinaryAnd>(new BinaryAnd(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::BINOR:
+                op = shared_ptr<BinaryOr>(new BinaryOr(current_bb.get(),*leftOp,*rightOp, *res));
                 break;
             case BinaryOperator::BINXOR:
                 //todo to do in the distant future
