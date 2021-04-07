@@ -496,6 +496,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //todo do get char
             shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(&CHARTYPE);
             shared_ptr<getChar> op(new getChar(current_bb.get(),*res));
+            current_bb->add_IRInstr(op);
             return res;
         }
         break;
