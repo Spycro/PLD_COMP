@@ -20,7 +20,7 @@
 #include "type/Int64.h"
 #include "type/Char.h"
 
-
+#include <string>
 
 #define DEBUG
 
@@ -52,7 +52,7 @@ antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) {
 
   return visitChildren(context);
 }
-
+antlrcpp::Any Visitor::visitConstant(ifccParser::ConstantContext*) UNHANDLED;
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) {
   TRACE
 
@@ -126,8 +126,9 @@ antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *
    TRACE
   // create corresponding AST node
   shared_ptr<Node> functionCall = make_shared<FunctionCall>();
-  
-
+  std::string symbol = context->getStart()->getText();
+  // PRINT(symbol)
+  verifySymbol(symbol);
   // create links with the tree
   functionCall->setParent(parentNode); // add the new node to it parent
   parentNode->getChildren().push_back(functionCall); // set the new node parent
@@ -167,7 +168,7 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   // create corresponding AST node
   this->scope->addFunction("main", new VarType::Int64());
   shared_ptr<Node> mainFunct = make_shared<Function>();
-  
+  mainFunct->setSymbol("main");
   // create links with the tree
   parentNode->getChildren().push_back(mainFunct); // add the new node to it parent
   mainFunct->setParent(parentNode); // set the new node parent
@@ -193,11 +194,11 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   TRACE
 
   // create corresponding AST node
-  std::string functionName = context->type()->getStart()->getText();
+  std::string functionName = context->NAME()->getSymbol()->getText();
   VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
   this->scope->addFunction(functionName, functionType);
   shared_ptr<Node> funct = make_shared<Function>();
-  
+  funct->setSymbol(functionName);
   // create links with the tree
   parentNode->getChildren().push_back(funct); // add the new node to it parent
   funct->setParent(parentNode); // set the new node parent
@@ -312,6 +313,9 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
     }
 
   }
+  //recursively visit declarationList
+  if(context->variableDeclarationList())
+    visit(context->variableDeclarationList());
 
   return 0;
 }
@@ -544,7 +548,7 @@ antlrcpp::Any Visitor::visitBitwiseAnd_assign(ifccParser::BitwiseAnd_assignConte
 
 antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) {
   TRACE
-
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
 
@@ -587,12 +591,11 @@ antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) {
 
   // set current node attributes
   // operator
-  std::string opString = context->getStart()->getText();
-  BinaryOperator op;
 
-  if(opString == "==")
+  BinaryOperator op;
+  if(context->EQUAL())
     op = EQUAL;
-  else if(opString == "!=")
+  else if(context->NOTEQUAL())
     op = NE;
   binary->setBinaryOperator(op);
   // operands
@@ -613,7 +616,14 @@ antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *context) {
   parentNode->getChildren().push_back(constant); // set the new node parent
 
   // set current node attributes
-  int value = stoi(context->CONST()->getSymbol()->getText());
+  int value;
+  if(context->constant()->NUMBERS()){
+    value = stoi(context->constant()->NUMBERS()->getSymbol()->getText());
+  } else {
+    value = context->constant()->CHARACTERS()->getSymbol()->getText().at(1);
+  }
+   
+
   constant->setConstValue(value);
 
   return antlrcpp::Any(constant);
@@ -685,6 +695,7 @@ antlrcpp::Any Visitor::visitAddresOf(ifccParser::AddresOfContext *context) UNHAN
 
 antlrcpp::Any Visitor::visitPostIncr(ifccParser::PostIncrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -721,6 +732,7 @@ antlrcpp::Any Visitor::visitBitwiseShift(ifccParser::BitwiseShiftContext *contex
 
 antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> affectation = make_shared<Affectation>();
@@ -830,16 +842,15 @@ antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *
   BinaryOperator op;
   // set current node attributes
   // operator
-  std::string opString = context->getStart()->getText();
-  if(opString == "<")
+  if(context->LT())
     op = LT;
-  else if(opString   == ">")
+  else if(context->GT())
     op = GT;
-  else if(opString == "<=")
+  else if(context->LTE())
     op = LTE;
-  else if(opString == ">=")
+  else if(context->GTE())
     op = GTE;
-  
+  PRINT(op)
   binary->setBinaryOperator(op);
   // operands
   binary->setOperand1(op1.as<shared_ptr<Node>>());
@@ -916,6 +927,7 @@ antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) {
 
 antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -944,6 +956,7 @@ antlrcpp::Any Visitor::visitSizeof(ifccParser::SizeofContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitPostDecr(ifccParser::PostDecrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -1045,6 +1058,8 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   // retrieve symbol
   std::string symbol = context->varName()->NAME()->getSymbol()->getText();
 
+  verifySymbol(symbol);
+
   // create corresponding AST node
   shared_ptr<Node> variable = make_shared<Variable>(symbol);
 
@@ -1128,3 +1143,19 @@ void Visitor::popScope() {
 
   scope = scope->getParentScope();
 }
+
+bool Visitor::verifySymbol(std::string symbol){
+  auto p = scope->getSymbol(symbol);
+  if(!p){
+    setFail();
+    std::string trace = "[!] ERROR : Symbol named \"" + symbol + "\" is used when not declared.\n";
+    addToErrorTrace(trace); 
+    return false; 
+  }
+  return true;
+}
+
+void Visitor::addToErrorTrace(std::string str){
+  errorTrace += str;
+}
+

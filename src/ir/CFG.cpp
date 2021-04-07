@@ -11,18 +11,27 @@
 #include "ir/instructions/Copy.h"
 #include "ir/instructions/Jmp_cmp_eq.h"
 #include "ir/instructions/Jmp_cmp_neq.h"
+#include "ir/instructions/Cmp_eq.h"
+#include "ir/instructions/Cmp_ge.h"
+#include "ir/instructions/Cmp_gt.h"
+#include "ir/instructions/Cmp_le.h"
+#include "ir/instructions/Cmp_lt.h"
+#include "ir/instructions/Cmp_neq.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
-CFG::CFG(Function* ast_, std::string label_, VarType::Type* type_, std::vector<SymbolTableElement> params_) : ast(ast_), label(label_), type(type_){}
+CFG::CFG(Function* ast_, std::string label_, VarType::Type* type_, std::vector<SymbolTableElement> params_) : label(label_), type(type_){}
 
 CFG::CFG(shared_ptr<Node> function){
-    label = "main"; // todo
-    type = &INTTYPE64; //todo
+    label =  function->getSymbol(); 
 
     shared_ptr<Node> block = function->getCode();
-    list<shared_ptr<Node>> parameters = function->getParameters();
     shared_ptr<Scope> scope = block->getScope();
+
+    type = scope->getSymbol(label)->getType(); 
+    
+    list<shared_ptr<Node>> parameters = function->getParameters();
+
     for(auto var : parameters){
         shared_ptr<SymbolTableElement> param = scope->getSymbol(var->getSymbol());
         myParams.push_back(param);
@@ -121,9 +130,11 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
     switch (instr->getType())
     {
     case NodeType::AFFECTATION:
-        {
-            std::string symbol = instr->getSymbol();
-            shared_ptr<Node> value = instr->getValue();
+        {            
+            shared_ptr<Node> leftValue = instr->getLValue();
+            shared_ptr<Node> value = instr->getRValue();
+
+            std::string symbol = leftValue->getSymbol();
 
             std::shared_ptr<SymbolTableElement> input = inspectInstruction(value);
             std::shared_ptr<SymbolTableElement> output = current_bb->getScope()->getSymbol(symbol);
@@ -163,7 +174,6 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<SymbolTableElement> rightOp = inspectInstruction(instr->getOperand2());
             shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(leftOp->getType()->getLargestType(rightOp->getType()));
             shared_ptr<IRInstr> op;
-            std::cout << instr->getOp() <<std::endl;
 
             switch (instr->getOp())
             {
@@ -179,12 +189,98 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             case BinaryOperator::DIV:
                 op = shared_ptr<Div>(new Div(current_bb.get(),*leftOp,*rightOp, *res));
                 break;
-            
+            case BinaryOperator::EQUAL:
+                op = shared_ptr<Cmp_eq>(new Cmp_eq(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::NE:
+                op = shared_ptr<Cmp_neq>(new Cmp_neq(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::LT:
+                op = shared_ptr<Cmp_lt>(new Cmp_lt(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::LTE:
+                op = shared_ptr<Cmp_le>(new Cmp_le(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::GT:
+                op = shared_ptr<Cmp_gt>(new Cmp_gt(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::GTE:
+                op = shared_ptr<Cmp_ge>(new Cmp_ge(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
             default:
                 break;
             }
             current_bb->add_IRInstr(op);
             return res;
+        }
+        break;
+    case NodeType::UNARY://todo finish
+        {
+            std::cout<< instr->toString()<<std::endl;
+            std::cout<< instr->getUnaryOp()<<std::endl;
+            std::cout<< instr->getOperand()<<std::endl;
+            shared_ptr<SymbolTableElement> in= inspectInstruction(instr->getOperand());
+            
+            shared_ptr<IRInstr> op;
+            
+            std::cout<< instr->toString()<<std::endl;
+            std::cout<< instr->getUnaryOp()<<std::endl;
+
+            switch (instr->getUnaryOp())
+            {
+            case UnaryOperator::POSTDECR:
+                {
+                    shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(in->getType());
+                    shared_ptr<IRInstr> copy(new Copy(current_bb.get(),*in,*res));
+                    op = shared_ptr<Add>(new Add(current_bb.get(),*in,SymbolTableElement(in->getType(),"-1"), *in));
+                    current_bb->add_IRInstr(copy);
+                    current_bb->add_IRInstr(op);
+                    return res;
+                }
+                break;
+            case UnaryOperator::POSTINCR:
+                {
+                    shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(in->getType());
+                    shared_ptr<IRInstr> copy(new Copy(current_bb.get(),*in,*res));
+                    op = shared_ptr<Add>(new Add(current_bb.get(),*in,SymbolTableElement(in->getType(),"1"), *in));
+                    current_bb->add_IRInstr(copy);
+                    current_bb->add_IRInstr(op);
+                    return res;
+                }
+                break;
+            case UnaryOperator::PREDECR:
+                {
+                    op = shared_ptr<Add>(new Add(current_bb.get(),*in,SymbolTableElement(in->getType(),"-1"), *in));
+                    current_bb->add_IRInstr(op);
+                    return in;
+                }
+                break;
+            case UnaryOperator::PREINCR:
+                {
+                    op = shared_ptr<Add>(new Add(current_bb.get(),*in,SymbolTableElement(in->getType(),"1"), *in));
+                    current_bb->add_IRInstr(op);
+                    return in;
+                }
+                break;
+            case UnaryOperator::NOT:
+                {
+                    shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(in->getType());
+                    op = shared_ptr<Cmp_eq>(new Cmp_eq(current_bb.get(),*in, SymbolTableElement(in->getType(),"0"), *res));
+                    current_bb->add_IRInstr(op);
+                    return res;
+                }
+                break;
+            case UnaryOperator::UNARYMINUS:
+                {
+                    shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(in->getType());
+                    op = shared_ptr<Sub>(new Sub(current_bb.get(),SymbolTableElement(in->getType(),"0"),*in, *res));
+                    current_bb->add_IRInstr(op);
+                    return res;
+                }
+                break;
+            default:
+                break;
+            }
         }
         break;
     case NodeType::INFINSTR:
@@ -244,7 +340,6 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::WHILEINSTR:
         {
-            
             shared_ptr<Node> mainBlock = instr->getCode();
 
             //create blocks
@@ -269,6 +364,39 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
                 inspectInstruction(InstrInBlock);
             }
+            //switch to end block
+            add_bb(endBlock);
+
+        }
+        break;
+    case NodeType::DOWHILEINSTR:
+        {
+            shared_ptr<Node> mainBlock = instr->getCode();
+
+            //create blocks
+            shared_ptr<BasicBlock> startBlock = current_bb;
+            shared_ptr<BasicBlock> mainBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
+            shared_ptr<BasicBlock> endBlock(new BasicBlock(this, current_bb->getScope()));
+
+            //bind blocks
+            startBlock->setExit_true(mainBasicBlock);
+            mainBasicBlock->setExit_true(mainBasicBlock);
+            mainBasicBlock->setExit_false(endBlock);
+
+            
+
+            //run main block
+            //instruction
+            add_bb(mainBasicBlock);
+
+            for(auto InstrInBlock : mainBlock->getInstructions()){ 
+                inspectInstruction(InstrInBlock);
+            }
+            shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
+            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            current_bb->add_IRInstr(jmpCmp);
+
+
             //switch to end block
             add_bb(endBlock);
 
@@ -306,6 +434,11 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //switch to end block
             add_bb(endBlock);
 
+        }
+        break;
+    case NodeType::FUNCTIONCALL:
+        {
+            std::string fName;
         }
         break;
     case NodeType::BLOCK:

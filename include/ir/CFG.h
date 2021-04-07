@@ -51,7 +51,7 @@ private :
 	std::list <std::shared_ptr<BasicBlock>> bbs; /**< all the basic blocks of this CFG*/	
 
 	int memorySpacer = 0; //Number of temp variables in the function
-	Function* ast; /**< The AST this CFG comes from */
+	//Function* ast; /**< The AST this CFG comes from */
 	std::string label; //TODO : a modifier!! -> Function
-	VarType::Type* type; //TODO : a modifier!! -> Function
+	const VarType::Type* type; //TODO : a modifier!! -> Function
 };

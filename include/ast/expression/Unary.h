@@ -11,7 +11,7 @@ class Unary : public Expression
             : operand(nullptr) { type=UNARY; }
 
         Unary(shared_ptr<Node> operand, UnaryOperator op) 
-            : operand(operand), op(op) {}
+            : operand(operand), op(op) {type=UNARY;}
 
         inline shared_ptr<Node> getOperand() override { return operand; }
         inline UnaryOperator getUnaryOp() override  { return op; }

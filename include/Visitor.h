@@ -22,6 +22,7 @@ class Visitor : public ifccVisitor
 public:
     virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *context) override;
     virtual antlrcpp::Any visitType(ifccParser::TypeContext *context) override;
+    virtual antlrcpp::Any visitConstant(ifccParser::ConstantContext *context) override;
     virtual antlrcpp::Any visitVarName(ifccParser::VarNameContext *context) override;
     virtual antlrcpp::Any visitPutchar(ifccParser::PutcharContext *context) override;
     virtual antlrcpp::Any visitGetchar(ifccParser::GetcharContext *context) override;
@@ -86,7 +87,8 @@ public:
 
     inline shared_ptr<Node> getRootNode() { return rootNode; }
     inline shared_ptr<Scope> getScope() { return scope; }
-
+    inline bool getErrorFlag() { return errorFlag; }
+    inline string& getErrorTrace() { return errorTrace; }
 private:
     shared_ptr<Scope> scope = make_shared<Scope>();
 
@@ -94,8 +96,12 @@ private:
 
 	shared_ptr<Node> parentNode;
     VarType::Type* declarationType;
+    bool errorFlag = false;
+    std::string errorTrace;
 
     void pushScope();
     void popScope();
-
+    bool verifySymbol(std::string);
+    void addToErrorTrace(std::string);
+    void setFail(){ errorFlag = true; }
 };
