@@ -29,6 +29,23 @@
 #include "SymbolTable.h"
 #include "ir/ASMConstants.h"
 
+void test_div() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "5");
+    SymbolTableElement constant2(&INTTYPE64, "2");
+    SymbolTableElement dest(&INTTYPE64, false, false, 8);
+
+    shared_ptr<Div> instr0(new Div(bb0.get(), constant1, constant2, dest));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
 void test_mul() {
 
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
@@ -376,4 +393,5 @@ int main(){
     test_sub();
     test_add();
     test_mul();
+    test_div();
 }

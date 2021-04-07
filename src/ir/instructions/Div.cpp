@@ -1,21 +1,21 @@
 #include "ir/instructions/Div.h"
 #include "ir/ASMConstants.h"
+#include "ir/ASMx86Utils.h"
+
+using namespace ASMx86Utils;
 
 Div::Div(BasicBlock *bb, SymbolTableElement a_, SymbolTableElement b_, SymbolTableElement res_) : IRInstr(bb), a(a_), b(b_), res(res_){}
 
 
 void Div::gen_asm(std::ostream &o) {
 
-    std::string val1, val2, dest;
+    // Get subregister of RAX (al, ax, eax) depending on res size
+    SymbolTableElement& raxSubReg = getSubReg(RAX_REGISTER, res.getSize());
 
-    val1 = a.getAsm();
-    val2 = b.getAsm();
-    dest = res.getAsm();
-
-    o << "\tmovq " << val1 << ", " << RAX_REGISTER.getAsm() <<std::endl;
-    o << "\tmovq $0, " << RDX_REGISTER.getAsm() <<std::endl;
-    o << "\tmovq " << val2 << ", " << RBX_REGISTER.getAsm() <<std::endl;
-    o << "\tidivq " << RBX_REGISTER.getAsm() << std::endl;
-    o << "\tmovq " << RAX_REGISTER.getAsm() << ", " << dest << std::endl;
-
+    // Convert both operands to 64 bits
+    o << moveTo64Reg(a, RAX_REGISTER) << std::endl;
+    o << moveTo64Reg(b, RCX_REGISTER) << std::endl;
+    o << "\tcqto" << std::endl; // sign extend rax to rdx:rax (128 bits)
+    o << "\tidivq " << RCX_REGISTER.getAsm() << std::endl;
+    o << "\tmov" << symbolSizeChar(res.getSize()) << " " << raxSubReg.getAsm() << ", " << res.getAsm() << std::endl;
 }
