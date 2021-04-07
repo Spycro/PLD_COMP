@@ -1,6 +1,7 @@
 #include "ir/ASMx86Utils.h"
 #include "ir/ASMConstants.h"
 
+#include <iostream>
 #include <sstream>
 
 char ASMx86Utils::symbolSizeChar(int s) {
