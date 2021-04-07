@@ -78,8 +78,11 @@ SIZEOF : 'sizeof' ;
 /*
  *    names and numbers
  */
-CONST : [0-9]+ ; // TODO : add chars ('a', '\0', '\n' ...), add type modifier
+
+NUMBERS : [0-9]+ ;
+CHARACTERS : '\''[\\]?[\u0000-\u007F]'\''; // TODO : add chars ('a', '\0', '\n' ...), add type modifier
 NAME : [a-zA-Z_][a-zA-Z0-9_]* ;
+constant : NUMBERS|CHARACTERS;
 varName : NAME ('[' expression ']')? ;
 functionCall 
       : 'putchar(' expression ')' #putchar
@@ -152,7 +155,7 @@ controlStructure
 
 
 expression 
-      : CONST #const
+      : constant #const
       | varName #variable
       | functionCall #functCall
       | '(' expression ')' #parenthesis

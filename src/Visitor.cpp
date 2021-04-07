@@ -18,7 +18,7 @@
 #include "type/Int.h"
 #include "type/Char.h"
 
-
+#include <string>
 
 #define DEBUG
 
@@ -48,6 +48,8 @@ antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) {
 
   return visitChildren(context);
 }
+
+antlrcpp::Any Visitor::visitConstant(ifccParser::ConstantContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDLED
 
@@ -520,7 +522,14 @@ antlrcpp::Any Visitor::visitConst(ifccParser::ConstContext *context) {
   parentNode->getChildren().push_back(constant); // set the new node parent
 
   // set current node attributes
-  int value = stoi(context->CONST()->getSymbol()->getText());
+  int value;
+  if(context->constant()->NUMBERS()){
+    value = stoi(context->constant()->NUMBERS()->getSymbol()->getText());
+  } else {
+    value = context->constant()->CHARACTERS()->getSymbol()->getText().at(1);
+  }
+   
+
   constant->setConstValue(value);
 
   return antlrcpp::Any(constant);
