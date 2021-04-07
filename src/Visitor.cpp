@@ -197,8 +197,7 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
 
   // retrieve function name
   std::string functionName = context->NAME()->getSymbol()->getText();
-
-  // retrieve function type
+  verifySymbolNotExist(functionName);
   VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
 
   // add to scope
