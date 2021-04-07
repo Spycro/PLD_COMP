@@ -6,7 +6,7 @@ int coucouFX() {
 
 int main() {
     int i;
-    for (i=2;1;i++){i=2;}
+    for (i=2;i<4;i++){i=2;}
     return 0;
 }
 
