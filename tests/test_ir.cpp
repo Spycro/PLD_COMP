@@ -29,6 +29,23 @@
 #include "SymbolTable.h"
 #include "ir/ASMConstants.h"
 
+void test_mul() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement constant2(&INTTYPE64, "3");
+    SymbolTableElement dest(&INTTYPE64, false, false, 8);
+
+    shared_ptr<Mul> instr0(new Mul(bb0.get(), constant1, constant2, dest));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
 void test_copy() {
 
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
@@ -42,6 +59,7 @@ void test_copy() {
     bb0->add_IRInstr(instr0);
     firstCFG->add_bb(bb0);
     firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
 }
 
 void test_sub() {
@@ -58,6 +76,24 @@ void test_sub() {
     bb0->add_IRInstr(instr0);
     firstCFG->add_bb(bb0);
     firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
+void test_add() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement constant2(&INTTYPE64, "3");
+    SymbolTableElement a(&INTTYPE32, false, false, 8);
+
+    shared_ptr<Add> instr0(new Add(bb0.get(), constant1, constant2, a));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
 }
 
 void test_pointers(){
@@ -79,6 +115,7 @@ void test_pointers(){
     firstCFG->add_bb(bb0);
 
     firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
 }
 
 /*
@@ -337,4 +374,6 @@ int main(){
     //test_cmp();
     test_copy();
     test_sub();
+    test_add();
+    test_mul();
 }
