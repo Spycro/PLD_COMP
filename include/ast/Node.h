@@ -109,6 +109,8 @@ public:
     /**************************************/
 
     /**************FUNCTION************/
+    //virtual void setSymbol(std::string symb) THROW // also def for variable
+    //virtual inline string& getSymbol() THROW // also def for variable
     virtual inline list<shared_ptr<Node>> getParameters() THROW
     /*********************************/
 
@@ -124,11 +126,16 @@ public:
     
     
     /************AFFECTATION************/
-    virtual inline string& getSymbol() THROW
+    virtual inline shared_ptr<Node> getLValue() THROW
+    virtual inline void setLValue(shared_ptr<Node> lValue) THROW
+    virtual inline shared_ptr<Node> getRValue() THROW
+    virtual inline void setRValue(shared_ptr<Node> rValue) THROW
+
     /*********************************/
     
     /************ARRAY************/
     virtual inline shared_ptr<Node> getPosition() THROW
+    virtual inline void setPosition(shared_ptr<Node> position) THROW
     /*********************************/
 
     /***********BINARY**********************/ //and part Tenary too
@@ -152,7 +159,8 @@ public:
     /*****************************************/
 
     /****************VARIABLE***********/
-    virtual void setSymbol(std::string) THROW
+    virtual void setSymbol(std::string symb) THROW
+    virtual inline string& getSymbol() THROW
     /**************************************/
 
     /**************CONST**************/
@@ -166,5 +174,5 @@ protected:
     vector<shared_ptr<Node>> children;
     shared_ptr<Node> parent;
     NodeType type;
-    std::string placeholder = "";
+    std::string placeholder = ""; // TODO : vérifier que non-utilisé et supprimer
 };

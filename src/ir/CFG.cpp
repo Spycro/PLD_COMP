@@ -130,9 +130,11 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
     switch (instr->getType())
     {
     case NodeType::AFFECTATION:
-        {
-            std::string symbol = instr->getSymbol();
-            shared_ptr<Node> value = instr->getValue();
+        {            
+            shared_ptr<Node> leftValue = instr->getLValue();
+            shared_ptr<Node> value = instr->getRValue();
+
+            std::string symbol = leftValue->getSymbol();
 
             std::shared_ptr<SymbolTableElement> input = inspectInstruction(value);
             std::shared_ptr<SymbolTableElement> output = current_bb->getScope()->getSymbol(symbol);

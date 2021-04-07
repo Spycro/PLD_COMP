@@ -10,23 +10,25 @@ class Affectation : public Expression
 
     public:
         Affectation()
-            : value(nullptr) {type=AFFECTATION;}
+            : lValue(nullptr), rValue(nullptr) {type=AFFECTATION;}
         
-        Affectation(string symbol)
-            : symbol(symbol), value(nullptr) {type=AFFECTATION;} 
+        Affectation(shared_ptr<Node> lValue)
+            : lValue(lValue), rValue(nullptr) {type=AFFECTATION;} 
 
-        Affectation(string symbol, shared_ptr<Node> value)
-            : symbol(symbol), value(value) {type=AFFECTATION;}
+        Affectation(shared_ptr<Node> lValue, shared_ptr<Node> rValue)
+            : lValue(lValue), rValue(rValue) {type=AFFECTATION;}
         
-        inline void setSymbol(string symbol_) override {symbol = symbol_;}
-        inline string& getSymbol() override { return symbol; }
-        inline shared_ptr<Node> getValue() override { return value; }
-        void setValue(shared_ptr<Node> value) override { this->value = value; }
+        inline shared_ptr<Node> getLValue() override { return lValue; }
+        void setLValue(shared_ptr<Node> lValue) override { this->lValue = lValue; }
+
+        inline shared_ptr<Node> getRValue() override { return rValue; }
+        void setRValue(shared_ptr<Node> rValue) override { this->rValue = rValue; }
+
         virtual std::string toString() override;
 
     private:
 
-        string symbol;
-        shared_ptr<Node> value;
+        shared_ptr<Node> lValue;
+        shared_ptr<Node> rValue;
 
 };
