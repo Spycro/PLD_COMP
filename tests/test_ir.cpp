@@ -77,14 +77,14 @@ void test_jmp_cmp_neq() {
     bb0->add_IRInstr(copy1);
     bb0->add_IRInstr(jmp_cmp_neq);
 
-    bb0->exit_true = bb1.get();
+    bb0->setExit_true(bb1);
 
     // if branch
-    bb0->exit_true = bb1.get();
-    bb0->exit_false = bb2.get();
+    bb0->setExit_true(bb1);
+    bb0->setExit_false(bb2);
 
     // final block in common for if and else
-    bb1->exit_true = bb2.get();
+    bb1->setExit_true(bb2);
 
     firstCFG->add_bb(bb0);
     firstCFG->add_bb(bb1);
@@ -359,12 +359,12 @@ void test_if_else_condition() {
     bb2.add_IRInstr(&copyInstr2);
 
     // if branch
-    bb0.exit_true = &bb1;
-    bb0.exit_false = &bb2;
+    bb0.getExit_true() = &bb1;
+    bb0.getExit_false() = &bb2;
 
     // final block in common for if and else
-    bb1.exit_true = &bb3;
-    bb2.exit_true = &bb3;
+    bb1.getExit_true() = &bb3;
+    bb2.getExit_true() = &bb3;
 
     firstCFG->add_bb(&bb0);
     firstCFG->add_bb(&bb1);
@@ -393,11 +393,11 @@ void test_if_condition() {
     bb2.add_IRInstr(&copyInstr2);
 
     // if branch
-    bb0.exit_true = &bb1;
-    bb0.exit_false = &bb2;
+    bb0.getExit_true() = &bb1;
+    bb0.getExit_false() = &bb2;
 
     // final block in common for if and else
-    bb1.exit_true = &bb2;
+    bb1.getExit_true() = &bb2;
 
     firstCFG->add_bb(&bb0);
     firstCFG->add_bb(&bb1);
@@ -418,7 +418,7 @@ void test_following_blocks() {
 
     bb0.add_IRInstr(&instr1);
     bb1.add_IRInstr(&instr2);
-    bb0.exit_true = &bb1;
+    bb0.getExit_true() = &bb1;
 
     firstCFG->add_bb(&bb0);
     firstCFG->add_bb(&bb1);

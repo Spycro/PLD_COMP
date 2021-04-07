@@ -10,8 +10,9 @@ namespace VarType
             return 4;
         }
 
-        virtual std::string toString() override { return "Int"; }
+        virtual std::string toString() override { return "Int32"; }
         
     };
 }
+
 extern VarType::Int32 INTTYPE32;

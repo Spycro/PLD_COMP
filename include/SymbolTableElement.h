@@ -1,9 +1,9 @@
 #pragma once
 
-#include "type/Type.h"
-#include "type/Void.h"
 #include <string>
 
+#include "type/Type.h"
+#include "type/Void.h"
 
 class CFG;
 class SymbolTableElement{//todo this entire class should probably be seperated into multiple in the futur

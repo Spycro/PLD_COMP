@@ -14,4 +14,5 @@ namespace VarType
         
     };
 }
+
 extern VarType::Void VOIDTYPE;

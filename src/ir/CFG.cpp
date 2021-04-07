@@ -1,9 +1,10 @@
-#include "../../include/ir/CFG.h"
+#include <memory>
+
+#include "ir/CFG.h"
 
 #include "ast/expression/Affectation.h"
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
-#include <memory>
 #include "ir/instructions/Add.h"
 #include "ir/instructions/Sub.h"
 #include "ir/instructions/Mul.h"

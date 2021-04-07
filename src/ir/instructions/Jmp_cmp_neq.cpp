@@ -15,5 +15,5 @@ void Jmp_cmp_neq::gen_asm(std::ostream &o) {
 
     // Perform 64 bits comparison
     o << "\tcmpq " << RDX_REGISTER.getAsm() << ", " << RAX_REGISTER.getAsm() << std::endl;
-    o << "\tje " << '.' << bb->exit_false->label << std::endl;
+    o << "\tje " << '.' << bb->getExit_false()->label << std::endl;
 }

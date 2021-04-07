@@ -1,9 +1,17 @@
 #include "SymbolTableElement.h"
 #include "ir/ASMConstants.h"
 
-VarType::Void VOIDTYPE;
-VarType::Int64 INTTYPE64;
+#include "type/Int64.h"
+#include "type/Int32.h"
+#include "type/Int16.h"
+#include "type/Char.h"
+#include "type/Void.h"
+
+VarType::Char CHARTYPE;
+VarType::Int16 INTTYPE16;
 VarType::Int32 INTTYPE32;
+VarType::Int64 INTTYPE64;
+VarType::Void VOIDTYPE;
 
 SymbolTableElement RAX_REGISTER (&INTTYPE64, "rax", true);
 SymbolTableElement RBX_REGISTER (&INTTYPE64, "rbx", true);

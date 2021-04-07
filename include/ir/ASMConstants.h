@@ -2,18 +2,6 @@
 
 #include "SymbolTableElement.h"
 
-#include "type/Int64.h"
-#include "type/Int32.h"
-#include "type/Int16.h"
-#include "type/Char.h"
-#include "type/Void.h"
-
-extern Void VOIDTYPE;
-extern Int64 INTTYPE64;
-extern Int32 INTTYPE32;
-extern Int16 INTTYPE16;
-extern Char CHARTYPE;
-
 extern SymbolTableElement RAX_REGISTER;
 extern SymbolTableElement RBX_REGISTER;
 extern SymbolTableElement RCX_REGISTER;
