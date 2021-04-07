@@ -13,12 +13,12 @@ std::shared_ptr<SymbolTableElement> Scope::getSymbol(std::string name){
     
 }
 
-shared_ptr<SymbolTableElement> Scope::addTempVariable(VarType::Type* variableType){
+shared_ptr<SymbolTableElement> Scope::addTempVariable(const VarType::Type* variableType){
     int mem64 = getMemoryCounter64AndIncrement();
     return symbolicTable->addVariable(std::to_string(mem64), variableType, mem64);
 }
 
-void Scope::addVariable(std::string name, VarType::Type *variableType)
+void Scope::addVariable(std::string name,const VarType::Type *variableType)
 {
     if(getSymbol(name)!= nullptr){
         std::cerr<<"name is already used in scope" <<std::endl;
@@ -26,7 +26,7 @@ void Scope::addVariable(std::string name, VarType::Type *variableType)
     symbolicTable->addVariable(name, variableType, getMemoryCounter64AndIncrement());
 }
 
-void Scope::addFunction(std::string name, VarType::Type *functionType)
+void Scope::addFunction(std::string name,const VarType::Type *functionType)
 {
     symbolicTable->addFunction(name, functionType, 0);
 }

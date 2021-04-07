@@ -24,9 +24,9 @@ public:
 
     std::shared_ptr<SymbolTableElement> getSymbol(std::string name);
 
-    shared_ptr<SymbolTableElement> addTempVariable(VarType::Type * variableType);
-    void addVariable(std::string name, VarType::Type *variableType);
-    void addFunction(std::string name, VarType::Type *functionType);
+    shared_ptr<SymbolTableElement> addTempVariable(const VarType::Type * variableType);
+    void addVariable(std::string name, const VarType::Type *variableType);
+    void addFunction(std::string name, const VarType::Type *functionType);
     virtual std::string toString();
 
 private:

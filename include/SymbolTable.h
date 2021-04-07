@@ -26,8 +26,8 @@ class SymbolTable{
 		
 		VarType::Type* get_var_type(std::string name);
 
-		std::shared_ptr<SymbolTableElement> addVariable (std::string variableName, VarType::Type* variableType, int mem64);
-		std::shared_ptr<SymbolTableElement> addFunction (std::string functionName, VarType::Type* functionReturnType, int mem64);
+		std::shared_ptr<SymbolTableElement> addVariable (std::string variableName, const VarType::Type* variableType, int mem64);
+		std::shared_ptr<SymbolTableElement> addFunction (std::string functionName, const VarType::Type* functionReturnType, int mem64);
 		//const std::unique_ptr<SymbolMap> & getElements() { return elements; }
 
 	private:

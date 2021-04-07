@@ -161,7 +161,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         {
             shared_ptr<SymbolTableElement> leftOp= inspectInstruction(instr->getOperand1());
             shared_ptr<SymbolTableElement> rightOp = inspectInstruction(instr->getOperand2());
-            shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(&INTTYPE64);
+            shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(leftOp->getType()->getLargestType(rightOp->getType()));
             shared_ptr<IRInstr> op;
             std::cout << instr->getOp() <<std::endl;
 
@@ -263,7 +263,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //instruction
             add_bb(mainBasicBlock);
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
+            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
             current_bb->add_IRInstr(jmpCmp);
 
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
@@ -296,7 +296,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //instruction
             add_bb(mainBasicBlock);
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
+            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
             current_bb->add_IRInstr(jmpCmp);
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
                 inspectInstruction(InstrInBlock);
