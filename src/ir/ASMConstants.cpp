@@ -1,6 +1,8 @@
 #include "SymbolTableElement.h"
 #include "type/Int64.h"
 #include "type/Int32.h"
+#include "type/Int16.h"
+#include "type/Char.h"
 
 VarType::Void VOIDTYPE;
 VarType::Int64 INTTYPE64;
@@ -17,5 +19,16 @@ SymbolTableElement EAX_REGISTER (&INTTYPE32, "eax", true);
 SymbolTableElement EBX_REGISTER (&INTTYPE32, "ebx", true);
 SymbolTableElement ECX_REGISTER (&INTTYPE32, "ecx", true);
 SymbolTableElement EDX_REGISTER (&INTTYPE32, "edx", true);
+
+SymbolTableElement AX_REGISTER (&INTTYPE16, "ax", true);
+SymbolTableElement BX_REGISTER (&INTTYPE16, "bx", true);
+SymbolTableElement CX_REGISTER (&INTTYPE16, "cx", true);
+SymbolTableElement DX_REGISTER (&INTTYPE16, "dx", true);
+
+SymbolTableElement AL_REGISTER (&CHARTYPE, "al", true);
+SymbolTableElement BL_REGISTER (&CHARTYPE, "bl", true);
+SymbolTableElement CL_REGISTER (&CHARTYPE, "cl", true);
+SymbolTableElement DL_REGISTER (&CHARTYPE, "dl", true);
+
 SymbolTableElement R8D_REGISTER (&INTTYPE32, "r8d", true);
 SymbolTableElement R9D_REGISTER (&INTTYPE32, "r9d", true);
