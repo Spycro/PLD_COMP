@@ -1,10 +1,12 @@
 int bob(int a) {
-	int b =a;
+	int b ;
     return b;
 }
 
 int main() {
 	int a = 3;
-	bob(a);
+	while(1){
+		break;
+	}
     return a;
 }

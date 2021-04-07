@@ -67,7 +67,9 @@ class BasicBlock {
 	std::shared_ptr<Scope> scope;
 
 	bool needJmp;
- 
+	
+	std::shared_ptr<BasicBlock> exit_break = nullptr;//exit here if break happens
+
  	std::shared_ptr<BasicBlock> exit_true =nullptr;  /**< pointer to the next basic block, true branch. If nullptr, return from procedure */ 
 	std::shared_ptr<BasicBlock> exit_false = nullptr; /**< pointer to the next basic block, false branch. If null_ptr, the basic block ends with an unconditional jump */
 

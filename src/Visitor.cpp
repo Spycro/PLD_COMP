@@ -241,7 +241,8 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
       VarType::Type* type = VarType::getType(types[i]->getStart()->getText());
 
       // add to scope
-      scope->addVariable(name, declarationType);
+      //scope->addVariable(name, declarationType);
+      funct->getCode()->getScope()->addVariable(name,declarationType);
 
       // add to parameters
       shared_ptr<Node> param = make_shared<Variable>();
