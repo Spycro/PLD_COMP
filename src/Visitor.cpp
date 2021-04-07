@@ -732,9 +732,9 @@ antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *
   // operator
   if(context->LT())
     op = LT;
-  else if(context->LTE())
-    op = GT;
   else if(context->GT())
+    op = GT;
+  else if(context->LTE())
     op = LTE;
   else if(context->GTE())
     op = GTE;
