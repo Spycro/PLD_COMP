@@ -29,6 +29,44 @@
 #include "SymbolTable.h"
 #include "ir/ASMConstants.h"
 
+void test_jmp_cmp_neq() {
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+    shared_ptr<BasicBlock> bb1( new BasicBlock(firstCFG.get(), nullptr));
+    shared_ptr<BasicBlock> bb2( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant0(&INTTYPE64, "2");
+    SymbolTableElement constant1(&INTTYPE64, "3");
+    SymbolTableElement a(&INTTYPE64, false, false, 8);
+    SymbolTableElement b(&INTTYPE64, false, false, 16);
+
+    shared_ptr<Copy> copy0(new Copy(bb0.get(), constant0, a));
+    shared_ptr<Copy> copy1(new Copy(bb0.get(), constant1, b));
+
+    shared_ptr<Jmp_cmp_neq> jmp_cmp_neq(new Jmp_cmp_neq(bb0.get(), a, b));
+
+    bb0->add_IRInstr(copy0);
+    bb0->add_IRInstr(copy1);
+    bb0->add_IRInstr(jmp_cmp_neq);
+
+    bb0->exit_true = bb1.get();
+
+    // if branch
+    bb0->exit_true = bb1.get();
+    bb0->exit_false = bb2.get();
+
+    // final block in common for if and else
+    bb1->exit_true = bb2.get();
+
+    firstCFG->add_bb(bb0);
+    firstCFG->add_bb(bb1);
+    firstCFG->add_bb(bb2);
+
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
 void test_div() {
 
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
@@ -394,4 +432,5 @@ int main(){
     test_add();
     test_mul();
     test_div();
+    test_jmp_cmp_neq();
 }
