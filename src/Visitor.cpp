@@ -105,10 +105,11 @@ antlrcpp::Any Visitor::visitPutchar(ifccParser::PutcharContext *context) {
   putChar->setParent(parentNode); // add the new node to it parent
   parentNode->getChildren().push_back(putChar); // set the new node parent
 
+  // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = putChar; //setting parent to current node before anything else
   antlrcpp::Any expression = visit(context->expression());
-
+  putChar->getParameters().push_back(expression.as<shared_ptr<Node>>());
   parentNode = parent; //reseting parent node at the end of the call
 
   return antlrcpp::Any(putChar); 
@@ -138,20 +139,16 @@ antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *
   functionCall->setParent(parentNode); // add the new node to it parent
   parentNode->getChildren().push_back(functionCall); // set the new node parent
 
+  // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = functionCall; //setting parent to current node before anything else
-
-  //antlrcpp::Any expression = visit(context->expression());
-
   for (auto child : context->expression()) {
     antlrcpp::Any tmp = visit(child);
     functionCall->getParameters().push_back(tmp.as<shared_ptr<Node>>());
   }
-
   parentNode = parent; //reseting parent node at the end of the call
 
   return antlrcpp::Any(functionCall); 
-
 }
 
 antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
