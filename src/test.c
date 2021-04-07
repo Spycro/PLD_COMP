@@ -4,8 +4,8 @@ int bob(int a) {
 
 int main() {
 	int a = 3;
-	while(1){
-		break;
-	}
+	do{
+		continue;
+	}while(a);
     return a;
 }

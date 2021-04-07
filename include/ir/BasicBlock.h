@@ -51,9 +51,11 @@ class BasicBlock {
 
 	const std::shared_ptr<BasicBlock> getExit_true();
 	const std::shared_ptr<BasicBlock> getExit_false();
+	const std::shared_ptr<BasicBlock> getExit_break();
 
 	void setExit_true(std::shared_ptr<BasicBlock> exit_true);
 	void setExit_false(std::shared_ptr<BasicBlock> exit_false);
+	void setExit_break(std::shared_ptr<BasicBlock> exit_break);
 
 	// No encapsulation whatsoever here. Feel free to do better.
 	std::string label; /**< label of the BB, also will be the label in the generated code */

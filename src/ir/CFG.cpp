@@ -18,7 +18,8 @@
 #include "ir/instructions/Cmp_lt.h"
 #include "ir/instructions/Cmp_neq.h"
 #include "ir/instructions/Call.h"
-#include "ir/instructions/Jmp.h"
+#include "ir/instructions/Jmp_break.h"
+#include "ir/instructions/Jmp_continue.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -168,7 +169,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(valToReturn),RAX_REGISTER));
             current_bb->add_IRInstr(copy);
 
-            shared_ptr<Jmp> jmp (new Jmp(current_bb.get(),current_bb->getExit_true()));
+            shared_ptr<Jmp_break> jmp (new Jmp_break(current_bb.get()));
             current_bb->add_IRInstr(jmp);
         }
         break;
@@ -360,7 +361,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             startBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_false(endBlock);
-
+            mainBasicBlock->setExit_break(endBlock);
             
 
             //run main block
@@ -391,7 +392,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             startBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_false(endBlock);
-
+            mainBasicBlock->setExit_break(endBlock);
             
 
             //run main block
@@ -426,6 +427,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             startBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_false(endBlock);
+            mainBasicBlock->setExit_break(endBlock);
 
             inspectInstruction(init);
 
@@ -490,13 +492,13 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::BREAK:
         {
-            shared_ptr<Jmp> jmp (new Jmp(current_bb.get(),current_bb->getExit_true()));
+            shared_ptr<Jmp_break> jmp (new Jmp_break(current_bb.get()));
             current_bb->add_IRInstr(jmp);
         }
         break;
     case NodeType::CONTINUE:
         {
-            shared_ptr<Jmp> jmp (new Jmp(current_bb.get(),current_bb));
+            shared_ptr<Jmp_continue> jmp (new Jmp_continue(current_bb.get()));
             current_bb->add_IRInstr(jmp);
         }
         break;
