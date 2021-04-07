@@ -946,9 +946,7 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   std::string symbol = context->varName()->NAME()->getSymbol()->getText();
   PRINT(symbol)
 
-  if(!scope->getSymbol(symbol)) {
-      cerr<<"non declared variable"<<endl;
-  }
+  verifySymbol(symbol);
 
   // create corresponding AST node
   shared_ptr<Node> variable = make_shared<Variable>(symbol);
@@ -1031,3 +1029,19 @@ void Visitor::popScope() {
 
   scope = scope->getParentScope();
 }
+
+bool Visitor::verifySymbol(std::string symbol){
+  auto p = scope->getSymbol(symbol);
+  if(!p){
+    setFail();
+    std::string trace = "[!] ERROR : Symbol named \"" + symbol + "\" is used when not declared.\n";
+    addToErrorTrace(trace); 
+    return false; 
+  }
+  return true;
+}
+
+void Visitor::addToErrorTrace(std::string str){
+  errorTrace += str;
+}
+

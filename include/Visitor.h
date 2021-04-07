@@ -87,7 +87,8 @@ public:
 
     inline shared_ptr<Node> getRootNode() { return rootNode; }
     inline shared_ptr<Scope> getScope() { return scope; }
-
+    inline bool getErrorFlag() { return errorFlag; }
+    inline string& getErrorTrace() { return errorTrace; }
 private:
     shared_ptr<Scope> scope = make_shared<Scope>();
 
@@ -95,8 +96,12 @@ private:
 
 	shared_ptr<Node> parentNode;
     VarType::Type* declarationType;
+    bool errorFlag = false;
+    std::string errorTrace;
 
     void pushScope();
     void popScope();
-
+    bool verifySymbol(std::string);
+    void addToErrorTrace(std::string);
+    void setFail(){ errorFlag = true; }
 };
