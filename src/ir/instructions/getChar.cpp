@@ -11,7 +11,7 @@ void getChar::gen_asm(std::ostream &o) {
     o << "\tmovq $0, %rax #sys_read syscall" <<std::endl;
     o << "\tmovq $0, %rdi #stdin" << std::endl;
     if(charDest.getType() != &VOIDTYPE){
-        o << "\tleaq " << charDest.getAsm() << " %rsi #char addr destination" << std::endl;
+        o << "\tleaq " << charDest.getAsm() << ", %rsi #char addr destination" << std::endl;
     }
     o << "\tmovq $1, %rdx # length = 1" << std::endl;
     o << "\tsyscall" << std::endl;
