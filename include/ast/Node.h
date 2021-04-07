@@ -62,7 +62,8 @@ typedef enum
     PARENTHESIS,
     TILD,
     NOT,
-    UNARYMINUS
+    UNARYMINUS,
+    UNARYPLUS
 } UnaryOperator;
 
 class Node

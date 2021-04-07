@@ -849,7 +849,30 @@ antlrcpp::Any Visitor::visitBitwiseOr_assign(ifccParser::BitwiseOr_assignContext
 
 antlrcpp::Any Visitor::visitComma(ifccParser::CommaContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitUnaryPlus(ifccParser::UnaryPlusContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitUnaryPlus(ifccParser::UnaryPlusContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> unary = make_shared<Unary>();
+
+  // create links with the tree
+  unary->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(unary); // set the new node parent
+
+  // set current node attributes
+  // operator
+  unary->setOp(UNARYMINUS);
+  // operand
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent to current node before anything else
+  antlrcpp::Any tmp = visit(context->expression()); 
+  parentNode = parent; //reseting parent node at the end of the call
+
+  shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
+
+  return antlrcpp::Any(unary);
+}
 
 antlrcpp::Any Visitor::visitSub_assign(ifccParser::Sub_assignContext *context) UNHANDLED
 
