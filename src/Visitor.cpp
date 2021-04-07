@@ -12,6 +12,8 @@
 #include "ast/expression/Binary.h"
 #include "ast/expression/Unary.h"
 #include "type/TypeUtil.h"
+#include "ast/expression/getCharInstr.h"
+#include "ast/expression/putCharInstr.h"
 #include "type/Int.h"
 #include "type/Char.h"
 
@@ -48,9 +50,36 @@ antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) {
 
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitPutchar(ifccParser::PutcharContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitPutchar(ifccParser::PutcharContext *context) {
+    TRACE
+  // create corresponding AST node
+  shared_ptr<Node> putChar = make_shared<putCharInstr>();
+  
 
-antlrcpp::Any Visitor::visitGetchar(ifccParser::GetcharContext *context) UNHANDLED
+  // create links with the tree
+  putChar->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(putChar); // set the new node parent
+
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = putChar; //setting parent to current node before anything else
+  antlrcpp::Any expression = visit(context->expression());
+
+  parentNode = parent; //reseting parent node at the end of the call
+
+  return antlrcpp::Any(putChar); 
+}
+
+antlrcpp::Any Visitor::visitGetchar(ifccParser::GetcharContext *context) {
+  TRACE
+  // create corresponding AST node
+  shared_ptr<Node> getChar = make_shared<getCharInstr>();
+
+  // create links with the tree
+  getChar->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(getChar); // set the new node parent
+
+  return antlrcpp::Any(getChar); 
+}
 
 antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *context) UNHANDLED
 
