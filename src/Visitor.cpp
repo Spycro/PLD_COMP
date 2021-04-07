@@ -441,11 +441,11 @@ antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) {
 
   // set current node attributes
   // operator
-  std::string opString = context->getStart()->getText();
+
   BinaryOperator op;
-  if(opString == "==")
+  if(context->EQUAL())
     op = EQUAL;
-  else if(opString == "!=")
+  else if(context->NOTEQUAL())
     op = NE;
   binary->setBinaryOperator(op);
   // operands
