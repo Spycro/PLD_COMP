@@ -155,7 +155,7 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
   this->scope->addFunction(functionName, functionType);
   shared_ptr<Node> funct = make_shared<Function>();
-  
+  funct->setSymbol(functionName);
   // create links with the tree
   parentNode->getChildren().push_back(funct); // add the new node to it parent
   funct->setParent(parentNode); // set the new node parent
