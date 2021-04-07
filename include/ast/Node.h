@@ -61,7 +61,8 @@ typedef enum
     POSTDECR,
     PARENTHESIS,
     TILD,
-    NOT
+    NOT,
+    UNARYMINUS
 } UnaryOperator;
 
 class Node

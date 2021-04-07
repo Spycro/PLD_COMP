@@ -685,10 +685,13 @@ antlrcpp::Any Visitor::visitLogicalNot(ifccParser::LogicalNotContext *context) {
   // operator
   unary->setOp(NOT);
   // operand
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent to current node before anything else
   antlrcpp::Any tmp = visit(context->expression()); 
+  parentNode = parent; //reseting parent node at the end of the call
+
   shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
-  operand->setParent(unary);
-  unary->getChildren().push_back(operand);
 
   return antlrcpp::Any(unary);
 }
@@ -842,7 +845,30 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   return antlrcpp::Any(variable);
 }
 
-antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> unary = make_shared<Unary>();
+
+  // create links with the tree
+  unary->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(unary); // set the new node parent
+
+  // set current node attributes
+  // operator
+  unary->setOp(UNARYMINUS);
+  // operand
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent to current node before anything else
+  antlrcpp::Any tmp = visit(context->expression()); 
+  parentNode = parent; //reseting parent node at the end of the call
+
+  shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
+
+  return antlrcpp::Any(unary);
+}
 
 antlrcpp::Any Visitor::visitLogicalOr(ifccParser::LogicalOrContext *context) {
   TRACE
