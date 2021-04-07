@@ -5,3 +5,7 @@ int main() {
   
    return c;
 }
+
+int bob() {
+   
+}
