@@ -26,10 +26,11 @@
 
 //#define DEBUG
 
-#define UNHANDLED { setFail(); addToErrorTrace("[!] Unhandled operation : "); addToErrorTrace(__PRETTY_FUNCTION__); addToErrorTrace("\r\n"); return 0; }
-#define FORBIDEN(x) { setFail(); addToErrorTrace("[!] Forbiden operation : "); addToErrorTrace(x); addToErrorTrace("\r\n"); }
+#define UNHANDLED { setFail(); addToErrorTrace("[!] Unhandled operation : "); addToErrorTrace(__PRETTY_FUNCTION__); addToErrorTrace(".\r\n"); return 0; }
+#define FORBIDEN(x) { setFail(); addToErrorTrace("[!] Forbiden operation : "); addToErrorTrace(x); addToErrorTrace(".\r\n"); }
 #define UNDECLARED(x) { setFail(); addToErrorTrace("[!] Error : Symbol named \""); addToErrorTrace(x); addToErrorTrace("\" is used but not declared.\r\n"); }
- 
+#define NORETURN(x) { setFail(); addToErrorTrace("[!] Error : At least one return statement was expected in \""); addToErrorTrace(x); addToErrorTrace("\".\r\n"); }
+
 #ifdef DEBUG
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
   #define PRINT(x) std::cout << "[*] value : " << (x) << std::endl;
@@ -186,6 +187,11 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   // set base scope
   mainFunct->getCode()->getScope()->setFunctionBaseScope(true);
 
+  // check for a return statement
+  if (!checkForReturn(mainFunct)) {
+    NORETURN("main")
+  }
+
   return antlrcpp::Any(mainFunct);
 }
 
@@ -241,6 +247,13 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // reset function parameters
   varDeclNames = std::vector<antlr4::tree::TerminalNode *>();
   varDeclTypes = std::vector<ifccParser::TypeContext *>();
+  
+  // check for a return statement if needed
+  if (functionType->getSize() != 0) {
+    if (!checkForReturn(funct)) {
+      NORETURN(functionName)
+    }
+  }
 
   return antlrcpp::Any(funct);
 }
@@ -1230,4 +1243,17 @@ VarType::Type* Visitor::parseType(std::string typeString) {
     return new VarType::Char();
   }
   return nullptr;
+}
+
+bool Visitor::checkForReturn(shared_ptr<Node> node) {
+  bool ret = false;
+
+  if (node->getType() == NodeType::RETURN) {
+    return node->getChildren().size() > 0;
+  } else {
+    for (shared_ptr<Node> child : node->getChildren()) {
+      ret = ret || checkForReturn(child);
+    }
+    return ret;
+  }
 }
