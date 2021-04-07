@@ -166,7 +166,6 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
 }
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
-  // TODO : parameters
   TRACE
 
   // create corresponding AST node
@@ -181,7 +180,7 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = mainFunct; //setting parent to current node before anything else
   isBaseBlock = true;
-  visit(context->block()); // TODO : parameters
+  visit(context->block());
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
@@ -197,10 +196,16 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
 antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
   TRACE
 
-  // create corresponding AST node
+  // retrieve function name
   std::string functionName = context->NAME()->getSymbol()->getText();
+
+  // retrieve function type
   VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
+
+  // add to scope
   this->scope->addFunction(functionName, functionType);
+
+  // create corresponding AST node
   shared_ptr<Node> funct = make_shared<Function>();
   funct->setSymbol(functionName);
 
@@ -218,6 +223,26 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // set current node attributes
   funct->setSymbol(functionName);
   funct->setCode(funct->getChildren()[0]);
+
+  // add parameters to scope
+  if (context->functionParametersDeclaration() != nullptr) {
+    PRINT("variables declaration !")
+
+    std::vector<antlr4::tree::TerminalNode *> names = context->functionParametersDeclaration()->NAME();
+    std::vector<ifccParser::TypeContext *> types = context->functionParametersDeclaration()->type();
+
+    int paramCount = names.size();
+    for (int i = 0; i < paramCount; ++i) {
+      //retrieve name
+      std::string name = names[i]->getSymbol()->getText();
+
+      // retrieve type
+      VarType::Type* type = VarType::getType(types[i]->getStart()->getText());
+
+      // add to scope
+      scope->addVariable(name, declarationType);
+    }
+  }
 
   return antlrcpp::Any(funct);
 }
@@ -413,7 +438,6 @@ antlrcpp::Any Visitor::visitInstruction(ifccParser::InstructionContext *context)
 }
 
 antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
-  // TODO : parameters
   TRACE
 
   // updating scope 
