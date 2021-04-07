@@ -1,7 +1,8 @@
 int main() {
    int a = 5;
    int b = 5;
-   // int c = a;
+   int g,f,h=5;
+      // int c = a;
    a == b;
    // a || b;
    // a ^ b;

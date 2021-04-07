@@ -200,7 +200,7 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
 
   // add to scope
   scope->addVariable(name, declarationType);
-
+  PRINT("ADDED VARIABLE")
   // if a default expression (ie. value) is given, create an affectation
   // otherwise, no AST node is needed
   if(context->expression()){
@@ -224,6 +224,8 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
 
     return antlrcpp::Any(affectation);
   }
+  //recursively visit declarationList
+  visit(context->variableDeclarationList());
 
   return 0;
 }
