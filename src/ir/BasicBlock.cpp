@@ -47,7 +47,7 @@ void BasicBlock::gen_asm(std::ostream &o) {
         instr->gen_asm(o);
     }
 
-    if(needJmp){
+    if(needJmp && exit_true){
         o << "\tjmp ." << exit_true->label << std::endl;
     }    
 

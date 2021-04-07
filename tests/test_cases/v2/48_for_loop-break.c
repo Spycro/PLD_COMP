@@ -4,7 +4,9 @@ int main() {
     int i;
 
     for(i = 0 ; i < 5 ; ++i){
-        if(a >= 3) break;
+        if(a >= 3){
+            
+        }
 
         a = a + i;
     }
