@@ -1,6 +1,5 @@
 int bob(int a) {
-	int b ;
-    return b;
+	return a;
 }
 
 int main() {

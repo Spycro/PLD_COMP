@@ -99,6 +99,8 @@ private:
     VarType::Type* declarationType;
 
     bool isBaseBlock = false;
+    std::vector<antlr4::tree::TerminalNode *> varDeclNames;
+    std::vector<ifccParser::TypeContext *> varDeclTypes;
 
     bool errorFlag = false;
     
@@ -109,4 +111,5 @@ private:
     bool verifySymbol(std::string);
     void addToErrorTrace(std::string);
     void setFail(){ errorFlag = true; }
+    VarType::Type* parseType(std::string typeString);
 };

@@ -35,7 +35,7 @@
   #define PRINT(x) std::cout << "[*] value : " << (x) << std::endl;
   #define PRINTM(m, x) std::cout << "[*] " << (m) << " : " << (x) << std::endl;
 #else
-  #define TRACCE ;
+  #define TRACE ;
   #define PRINT(x) ;
   #define PRINTM(m, x) ;
 #endif
@@ -156,8 +156,6 @@ antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *
 
 antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
   TRACE
-  PRINTM("Global scope - #variable : ", context->variableDeclaration().size())
-  PRINTM("Global scope - #function : ", context->functionDeclaration().size())
 
   // base node
   parentNode = rootNode;
@@ -214,42 +212,34 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   parentNode->getChildren().push_back(funct); // add the new node to it parent
   funct->setParent(parentNode); // set the new node parent
   
+  // prepare to add parameters to scope
+  isBaseBlock = true;
+  if (context->functionParametersDeclaration() != nullptr) {
+    varDeclNames = context->functionParametersDeclaration()->NAME();
+    varDeclTypes = context->functionParametersDeclaration()->type();
+  } else {
+    varDeclNames = std::vector<antlr4::tree::TerminalNode *>();
+    varDeclTypes = std::vector<ifccParser::TypeContext *>();
+  }
+  {
+    int paramCount = varDeclNames.size();
+    for (int i = 0; i < paramCount; ++i) {
+      // add to parameters
+      shared_ptr<Node> param = make_shared<Variable>();
+      param->setSymbol(varDeclNames[i]->getSymbol()->getText());
+      funct->getParameters().push_back(param);
+    }
+  }
+
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = funct; //setting parent to current node before anything else
-  isBaseBlock = true;
   visit(context->block());
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
   funct->setSymbol(functionName);
   funct->setCode(funct->getChildren()[0]);
-
-  // add parameters to scope
-  if (context->functionParametersDeclaration() != nullptr) {
-    PRINT("variables declaration !")
-
-    std::vector<antlr4::tree::TerminalNode *> names = context->functionParametersDeclaration()->NAME();
-    std::vector<ifccParser::TypeContext *> types = context->functionParametersDeclaration()->type();
-
-    int paramCount = names.size();
-    for (int i = 0; i < paramCount; ++i) {
-      //retrieve name
-      std::string name = names[i]->getSymbol()->getText();
-
-      // retrieve type
-      VarType::Type* type = VarType::getType(types[i]->getStart()->getText());
-
-      // add to scope
-      //scope->addVariable(name, declarationType);
-      funct->getCode()->getScope()->addVariable(name,declarationType);
-
-      // add to parameters
-      shared_ptr<Node> param = make_shared<Variable>();
-      param->setSymbol(name);
-      funct->getParameters().push_back(param);
-    }
-  }
 
   return antlrcpp::Any(funct);
 }
@@ -260,12 +250,7 @@ antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationC
   TRACE
 
   // retrieve type
-  string type = context->type()->getStart()->getText();
-  if (type == "int") {
-    declarationType = new VarType::Int64();
-  } else if (type == "char") {
-    declarationType = new VarType::Char();
-  }
+  declarationType = parseType(context->type()->getStart()->getText());
 
   // visit children
   return visitChildren(context);
@@ -461,6 +446,12 @@ antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
   if (isBaseBlock) {
     block->getScope()->setFunctionBaseScope(true);
     isBaseBlock = false;
+
+    int paramCount = varDeclNames.size();
+    for (int i = 0; i < paramCount; ++i) {
+      // add to scope
+      block->getScope()->addVariable(varDeclNames[i]->getSymbol()->getText(), parseType(varDeclTypes[i]->getStart()->getText()));
+    }
   }
 
   // visit children
@@ -1220,3 +1211,11 @@ void Visitor::addToErrorTrace(std::string str){
   errorTrace += str;
 }
 
+VarType::Type* Visitor::parseType(std::string typeString) {
+  if (typeString == "int") {
+    return new VarType::Int64();
+  } else if (typeString == "char") {
+    return new VarType::Char();
+  }
+  return nullptr;
+}

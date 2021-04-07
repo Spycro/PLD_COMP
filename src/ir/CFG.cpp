@@ -40,7 +40,6 @@ CFG::CFG(shared_ptr<Node> function){
     for(auto var : parameters){
         shared_ptr<SymbolTableElement> param = scope->getSymbol(var->getSymbol());
         myParams.push_back(param);
-        incrementSpacer(param->getSize());
     }
 
     current_bb = std::shared_ptr<BasicBlock>(new BasicBlock(this, scope));
