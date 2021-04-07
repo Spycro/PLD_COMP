@@ -208,6 +208,15 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             case BinaryOperator::GTE:
                 op = shared_ptr<Cmp_ge>(new Cmp_ge(current_bb.get(),*leftOp,*rightOp, *res));
                 break;
+            case BinaryOperator::LOGAND:
+                op = shared_ptr<Mul>(new Mul(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::LOGOR:
+                op = shared_ptr<Add>(new Add(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::BINXOR:
+                //todo to do in the distant future
+                break;
             default:
                 break;
             }
@@ -312,7 +321,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             }
 
             //instruction
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(startBlock.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(startBlock.get(),*condition,SymbolTableElement(condition->getType(),"0")));
             current_bb->add_IRInstr(jmpCmp);
 
 
@@ -359,7 +368,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //instruction
             add_bb(mainBasicBlock);
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"0")));
             current_bb->add_IRInstr(jmpCmp);
 
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
@@ -394,7 +403,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
                 inspectInstruction(InstrInBlock);
             }
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"0")));
             current_bb->add_IRInstr(jmpCmp);
 
 
@@ -425,7 +434,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //instruction
             add_bb(mainBasicBlock);
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"0")));
             current_bb->add_IRInstr(jmpCmp);
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
                 inspectInstruction(InstrInBlock);
