@@ -657,7 +657,42 @@ antlrcpp::Any Visitor::visitMultiplicationDivisionModulo(ifccParser::Multiplicat
   return antlrcpp::Any(binary);
 }
 
-antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> binary = make_shared<Binary>();
+
+  // create links with the tree
+  binary->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(binary); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = binary; //setting parent to current node before anything else
+  antlrcpp::Any op1 = visit(context->expression(0));
+  antlrcpp::Any op2 = visit(context->expression(1));
+  parentNode = parent; //reseting parent node at the end of the call
+  BinaryOperator op;
+  // set current node attributes
+  // operator
+  std::string opString = context->getStart()->getText();
+  if(opString == "<")
+    op = LT;
+  else if(opString   == ">")
+    op = GT;
+  else if(opString == "<=")
+    op = LTE;
+  else if(opString == ">=")
+    op = GTE;
+  
+  binary->setBinaryOperator(op);
+  // operands
+  binary->setOperand1(op1.as<shared_ptr<Node>>());
+  binary->setOperand2(op2.as<shared_ptr<Node>>());
+
+  return antlrcpp::Any(binary);
+}
 
 antlrcpp::Any Visitor::visitBitwiseLeftShift_assign(ifccParser::BitwiseLeftShift_assignContext *context) UNHANDLED
 
