@@ -5,10 +5,10 @@
 class Wmem : public IRInstr
 {
     public:
-        Wmem(BasicBlock *bb, SymbolTableElement ValueToWrite, SymbolTableElement address);
+        Wmem(BasicBlock *bb, SymbolTableElement valToWrite_, SymbolTableElement address);
 
         void gen_asm(std::ostream &o) override;
 
     private:
-        SymbolTableElement ValueToWrite, address;
+        SymbolTableElement valToWrite, address;
 };
