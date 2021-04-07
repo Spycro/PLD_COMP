@@ -5,6 +5,7 @@
 VarType::Void VOIDTYPE;
 VarType::Int64 INTTYPE64;
 VarType::Int32 INTTYPE32;
+VarType::Int32 CHARTYPE;
 
 SymbolTableElement RAX_REGISTER (&INTTYPE64, "rax", true);
 SymbolTableElement RBX_REGISTER (&INTTYPE64, "rbx", true);

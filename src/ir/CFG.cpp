@@ -25,6 +25,7 @@
 #include "ir/instructions/getChar.h"
 #include "ir/instructions/Jmp_return.h"
 #include "type/Int64.h"
+#include "type/Char.h"
 #include "ir/ASMConstants.h"
 
 CFG::CFG(Function* ast_, std::string label_, VarType::Type* type_, std::vector<SymbolTableElement> params_) : label(label_), type(type_){}
@@ -496,6 +497,9 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
     case NodeType::GETCHARINSTR:
         {
             //todo do get char
+            shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(&CHARTYPE);
+            shared_ptr<getChar> op(new getChar(current_bb.get(),*res));
+            return res;
         }
         break;
     case NodeType::BLOCK:
