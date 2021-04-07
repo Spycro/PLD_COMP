@@ -130,7 +130,7 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   // create corresponding AST node
   this->scope->addFunction("main", new VarType::Int64());
   shared_ptr<Node> mainFunct = make_shared<Function>();
-  
+  mainFunct->setSymbol("main");
   // create links with the tree
   parentNode->getChildren().push_back(mainFunct); // add the new node to it parent
   mainFunct->setParent(parentNode); // set the new node parent
@@ -152,11 +152,11 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   TRACE
 
   // create corresponding AST node
-  std::string functionName = context->type()->getStart()->getText();
+  std::string functionName = context->NAME()->getSymbol()->getText();
   VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
   this->scope->addFunction(functionName, functionType);
   shared_ptr<Node> funct = make_shared<Function>();
-  
+  funct->setSymbol(functionName);
   // create links with the tree
   parentNode->getChildren().push_back(funct); // add the new node to it parent
   funct->setParent(parentNode); // set the new node parent

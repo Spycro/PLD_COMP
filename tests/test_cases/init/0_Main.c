@@ -10,3 +10,7 @@ int main() {
    test();
    return c;
 }
+
+int bob() {
+   
+}
