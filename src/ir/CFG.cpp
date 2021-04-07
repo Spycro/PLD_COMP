@@ -313,12 +313,13 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<BasicBlock> startBlock = current_bb;
             shared_ptr<BasicBlock> mainBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
             shared_ptr<BasicBlock> endBlock(new BasicBlock(this, current_bb->getScope(),true));
-            
             //bind blocks
             endBlock->setExit_false(startBlock->getExit_false());
             endBlock->setExit_true(startBlock->getExit_true());
             endBlock->setExit_break(startBlock->getExit_break());
-            
+            startBlock = shared_ptr<BasicBlock>(new BasicBlock(this, current_bb->getScope(),true));
+            current_bb->setExit_true(startBlock);
+            add_bb(startBlock);
 
             startBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_true(endBlock);
@@ -374,6 +375,9 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             endBlock->setExit_false(startBlock->getExit_false());
             endBlock->setExit_true(startBlock->getExit_true());
             endBlock->setExit_break(startBlock->getExit_break());
+            startBlock = shared_ptr<BasicBlock>(new BasicBlock(this, current_bb->getScope(),true));
+            current_bb->setExit_true(startBlock);
+            add_bb(startBlock);
 
             startBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_true(mainBasicBlock);
@@ -410,6 +414,9 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             endBlock->setExit_false(startBlock->getExit_false());
             endBlock->setExit_true(startBlock->getExit_true());
             endBlock->setExit_break(startBlock->getExit_break());
+            startBlock = shared_ptr<BasicBlock>(new BasicBlock(this, current_bb->getScope(),true));
+            current_bb->setExit_true(startBlock);
+            add_bb(startBlock);
 
             startBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_true(mainBasicBlock);
@@ -449,6 +456,9 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             endBlock->setExit_false(startBlock->getExit_false());
             endBlock->setExit_true(startBlock->getExit_true());
             endBlock->setExit_break(startBlock->getExit_break());
+            startBlock = shared_ptr<BasicBlock>(new BasicBlock(this, current_bb->getScope(),true));
+            current_bb->setExit_true(startBlock);
+            add_bb(startBlock);
 
             startBlock->setExit_true(mainBasicBlock);
             mainBasicBlock->setExit_true(mainBasicBlock);
