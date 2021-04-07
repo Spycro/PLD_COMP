@@ -35,6 +35,7 @@ CFG::CFG(shared_ptr<Node> function){
     
     list<shared_ptr<Node>> parameters = function->getParameters();
 
+
     for(auto var : parameters){
         shared_ptr<SymbolTableElement> param = scope->getSymbol(var->getSymbol());
         myParams.push_back(param);
@@ -442,17 +443,34 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         }
         break;
     case NodeType::FUNCTIONCALL:
-        {//todo add params
+        {
             std::string fName = instr->getSymbol();
             shared_ptr<SymbolTableElement> endPoint = current_bb->getScope()->getSymbol(fName);
             shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(endPoint->getType());
+            list<shared_ptr<Node>> paramNames = instr->getParameters();
 
-            std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>() ;// todo add aparms
+            //get parameters from symbol table
+            std::vector<SymbolTableElement> elemParams;
+            for(auto p : paramNames){
+                shared_ptr<SymbolTableElement> temp = current_bb->getScope()->getSymbol(p->getSymbol());
+                elemParams.push_back(*temp);
+            }
 
-            shared_ptr<Call> call(new Call(current_bb.get(),endPoint->getCFG(),params_,*res));
+
+            shared_ptr<Call> call(new Call(current_bb.get(),endPoint->getCFG(),elemParams,*res));
             current_bb->add_IRInstr(call);
 
             return res;
+        }
+        break;
+    case NodeType::PUTCHARINSTR:
+        {
+            //todo do put char
+        }
+        break;
+    case NodeType::GETCHARINSTR:
+        {
+            //todo do get char
         }
         break;
     case NodeType::BLOCK:
