@@ -22,6 +22,7 @@ class Visitor : public ifccVisitor
 public:
     virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *context) override;
     virtual antlrcpp::Any visitType(ifccParser::TypeContext *context) override;
+    virtual antlrcpp::Any visitConstant(ifccParser::ConstantContext *context) override;
     virtual antlrcpp::Any visitVarName(ifccParser::VarNameContext *context) override;
     virtual antlrcpp::Any visitPutchar(ifccParser::PutcharContext *context) override;
     virtual antlrcpp::Any visitGetchar(ifccParser::GetcharContext *context) override;
