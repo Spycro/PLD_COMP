@@ -1,10 +1,10 @@
 int main() {
     int a = 0;
     int b = 0;
-    for(a=1;a;a=a+1){
-        b = 1;
+    if(a){
+        a = 1;
+    }else{
+        a = 2;
     }
-    while(a){
-        b=1;
-    }
+    return a;
 }

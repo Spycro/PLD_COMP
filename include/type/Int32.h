@@ -6,7 +6,7 @@ namespace VarType
     class Int32 : public Type {
         public :
 
-        int getSize() override {
+        int getSize() const override {
             return 4;
         }
 

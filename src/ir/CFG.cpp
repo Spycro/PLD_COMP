@@ -215,7 +215,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             }
 
             //instruction
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(startBlock.get(),*condition,SymbolTableElement(&INTTYPE64,"1")));
+            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(startBlock.get(),*condition,SymbolTableElement(condition->getType(),"1")));
             current_bb->add_IRInstr(jmpCmp);
 
 

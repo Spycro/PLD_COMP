@@ -7,7 +7,7 @@ namespace VarType
     class Char : public VarType::Type {
         public :
 
-        int getSize() override {
+        int getSize() const override {
             return 1;
         }
 

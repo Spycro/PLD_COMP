@@ -6,7 +6,7 @@ namespace VarType
     class Void : public Type {
         public :
 
-        int getSize() override {
+        int getSize() const override {
             return 0;
         }
 
