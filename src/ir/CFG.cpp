@@ -11,6 +11,12 @@
 #include "ir/instructions/Copy.h"
 #include "ir/instructions/Jmp_cmp_eq.h"
 #include "ir/instructions/Jmp_cmp_neq.h"
+#include "ir/instructions/Cmp_eq.h"
+#include "ir/instructions/Cmp_ge.h"
+#include "ir/instructions/Cmp_gt.h"
+#include "ir/instructions/Cmp_le.h"
+#include "ir/instructions/Cmp_lt.h"
+#include "ir/instructions/Cmp_neq.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -179,7 +185,24 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             case BinaryOperator::DIV:
                 op = shared_ptr<Div>(new Div(current_bb.get(),*leftOp,*rightOp, *res));
                 break;
-            
+            case BinaryOperator::EQUAL:
+                op = shared_ptr<Cmp_eq>(new Cmp_eq(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::NE:
+                op = shared_ptr<Cmp_neq>(new Cmp_neq(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::LT:
+                op = shared_ptr<Cmp_lt>(new Cmp_lt(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::LTE:
+                op = shared_ptr<Cmp_le>(new Cmp_le(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::GT:
+                op = shared_ptr<Cmp_gt>(new Cmp_gt(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::GTE:
+                op = shared_ptr<Cmp_ge>(new Cmp_ge(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
             default:
                 break;
             }
@@ -244,7 +267,6 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::WHILEINSTR:
         {
-            
             shared_ptr<Node> mainBlock = instr->getCode();
 
             //create blocks
@@ -269,6 +291,39 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
                 inspectInstruction(InstrInBlock);
             }
+            //switch to end block
+            add_bb(endBlock);
+
+        }
+        break;
+    case NodeType::DOWHILEINSTR:
+        {
+            shared_ptr<Node> mainBlock = instr->getCode();
+
+            //create blocks
+            shared_ptr<BasicBlock> startBlock = current_bb;
+            shared_ptr<BasicBlock> mainBasicBlock(new BasicBlock(this,mainBlock->getScope(),true));
+            shared_ptr<BasicBlock> endBlock(new BasicBlock(this, current_bb->getScope()));
+
+            //bind blocks
+            startBlock->setExit_true(mainBasicBlock);
+            mainBasicBlock->setExit_true(mainBasicBlock);
+            mainBasicBlock->setExit_false(endBlock);
+
+            
+
+            //run main block
+            //instruction
+            add_bb(mainBasicBlock);
+
+            for(auto InstrInBlock : mainBlock->getInstructions()){ 
+                inspectInstruction(InstrInBlock);
+            }
+            shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
+            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            current_bb->add_IRInstr(jmpCmp);
+
+
             //switch to end block
             add_bb(endBlock);
 
