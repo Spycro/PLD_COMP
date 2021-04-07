@@ -52,7 +52,9 @@ antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) {
 
   return visitChildren(context);
 }
+
 antlrcpp::Any Visitor::visitConstant(ifccParser::ConstantContext*) UNHANDLED;
+
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) {
   TRACE
 
@@ -190,7 +192,6 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
 }
 
 antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
-  // TODO : parameters
   TRACE
 
   // create corresponding AST node
@@ -199,6 +200,7 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   this->scope->addFunction(functionName, functionType);
   shared_ptr<Node> funct = make_shared<Function>();
   funct->setSymbol(functionName);
+
   // create links with the tree
   parentNode->getChildren().push_back(funct); // add the new node to it parent
   funct->setParent(parentNode); // set the new node parent
@@ -206,15 +208,13 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = funct; //setting parent to current node before anything else
-  visit(context->block()); // TODO : parameters
+  isBaseBlock = true;
+  visit(context->block());
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
   funct->setSymbol(functionName);
   funct->setCode(funct->getChildren()[0]);
-
-  // set base scope
-  funct->getCode()->getScope()->setFunctionBaseScope(true);
 
   return antlrcpp::Any(funct);
 }
@@ -388,6 +388,7 @@ antlrcpp::Any Visitor::visitInstruction(ifccParser::InstructionContext *context)
 }
 
 antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
+  // TODO : parameters
   TRACE
 
   // updating scope 
@@ -395,6 +396,10 @@ antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
 
   // create corresponding AST node
   shared_ptr<Node> block = make_shared<Block>();
+  if (isBaseBlock) {
+    block->getScope()->setFunctionBaseScope(true);
+    isBaseBlock = false;
+  }
 
   // create links with the tree
   block->setParent(parentNode); // add the new node to it parent
