@@ -549,17 +549,21 @@ antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) {
   shared_ptr<Node> unary = make_shared<Unary>();
 
   // create links with the tree
-  unary->setParent(parentNode); // add the new node to it parent
-  parentNode->getChildren().push_back(unary); // set the new node parent
+  parentNode->getChildren().push_back(unary); // add the new node to it parent
+  unary->setParent(parentNode); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent node before anything else
+  antlrcpp::Any varAny = visit(context->varName());
+  parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
   // operator
   unary->setOp(PREDECR);
   // operand
-  shared_ptr<Node> operand = make_shared<Variable>();
-  operand->setParent(unary);
-  unary->getChildren().push_back(operand);
-  operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
+  shared_ptr<Node> var = varAny.as<shared_ptr<Node>>();
+  unary->setOperand(var);
 
   return antlrcpp::Any(unary);
 }
@@ -686,17 +690,21 @@ antlrcpp::Any Visitor::visitPostIncr(ifccParser::PostIncrContext *context) {
   shared_ptr<Node> unary = make_shared<Unary>();
 
   // create links with the tree
-  unary->setParent(parentNode); // add the new node to it parent
-  parentNode->getChildren().push_back(unary); // set the new node parent
+  parentNode->getChildren().push_back(unary); // add the new node to it parent
+  unary->setParent(parentNode); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent node before anything else
+  antlrcpp::Any varAny = visit(context->varName());
+  parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
   // operator
   unary->setOp(POSTINCR);
   // operand
-  shared_ptr<Node> operand = make_shared<Variable>();
-  operand->setParent(unary);
-  unary->getChildren().push_back(operand);
-  operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
+  shared_ptr<Node> var = varAny.as<shared_ptr<Node>>();
+  unary->setOperand(var);
 
   return antlrcpp::Any(unary);
 }
@@ -718,7 +726,6 @@ antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *cont
   shared_ptr<Node> affectation = make_shared<Affectation>();
 
   // create links with the tree
-  
   parentNode->getChildren().push_back(affectation); // add the new node to it parent
   affectation->setParent(parentNode); // set the new node parent
 
@@ -917,14 +924,18 @@ antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) {
   parentNode->getChildren().push_back(unary); // add the new node to it parent
   unary->setParent(parentNode); // set the new node parent
 
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent node before anything else
+  antlrcpp::Any varAny = visit(context->varName());
+  parentNode = parent; //reseting parent node at the end of the call
+
   // set current node attributes
   // operator
   unary->setOp(PREINCR);
   // operand
-  shared_ptr<Node> operand = make_shared<Variable>();
-  operand->setParent(unary);
-  unary->getChildren().push_back(operand);
-  operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
+  shared_ptr<Node> var = varAny.as<shared_ptr<Node>>();
+  unary->setOperand(var);
 
   return antlrcpp::Any(unary);
 }
@@ -933,21 +944,26 @@ antlrcpp::Any Visitor::visitSizeof(ifccParser::SizeofContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitPostDecr(ifccParser::PostDecrContext *context) {
   TRACE
+
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
 
   // create links with the tree
-  parentNode->getChildren().push_back(unary);
-  unary->setParent(parentNode);
+  parentNode->getChildren().push_back(unary); // add the new node to it parent
+  unary->setParent(parentNode); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent node before anything else
+  antlrcpp::Any varAny = visit(context->varName());
+  parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
   // operator
   unary->setOp(POSTDECR);
   // operand
-  shared_ptr<Node> operand = make_shared<Variable>();
-  operand->setParent(unary);
-  unary->getChildren().push_back(operand);
-  operand->setSymbol(context->varName()->NAME()->getSymbol()->getText());
+  shared_ptr<Node> var = varAny.as<shared_ptr<Node>>();
+  unary->setOperand(var);
 
   return antlrcpp::Any(unary);
 }
@@ -1004,17 +1020,19 @@ antlrcpp::Any Visitor::visitUnaryPlus(ifccParser::UnaryPlusContext *context) {
   unary->setParent(parentNode); // add the new node to it parent
   parentNode->getChildren().push_back(unary); // set the new node parent
 
-  // set current node attributes
-  // operator
-  unary->setOp(UNARYMINUS);
-  // operand
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
-  parentNode = unary; //setting parent to current node before anything else
-  antlrcpp::Any tmp = visit(context->expression()); 
+  parentNode = unary; //setting parent node before anything else
+  antlrcpp::Any exprAny = visit(context->expression());
   parentNode = parent; //reseting parent node at the end of the call
 
-  shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
+
+  // set current node attributes
+  // operator
+  unary->setOp(UNARYPLUS);
+  // operand
+  shared_ptr<Node> expr = exprAny.as<shared_ptr<Node>>();
+  unary->setOperand(expr);
 
   return antlrcpp::Any(unary);
 }
@@ -1047,17 +1065,19 @@ antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) {
   unary->setParent(parentNode); // add the new node to it parent
   parentNode->getChildren().push_back(unary); // set the new node parent
 
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent node before anything else
+  antlrcpp::Any exprAny = visit(context->expression());
+  parentNode = parent; //reseting parent node at the end of the call
+
+
   // set current node attributes
   // operator
   unary->setOp(UNARYMINUS);
   // operand
-  // visit children
-  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
-  parentNode = unary; //setting parent to current node before anything else
-  antlrcpp::Any tmp = visit(context->expression()); 
-  parentNode = parent; //reseting parent node at the end of the call
-
-  shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
+  shared_ptr<Node> expr = exprAny.as<shared_ptr<Node>>();
+  unary->setOperand(expr);
 
   return antlrcpp::Any(unary);
 }
