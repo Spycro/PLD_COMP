@@ -150,7 +150,6 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
     case NodeType::CONST:
         {
             shared_ptr<Const> myConst = std::dynamic_pointer_cast<Const>(instr);
-            std::cout<< "Const value: " << myConst->getConstValue()<< std::endl;
             return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getConstValue())));
         }
         break;
@@ -227,15 +226,10 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::UNARY://todo finish
         {
-            std::cout<< instr->toString()<<std::endl;
-            std::cout<< instr->getUnaryOp()<<std::endl;
-            std::cout<< instr->getOperand()<<std::endl;
             shared_ptr<SymbolTableElement> in= inspectInstruction(instr->getOperand());
             
             shared_ptr<IRInstr> op;
             
-            std::cout<< instr->toString()<<std::endl;
-            std::cout<< instr->getUnaryOp()<<std::endl;
 
             switch (instr->getUnaryOp())
             {
@@ -449,10 +443,10 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::FUNCTIONCALL:
         {//todo add params
-            std::cout<< instr->getSymbol()<< std::endl;
             std::string fName = instr->getSymbol();
             shared_ptr<SymbolTableElement> endPoint = current_bb->getScope()->getSymbol(fName);
-            shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(endPoint->getType());;
+            shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(endPoint->getType());
+
             std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>() ;// todo add aparms
 
             shared_ptr<Call> call(new Call(current_bb.get(),endPoint->getCFG(),params_,*res));
