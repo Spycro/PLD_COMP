@@ -17,6 +17,7 @@
 #include "ir/instructions/Cmp_le.h"
 #include "ir/instructions/Cmp_lt.h"
 #include "ir/instructions/Cmp_neq.h"
+#include "ir/instructions/Call.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -28,6 +29,8 @@ CFG::CFG(shared_ptr<Node> function){
     shared_ptr<Node> block = function->getCode();
     shared_ptr<Scope> scope = block->getScope();
 
+    shared_ptr<SymbolTableElement> myElement = scope->getSymbol(label);
+    myElement->setCFG(this);
     type = scope->getSymbol(label)->getType(); 
     
     list<shared_ptr<Node>> parameters = function->getParameters();
@@ -126,7 +129,6 @@ void CFG::gen_asm_epilogue(std::ostream& o) {
 }
 
 std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> instr){
-    std::cout<<instr->toString() << " enum: " << instr->getType()<<std::endl;
     switch (instr->getType())
     {
     case NodeType::AFFECTATION:
@@ -167,7 +169,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             current_bb->add_IRInstr(copy);
         }
         break;
-
+    
     case NodeType::BINARY:
         {
             shared_ptr<SymbolTableElement> leftOp= inspectInstruction(instr->getOperand1());
@@ -206,6 +208,15 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
                 break;
             case BinaryOperator::GTE:
                 op = shared_ptr<Cmp_ge>(new Cmp_ge(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::LOGAND:
+                op = shared_ptr<Mul>(new Mul(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::LOGOR:
+                op = shared_ptr<Add>(new Add(current_bb.get(),*leftOp,*rightOp, *res));
+                break;
+            case BinaryOperator::BINXOR:
+                //todo to do in the distant future
                 break;
             default:
                 break;
@@ -311,7 +322,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             }
 
             //instruction
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(startBlock.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(startBlock.get(),*condition,SymbolTableElement(condition->getType(),"0")));
             current_bb->add_IRInstr(jmpCmp);
 
 
@@ -358,7 +369,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //instruction
             add_bb(mainBasicBlock);
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"0")));
             current_bb->add_IRInstr(jmpCmp);
 
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
@@ -393,7 +404,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
                 inspectInstruction(InstrInBlock);
             }
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"0")));
             current_bb->add_IRInstr(jmpCmp);
 
 
@@ -424,7 +435,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //instruction
             add_bb(mainBasicBlock);
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());
-            shared_ptr<Jmp_cmp_eq> jmpCmp(new Jmp_cmp_eq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"1")));
+            shared_ptr<Jmp_cmp_neq> jmpCmp(new Jmp_cmp_neq(current_bb.get(),*condition,SymbolTableElement(condition->getType(),"0")));
             current_bb->add_IRInstr(jmpCmp);
             for(auto InstrInBlock : mainBlock->getInstructions()){ 
                 inspectInstruction(InstrInBlock);
@@ -437,8 +448,17 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         }
         break;
     case NodeType::FUNCTIONCALL:
-        {
-            std::string fName;
+        {//todo add params
+            std::cout<< instr->getSymbol()<< std::endl;
+            std::string fName = instr->getSymbol();
+            shared_ptr<SymbolTableElement> endPoint = current_bb->getScope()->getSymbol(fName);
+            shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(endPoint->getType());;
+            std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>() ;// todo add aparms
+
+            shared_ptr<Call> call(new Call(current_bb.get(),endPoint->getCFG(),params_,*res));
+            current_bb->add_IRInstr(call);
+
+            return res;
         }
         break;
     case NodeType::BLOCK:

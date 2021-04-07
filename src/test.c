@@ -1,10 +1,10 @@
-int main() {
-	int a = 3;
-	int b ;
+int bob() {
+	int b =1;
     return b;
 }
-char bo() {
+
+int main() {
 	int a = 3;
-	int b ;
-    return b;
+	bob();
+    return a;
 }

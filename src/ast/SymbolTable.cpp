@@ -15,7 +15,7 @@ shared_ptr<SymbolTableElement> SymbolTable::addVariable (string variableName, co
 
 shared_ptr<SymbolTableElement> SymbolTable::addArray(string variableName, const VarType::Type* variableType, int size, int mem64) {
 
-    shared_ptr<SymbolTableElement> buffer = make_shared<SymbolTableElement>(variableType,false,false,true,mem64);
+    shared_ptr<SymbolTableElement> buffer = make_shared<SymbolTableElement>(variableType,false,false,false,mem64);
     bool test = elements->emplace(variableName,buffer).second;
     if(!test) {
         cerr<<"name is already used";

@@ -95,8 +95,13 @@ private:
     shared_ptr<Node> rootNode = make_shared<Node>();
 
 	shared_ptr<Node> parentNode;
+    
     VarType::Type* declarationType;
+
+    bool isBaseBlock = false;
+
     bool errorFlag = false;
+    
     std::string errorTrace;
 
     void pushScope();

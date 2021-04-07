@@ -48,7 +48,8 @@ void Scope::addFunction(std::string name, const VarType::Type *functionType)
 }
 
 int Scope::getMemoryCounter64(){
-    if(parentScope != nullptr){
+
+    if((parentScope != nullptr) && !functionBaseScope){
       return parentScope->getMemoryCounter64();
     }
     return memoryCounter64;
@@ -60,7 +61,7 @@ std::string Scope::toString()
 }
 
 int Scope::getMemoryCounter64AndIncrement(){
-    if(parentScope != nullptr){
+    if((parentScope != nullptr) && !functionBaseScope){
         return parentScope->getMemoryCounter64AndIncrement();
     }
     memoryCounter64 += 8;
