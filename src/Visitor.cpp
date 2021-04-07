@@ -882,6 +882,7 @@ antlrcpp::Any Visitor::visitLogicalNot(ifccParser::LogicalNotContext *context) {
   parentNode = parent; //reseting parent node at the end of the call
 
   shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
+  unary->setOperand(operand);
 
   return antlrcpp::Any(unary);
 }
