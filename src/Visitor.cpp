@@ -195,8 +195,12 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // retrieve function name
   std::string functionName = context->NAME()->getSymbol()->getText();
   verifySymbolNotExist(functionName);
-  VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
-
+  VarType::Type* functionType;
+  if(context->type()){
+    functionType = VarType::getType(context->type()->getStart()->getText());
+  }else{
+    functionType = new VarType::Void();
+  }
   // add to scope
   this->scope->addFunction(functionName, functionType);
 
@@ -213,9 +217,6 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   if (context->functionParametersDeclaration() != nullptr) {
     varDeclNames = context->functionParametersDeclaration()->NAME();
     varDeclTypes = context->functionParametersDeclaration()->type();
-  } else {
-    varDeclNames = std::vector<antlr4::tree::TerminalNode *>();
-    varDeclTypes = std::vector<ifccParser::TypeContext *>();
   }
   {
     int paramCount = varDeclNames.size();
@@ -236,6 +237,10 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // set current node attributes
   funct->setSymbol(functionName);
   funct->setCode(funct->getChildren()[0]);
+
+  // reset function parameters
+  varDeclNames = std::vector<antlr4::tree::TerminalNode *>();
+  varDeclTypes = std::vector<ifccParser::TypeContext *>();
 
   return antlrcpp::Any(funct);
 }

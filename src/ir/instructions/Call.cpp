@@ -35,7 +35,7 @@ void Call::gen_asm(std::ostream &o){
     o << "\taddq $" << nStackVar * 8 << ", %rsp"<< std::endl;
 
     // We don't move the result if the output is void (procedure)
-    if(output.getType() != &VOIDTYPE) {
+    if(output.getType()->getSize() != 0) {
         o << moveTo(EAX_REGISTER, output) << std::endl;
     }
 
