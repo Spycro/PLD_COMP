@@ -23,11 +23,42 @@
 #include "ir/instructions/Jmp_cmp_le.h"
 #include "ir/instructions/Jmp_cmp_gt.h"
 #include "ir/instructions/Jmp_cmp_ge.h"
+#include "type/Int32.h"
 #include "type/Int64.h"
 #include "type/Void.h"
 #include "SymbolTable.h"
 #include "ir/ASMConstants.h"
 
+void test_copy() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement a(&INTTYPE64, false, false, 8);
+
+    shared_ptr<Copy> instr0(new Copy(bb0.get(), constant1, a));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+}
+
+void test_sub() {
+
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant1(&INTTYPE64, "2");
+    SymbolTableElement constant2(&INTTYPE64, "3");
+    SymbolTableElement a(&INTTYPE32, false, false, 8);
+
+    shared_ptr<Sub> instr0(new Sub(bb0.get(), constant1, constant2, a));
+    bb0->add_IRInstr(instr0);
+    firstCFG->add_bb(bb0);
+    firstCFG->gen_asm(std::cout);
+}
 
 void test_pointers(){
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
@@ -302,6 +333,8 @@ int main(){
     //test_call_many_params();
     //test_operations_sub_add();
     //test_operations_mul_div();
-    test_pointers();
+    //test_pointers();
     //test_cmp();
+    test_copy();
+    test_sub();
 }
