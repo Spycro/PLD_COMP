@@ -21,6 +21,9 @@
 #include "ir/instructions/Jmp_break.h"
 #include "ir/instructions/Jmp_continue.h"
 #include "ir/instructions/Jmp_return.h"
+#include "ir/instructions/putChar.h"
+#include "ir/instructions/getChar.h"
+#include "ir/instructions/Jmp_return.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -484,6 +487,10 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
     case NodeType::PUTCHARINSTR:
         {
             //todo do put char
+            std::cout<< instr->getParameters().size()<<std::endl;
+            shared_ptr<SymbolTableElement> param = inspectInstruction(instr->getParameters().front());
+            shared_ptr<putChar> op(new putChar(current_bb.get(),*param));
+            current_bb->add_IRInstr(op);
         }
         break;
     case NodeType::GETCHARINSTR:
