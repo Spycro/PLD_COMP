@@ -210,6 +210,11 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             return res;
         }
         break;
+    case NodeType::UNARY:
+        {
+            shared_ptr<SymbolTableElement> op= inspectInstruction(instr->getOperand());
+        }
+        break;
     case NodeType::INFINSTR:
         {
             shared_ptr<SymbolTableElement> condition = inspectInstruction(instr->getTest());

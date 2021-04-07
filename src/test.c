@@ -1,7 +1,5 @@
 int main() {
-    int a = 0;
-    while(a>2){
-        a = 1;
-    }
+	int a,d = 3;
+    a=5;
     return a;
 }
