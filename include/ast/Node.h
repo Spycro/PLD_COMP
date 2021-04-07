@@ -111,7 +111,7 @@ public:
     /**************FUNCTION************/
     //virtual void setSymbol(std::string symb) THROW // also def for variable
     //virtual inline string& getSymbol() THROW // also def for variable
-    virtual inline list<shared_ptr<Node>> getParameters() THROW
+    virtual inline list<shared_ptr<Node>>& getParameters() THROW
     /*********************************/
 
     /**************IFINSTR************/

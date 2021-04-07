@@ -29,7 +29,7 @@ class Function : public Node {
         inline string& getSymbol() override { return symbol; }
         void setSymbol(std::string symb) override { symbol = symb; }
 
-        inline list<shared_ptr<Node>> getParameters() override { return parameters; }
+        inline list<shared_ptr<Node>>& getParameters() override { return parameters; }
         
         virtual std::string toString() override;
     private:
