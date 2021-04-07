@@ -209,7 +209,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             return res;
         }
         break;
-    case NodeType::UNARY:
+    case NodeType::UNARY://todo finish
         {
             std::cout<< instr->toString()<<std::endl;
             std::cout<< instr->getUnaryOp()<<std::endl;
@@ -429,6 +429,11 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             //switch to end block
             add_bb(endBlock);
 
+        }
+        break;
+    case NodeType::FUNCTIONCALL:
+        {
+            std::string fName;
         }
         break;
     case NodeType::BLOCK:
