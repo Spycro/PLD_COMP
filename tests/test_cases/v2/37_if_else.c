@@ -10,5 +10,12 @@ int main(){
         a = 2;
     }
 
+    if(x < y){
+        a = a + 2;
+    }
+    else{
+        a = a + 3;
+    }
+
     return a;
 }

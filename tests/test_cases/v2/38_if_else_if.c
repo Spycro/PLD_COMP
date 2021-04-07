@@ -13,5 +13,17 @@ int main(){
         a = 3;
     }
 
+    if(x == y){
+        a = a + 1;
+    }
+    else if (x < y){
+        a = a + 2;
+    }
+    else {
+        a = a + 3;
+    }
+
+    a++;
+
     return a;
 }
