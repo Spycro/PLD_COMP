@@ -14,6 +14,7 @@ class FunctionCall : public Expression {
          : symbol(symbol), parameters(param) {}
 
         inline string& getSymbol() override { return symbol; }
+        void setSymbol(std::string symbol_) override { symbol=symbol_; }
         inline list<shared_ptr<Node>> getParameters() override { return parameters; }
 
         virtual std::string toString() override;

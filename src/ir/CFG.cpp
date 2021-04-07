@@ -17,6 +17,7 @@
 #include "ir/instructions/Cmp_le.h"
 #include "ir/instructions/Cmp_lt.h"
 #include "ir/instructions/Cmp_neq.h"
+#include "ir/instructions/Call.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -28,7 +29,8 @@ CFG::CFG(shared_ptr<Node> function){
     shared_ptr<Node> block = function->getCode();
     shared_ptr<Scope> scope = block->getScope();
 
-
+    shared_ptr<SymbolTableElement> myElement = scope->getSymbol(label);
+    myElement->setCFG(this);
     type = scope->getSymbol(label)->getType(); 
     
     list<shared_ptr<Node>> parameters = function->getParameters();
@@ -127,7 +129,6 @@ void CFG::gen_asm_epilogue(std::ostream& o) {
 }
 
 std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> instr){
-    std::cout<<instr->toString() << " enum: " << instr->getType()<<std::endl;
     switch (instr->getType())
     {
     case NodeType::AFFECTATION:
@@ -149,7 +150,6 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
     case NodeType::CONST:
         {
             shared_ptr<Const> myConst = std::dynamic_pointer_cast<Const>(instr);
-            std::cout<< "Const value: " << myConst->getConstValue()<< std::endl;
             return std::shared_ptr<SymbolTableElement>(new SymbolTableElement(&INTTYPE64,std::to_string(myConst->getConstValue())));
         }
         break;
@@ -168,7 +168,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             current_bb->add_IRInstr(copy);
         }
         break;
-
+    
     case NodeType::BINARY:
         {
             shared_ptr<SymbolTableElement> leftOp= inspectInstruction(instr->getOperand1());
@@ -226,15 +226,10 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::UNARY://todo finish
         {
-            std::cout<< instr->toString()<<std::endl;
-            std::cout<< instr->getUnaryOp()<<std::endl;
-            std::cout<< instr->getOperand()<<std::endl;
             shared_ptr<SymbolTableElement> in= inspectInstruction(instr->getOperand());
             
             shared_ptr<IRInstr> op;
             
-            std::cout<< instr->toString()<<std::endl;
-            std::cout<< instr->getUnaryOp()<<std::endl;
 
             switch (instr->getUnaryOp())
             {
@@ -447,8 +442,17 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         }
         break;
     case NodeType::FUNCTIONCALL:
-        {
-            std::string fName;
+        {//todo add params
+            std::string fName = instr->getSymbol();
+            shared_ptr<SymbolTableElement> endPoint = current_bb->getScope()->getSymbol(fName);
+            shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(endPoint->getType());
+
+            std::vector<SymbolTableElement> params_ = std::vector<SymbolTableElement>() ;// todo add aparms
+
+            shared_ptr<Call> call(new Call(current_bb.get(),endPoint->getCFG(),params_,*res));
+            current_bb->add_IRInstr(call);
+
+            return res;
         }
         break;
     case NodeType::BLOCK:

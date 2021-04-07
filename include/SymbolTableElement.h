@@ -4,6 +4,8 @@
 #include "type/Void.h"
 #include <string>
 
+
+class CFG;
 class SymbolTableElement{//todo this entire class should probably be seperated into multiple in the futur
     public:
         SymbolTableElement():type(&VOIDTYPE), isSet(false), isUsed(false), memoryOffset(0), isConst(false), constValue(""), isReg(false), regValue(""){}
@@ -33,6 +35,9 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
 
         inline const VarType::Type* getType(){return type;};
 
+        inline void setCFG(CFG* functionPointer_){functionPointer = functionPointer_;}
+        inline CFG* getCFG(){return functionPointer;};
+
     private:
         const VarType::Type* type;
         bool isSet;
@@ -45,4 +50,6 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
 
         bool isReg;
         std::string regValue;
+
+        CFG* functionPointer;
 };

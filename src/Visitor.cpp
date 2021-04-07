@@ -26,15 +26,15 @@
 
 #define DEBUG
 
+#define UNHANDLED { setFail(); addToErrorTrace("[!] Unhandled operation : "); addToErrorTrace(__PRETTY_FUNCTION__); addToErrorTrace("\r\n"); return 0; }
+#define FORBIDEN(x) { setFail(); addToErrorTrace("[!] Forbiden operation : "); addToErrorTrace(x); addToErrorTrace("\r\n"); }
+#define UNDECLARED(x) { setFail(); addToErrorTrace("[!] Error : Symbol named \""); addToErrorTrace(x); addToErrorTrace("\" is used but not declared.\r\n"); }
+ 
 #ifdef DEBUG
-  #define UNHANDLED { std::cerr << "/!\\ Unhandled operation : " << __PRETTY_FUNCTION__ << std::endl; return 0; }
-  #define FORBIDEN(x) { std::cerr << "/!\\ Forbiden operation : " << (x) << std::endl; return 0; }
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
   #define PRINT(x) std::cout << "[*] value : " << (x) << std::endl;
   #define PRINTM(m, x) std::cout << "[*] " << (m) << " : " << (x) << std::endl;
 #else
-  #define UNHANDLED { std::cerr << "/!\\Unhandled operation : " << __PRETTY_FUNCTION__ << std::endl; throw; }
-  #define FORBIDEN(x) { std::cerr << "/!\\ Forbiden operation : " << (x) << std::endl; throw; }
   #define TRACCE ;
   #define PRINT(x) ;
   #define PRINTM(m, x) ;
@@ -131,6 +131,7 @@ antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *
   // create corresponding AST node
   shared_ptr<Node> functionCall = make_shared<FunctionCall>();
   std::string symbol = context->getStart()->getText();
+  functionCall->setSymbol(symbol);
   // PRINT(symbol)
   verifySymbol(symbol);
   // create links with the tree
@@ -166,7 +167,6 @@ antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
 }
 
 antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *context) {
-  // TODO : parameters
   TRACE
 
   // create corresponding AST node
@@ -181,7 +181,7 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = mainFunct; //setting parent to current node before anything else
   isBaseBlock = true;
-  visit(context->block()); // TODO : parameters
+  visit(context->block());
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
@@ -197,10 +197,16 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
 antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
   TRACE
 
-  // create corresponding AST node
+  // retrieve function name
   std::string functionName = context->NAME()->getSymbol()->getText();
+
+  // retrieve function type
   VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
+
+  // add to scope
   this->scope->addFunction(functionName, functionType);
+
+  // create corresponding AST node
   shared_ptr<Node> funct = make_shared<Function>();
   funct->setSymbol(functionName);
 
@@ -218,6 +224,26 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // set current node attributes
   funct->setSymbol(functionName);
   funct->setCode(funct->getChildren()[0]);
+
+  // add parameters to scope
+  if (context->functionParametersDeclaration() != nullptr) {
+    PRINT("variables declaration !")
+
+    std::vector<antlr4::tree::TerminalNode *> names = context->functionParametersDeclaration()->NAME();
+    std::vector<ifccParser::TypeContext *> types = context->functionParametersDeclaration()->type();
+
+    int paramCount = names.size();
+    for (int i = 0; i < paramCount; ++i) {
+      //retrieve name
+      std::string name = names[i]->getSymbol()->getText();
+
+      // retrieve type
+      VarType::Type* type = VarType::getType(types[i]->getStart()->getText());
+
+      // add to scope
+      scope->addVariable(name, declarationType);
+    }
+  }
 
   return antlrcpp::Any(funct);
 }
@@ -413,7 +439,6 @@ antlrcpp::Any Visitor::visitInstruction(ifccParser::InstructionContext *context)
 }
 
 antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
-  // TODO : parameters
   TRACE
 
   // updating scope 
@@ -1179,9 +1204,7 @@ void Visitor::popScope() {
 bool Visitor::verifySymbol(std::string symbol){
   auto p = scope->getSymbol(symbol);
   if(!p){
-    setFail();
-    std::string trace = "[!] ERROR : Symbol named \"" + symbol + "\" is used when not declared.\n";
-    addToErrorTrace(trace); 
+    UNDECLARED(symbol)
     return false; 
   }
   return true;
