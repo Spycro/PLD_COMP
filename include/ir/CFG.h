@@ -28,6 +28,8 @@ class CFG {
 	
 	void add_bb(shared_ptr<BasicBlock> bb); 
 
+	shared_ptr<BasicBlock> getLastBlock();
+
 	void incrementSpacer(int cnt);
 
 	// x86 code generation: could be encapsulated in a processor class in a retargetable compiler

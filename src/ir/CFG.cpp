@@ -20,6 +20,7 @@
 #include "ir/instructions/Call.h"
 #include "ir/instructions/Jmp_break.h"
 #include "ir/instructions/Jmp_continue.h"
+#include "ir/instructions/Jmp_return.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -49,9 +50,14 @@ CFG::CFG(shared_ptr<Node> function){
         inspectInstruction(instr);
     }
     incrementSpacer(scope->getMemoryCounter64()); 
+
+    current_bb = std::shared_ptr<BasicBlock>(new BasicBlock(this, scope)); //end of function label
+    bbs.push_back(current_bb);
 }
 
-
+shared_ptr<BasicBlock> CFG::getLastBlock(){
+    return bbs.back();
+}
 
 
 void CFG::add_bb(shared_ptr<BasicBlock> bb){
@@ -169,7 +175,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(valToReturn),RAX_REGISTER));
             current_bb->add_IRInstr(copy);
 
-            shared_ptr<Jmp_break> jmp (new Jmp_break(current_bb.get()));
+            shared_ptr<Jmp_return> jmp (new Jmp_return(current_bb.get(),this));
             current_bb->add_IRInstr(jmp);
         }
         break;
