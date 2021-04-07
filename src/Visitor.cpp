@@ -460,7 +460,7 @@ antlrcpp::Any Visitor::visitBitwiseAnd_assign(ifccParser::BitwiseAnd_assignConte
 
 antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) {
   TRACE
-
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
 
@@ -603,6 +603,7 @@ antlrcpp::Any Visitor::visitAddresOf(ifccParser::AddresOfContext *context) UNHAN
 
 antlrcpp::Any Visitor::visitPostIncr(ifccParser::PostIncrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -636,6 +637,7 @@ antlrcpp::Any Visitor::visitBitwiseShift(ifccParser::BitwiseShiftContext *contex
 antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) {
   // TODO : tableaux
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> affect = make_shared<Affectation>();
@@ -827,6 +829,7 @@ antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) {
 
 antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -851,6 +854,8 @@ antlrcpp::Any Visitor::visitSizeof(ifccParser::SizeofContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitPostDecr(ifccParser::PostDecrContext *context) {
   TRACE
+  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
+
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
 
