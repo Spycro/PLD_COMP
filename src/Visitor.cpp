@@ -946,6 +946,10 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   std::string symbol = context->varName()->NAME()->getSymbol()->getText();
   PRINT(symbol)
 
+  if(!scope->getSymbol(symbol)) {
+      cerr<<"non declared variable"<<endl;
+  }
+
   // create corresponding AST node
   shared_ptr<Node> variable = make_shared<Variable>(symbol);
 
