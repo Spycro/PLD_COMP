@@ -450,17 +450,24 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
     case NodeType::FUNCTIONCALL:
         {
             std::string fName = instr->getSymbol();
+            
+
             shared_ptr<SymbolTableElement> endPoint = current_bb->getScope()->getSymbol(fName);
             shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(endPoint->getType());
             list<shared_ptr<Node>> paramNames = instr->getParameters();
 
+            
+
             //get parameters from symbol table
             std::vector<SymbolTableElement> elemParams;
             for(auto p : paramNames){
-                shared_ptr<SymbolTableElement> temp = current_bb->getScope()->getSymbol(p->getSymbol());
+                shared_ptr<SymbolTableElement> temp ;
+                
+                temp = inspectInstruction(p);
+                
                 elemParams.push_back(*temp);
             }
-
+            
 
             shared_ptr<Call> call(new Call(current_bb.get(),endPoint->getCFG(),elemParams,*res));
             current_bb->add_IRInstr(call);
