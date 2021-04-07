@@ -76,7 +76,6 @@ public:
     virtual antlrcpp::Any visitParenthesis(ifccParser::ParenthesisContext *context) override;
     virtual antlrcpp::Any visitBitwiseXor_assig(ifccParser::BitwiseXor_assigContext *context) override;
     virtual antlrcpp::Any visitBitwiseOr_assign(ifccParser::BitwiseOr_assignContext *context) override;
-    virtual antlrcpp::Any visitComma(ifccParser::CommaContext *context) override;
     virtual antlrcpp::Any visitUnaryPlus(ifccParser::UnaryPlusContext *context) override;
     virtual antlrcpp::Any visitSub_assign(ifccParser::Sub_assignContext *context) override;
     virtual antlrcpp::Any visitVariable(ifccParser::VariableContext *context) override;

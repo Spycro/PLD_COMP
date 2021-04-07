@@ -194,7 +194,7 @@ expression
       | varName ('&='|'and_eq') expression #bitwiseAnd_assign
       | varName ('^='|'xor_eq') expression #bitwiseXor_assig
       | varName ('|='|'or_eq') expression #bitwiseOr_assign
-      | expression ',' expression #comma
+      //    | expression ',' expression #comma
       ;
 
 MULTDIVMOD : '*' | '/' | '%' ; // remplacer par non terminal ? (en minuscules)
