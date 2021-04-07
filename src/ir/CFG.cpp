@@ -28,6 +28,7 @@ CFG::CFG(shared_ptr<Node> function){
     shared_ptr<Node> block = function->getCode();
     shared_ptr<Scope> scope = block->getScope();
 
+
     type = scope->getSymbol(label)->getType(); 
     
     list<shared_ptr<Node>> parameters = function->getParameters();
