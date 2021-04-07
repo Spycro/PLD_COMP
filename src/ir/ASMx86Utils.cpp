@@ -19,17 +19,59 @@ char ASMx86Utils::symbolSizeChar(int s) {
     }
 }
 
-//TODO: change reg64 type to a specialized class for 64bits registries only
+std::string ASMx86Utils::moveTo(SymbolTableElement& src, SymbolTableElement& dst) {
+
+    std::stringstream ss;
+
+    if(src.getSize() == dst.getSize()) { // src size match dst size
+
+        ss << "\tmov" << symbolSizeChar(src.getSize()) << " " << src.getAsm() << ", " << dst.getAsm();
+
+    } else if(dst.getSize() > src.getSize()) {
+
+        SymbolTableElement& srcReg = getSubReg(RAX_REGISTER, src.getSize());
+        SymbolTableElement& dstReg = getSubReg(RAX_REGISTER, dst.getSize());
+
+        //TODO: optimise the number of instructions in specific cases
+
+        // Move src to a registry where it fits and only if needed (eg: to not to movb %al, %al)
+        if(src.getAsm() != srcReg.getAsm()) {
+            ss << "\tmov" << symbolSizeChar(src.getSize()) << " " << src.getAsm() << ", " << srcReg.getAsm() << std::endl;
+        }
+
+        // Sign-extend the value in registry to the size of dst (movsxq, with x either b, q or l depending on the symbol's size)
+        ss << "\tmovs" << symbolSizeChar(src.getSize()) << symbolSizeChar(dst.getSize()) << " " << srcReg.getAsm() << ", " << dstReg.getAsm() << std::endl;
+        // Finally move the value from the registry to the dst
+        ss << "\tmov" << symbolSizeChar(dst.getSize()) << " " << dstReg.getAsm() << ", " << dst.getAsm();
+
+    } else { // dst.getSize() < src.getSize()
+
+        SymbolTableElement& srcReg = getSubReg(RAX_REGISTER, src.getSize());
+        SymbolTableElement& dstReg = getSubReg(RAX_REGISTER, dst.getSize());
+
+        // Move src to a registry where it fits
+        ss << "\tmov" << symbolSizeChar(src.getSize()) << " " << src.getAsm() << ", " << srcReg.getAsm() << std::endl;
+        // Truncate and only move the part that interests us
+        ss << "\tmov" << symbolSizeChar(dst.getSize()) << " " << dstReg.getAsm() << ", " << dst.getAsm();
+
+    }
+
+    return ss.str();
+}
+
+
+//TODO: remove this and use moveTo above instead
 std::string ASMx86Utils::moveTo64Reg(SymbolTableElement& s, SymbolTableElement& reg64) {
 
     std::stringstream ss;
 
-    int size = s.getSize();
-
-    if(size == 8) {
+    if(s.getSize() == 8) {
         ss << "\tmovq " << s.getAsm() << ", " << reg64.getAsm();
-    } else if(size < 8) {
-        ss << "\tmovs" << symbolSizeChar(size) << symbolSizeChar(8) << " " << s.getAsm() << ", " << reg64.getAsm();
+    } else if(s.getSize() < 8) {
+        // Move s to a registry where it fits
+        ss << "\tmov" << symbolSizeChar(s.getSize()) << " " << s.getAsm() << ", " << getSubReg(reg64, s.getSize()).getAsm() << std::endl;
+        // Sign-extend it to the full 64 bits registry (movsxq, with x either b, q or l depending on the symbol's size)
+        ss << "\tmovs" << symbolSizeChar(s.getSize()) << "q" << " " << s.getAsm() << ", " << reg64.getAsm();
     } else {
         throw "Unsupported size";
     }
