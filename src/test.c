@@ -1,7 +1,7 @@
 
 int main() {
 	int a = 3;
-	//putchar(3);
+	getchar();
 	int c;
     return a;
 }
