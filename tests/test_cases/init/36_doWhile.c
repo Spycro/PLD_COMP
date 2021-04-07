@@ -3,4 +3,5 @@ int main() {
     do{
         a--;
     }while(a);
+    return a;
 }

@@ -24,7 +24,7 @@
 
 #include <string>
 
-#define DEBUG
+//#define DEBUG
 
 #define UNHANDLED { setFail(); addToErrorTrace("[!] Unhandled operation : "); addToErrorTrace(__PRETTY_FUNCTION__); addToErrorTrace("\r\n"); return 0; }
 #define FORBIDEN(x) { setFail(); addToErrorTrace("[!] Forbiden operation : "); addToErrorTrace(x); addToErrorTrace("\r\n"); }
