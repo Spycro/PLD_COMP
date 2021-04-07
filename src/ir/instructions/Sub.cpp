@@ -15,7 +15,7 @@ void Sub::gen_asm(std::ostream &o) {
     o << moveTo64Reg(b, RDX_REGISTER) << std::endl;
 
     // Perform 64 bits subtraction
-    o << "\tsubq " << RAX_REGISTER.getAsm() << ", " << RDX_REGISTER.getAsm() << std::endl;
+    o << "\tsubq " << RDX_REGISTER.getAsm() << ", " << RAX_REGISTER.getAsm() << std::endl;
     o << "\tmov" << symbolSizeChar(res.getSize()) << " " << raxSubReg.getAsm() << ", " << res.getAsm() << std::endl;   
 }
 
