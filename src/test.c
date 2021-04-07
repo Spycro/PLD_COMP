@@ -3,3 +3,8 @@ int main() {
 	int b ;
     return b;
 }
+int bo() {
+	int a = 3;
+	int b ;
+    return b;
+}

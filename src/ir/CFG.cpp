@@ -23,7 +23,7 @@
 CFG::CFG(Function* ast_, std::string label_, VarType::Type* type_, std::vector<SymbolTableElement> params_) : ast(ast_), label(label_), type(type_){}
 
 CFG::CFG(shared_ptr<Node> function){
-    label = "main"; // todo
+    label =  function->getSymbol(); 
     type = &INTTYPE64; //todo
 
     shared_ptr<Node> block = function->getCode();
