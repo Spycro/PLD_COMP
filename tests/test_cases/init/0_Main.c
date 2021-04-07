@@ -7,5 +7,6 @@ int main() {
    f++;
    f + a;
    f - a;
+   test();
    return c;
 }
