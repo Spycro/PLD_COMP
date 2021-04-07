@@ -242,6 +242,11 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
 
       // add to scope
       scope->addVariable(name, declarationType);
+
+      // add to parameters
+      shared_ptr<Node> param = make_shared<Variable>();
+      param->setSymbol(name);
+      funct->getParameters().push_back(param);
     }
   }
 
