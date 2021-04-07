@@ -497,11 +497,11 @@ antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) {
 
   // set current node attributes
   // operator
-  std::string opString = context->getStart()->getText();
+
   BinaryOperator op;
-  if(opString == "==")
+  if(context->EQUAL())
     op = EQUAL;
-  else if(opString == "!=")
+  else if(context->NOTEQUAL())
     op = NE;
   binary->setBinaryOperator(op);
   // operands
@@ -739,16 +739,15 @@ antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *
   BinaryOperator op;
   // set current node attributes
   // operator
-  std::string opString = context->getStart()->getText();
-  if(opString == "<")
+  if(context->LT())
     op = LT;
-  else if(opString   == ">")
+  else if(context->GT())
     op = GT;
-  else if(opString == "<=")
+  else if(context->LTE())
     op = LTE;
-  else if(opString == ">=")
+  else if(context->GTE())
     op = GTE;
-  
+  PRINT(op)
   binary->setBinaryOperator(op);
   // operands
   binary->setOperand1(op1.as<shared_ptr<Node>>());
