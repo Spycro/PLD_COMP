@@ -211,11 +211,15 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::UNARY:
         {
+            std::cout<< instr->toString()<<std::endl;
+            std::cout<< instr->getUnaryOp()<<std::endl;
+            std::cout<< instr->getOperand()<<std::endl;
             shared_ptr<SymbolTableElement> in= inspectInstruction(instr->getOperand());
             
             shared_ptr<IRInstr> op;
             
-            //todo unary op not set std::cout<< instr->getUnaryOp()<<std::endl;
+            std::cout<< instr->toString()<<std::endl;
+            std::cout<< instr->getUnaryOp()<<std::endl;
 
             switch (instr->getUnaryOp())
             {
