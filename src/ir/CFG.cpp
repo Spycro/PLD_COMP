@@ -20,15 +20,18 @@
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
-CFG::CFG(Function* ast_, std::string label_, VarType::Type* type_, std::vector<SymbolTableElement> params_) : ast(ast_), label(label_), type(type_){}
+CFG::CFG(Function* ast_, std::string label_, VarType::Type* type_, std::vector<SymbolTableElement> params_) : label(label_), type(type_){}
 
 CFG::CFG(shared_ptr<Node> function){
     label =  function->getSymbol(); 
-    type = &INTTYPE64; //todo
 
     shared_ptr<Node> block = function->getCode();
-    list<shared_ptr<Node>> parameters = function->getParameters();
     shared_ptr<Scope> scope = block->getScope();
+
+    type = scope->getSymbol(label)->getType(); 
+    
+    list<shared_ptr<Node>> parameters = function->getParameters();
+
     for(auto var : parameters){
         shared_ptr<SymbolTableElement> param = scope->getSymbol(var->getSymbol());
         myParams.push_back(param);

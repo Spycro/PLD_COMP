@@ -3,7 +3,7 @@ int main() {
 	int b ;
     return b;
 }
-int bo() {
+char bo() {
 	int a = 3;
 	int b ;
     return b;
