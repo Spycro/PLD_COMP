@@ -108,7 +108,8 @@ private:
 
     void pushScope();
     void popScope();
-    bool verifySymbol(std::string);
+    bool verifySymbolExist(std::string);
+    bool verifySymbolNotExist(std::string);
     void addToErrorTrace(std::string);
     void setFail(){ errorFlag = true; }
     VarType::Type* parseType(std::string typeString);
