@@ -18,6 +18,7 @@
 #include "ir/instructions/Cmp_lt.h"
 #include "ir/instructions/Cmp_neq.h"
 #include "ir/instructions/Call.h"
+#include "ir/instructions/Jmp.h"
 #include "type/Int64.h"
 #include "ir/ASMConstants.h"
 
@@ -39,7 +40,6 @@ CFG::CFG(shared_ptr<Node> function){
     for(auto var : parameters){
         shared_ptr<SymbolTableElement> param = scope->getSymbol(var->getSymbol());
         myParams.push_back(param);
-        incrementSpacer(param->getSize());
     }
 
     current_bb = std::shared_ptr<BasicBlock>(new BasicBlock(this, scope));
@@ -164,9 +164,12 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
 
     case NodeType::RETURN:
         {
-            shared_ptr<Node> valToReturn = instr->getValue(); //todo get instruction for return
+            shared_ptr<Node> valToReturn = instr->getValue();
             shared_ptr<Copy> copy (new Copy(current_bb.get(),*inspectInstruction(valToReturn),RAX_REGISTER));
             current_bb->add_IRInstr(copy);
+
+            shared_ptr<Jmp> jmp (new Jmp(current_bb.get(),current_bb->getExit_true()));
+            current_bb->add_IRInstr(jmp);
         }
         break;
     
@@ -485,7 +488,18 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             add_bb(current_bb->getExit_true());
         }
         break;
-
+    case NodeType::BREAK:
+        {
+            shared_ptr<Jmp> jmp (new Jmp(current_bb.get(),current_bb->getExit_true()));
+            current_bb->add_IRInstr(jmp);
+        }
+        break;
+    case NodeType::CONTINUE:
+        {
+            shared_ptr<Jmp> jmp (new Jmp(current_bb.get(),current_bb));
+            current_bb->add_IRInstr(jmp);
+        }
+        break;
     default:
         break;
     }
