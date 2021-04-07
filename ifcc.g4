@@ -73,8 +73,12 @@ FOR : 'for' ;
 SWITCH : 'switch' ;
 MAIN : 'main' ;
 SIZEOF : 'sizeof' ;
-
-
+LT: '<';
+LTE: '<=';
+GT: '>';
+GTE: '>=';
+EQUAL: '==';
+NOTEQUAL: '!=';
 /*
  *    names and numbers
  */
@@ -171,8 +175,8 @@ expression
       | expression MULTDIVMOD expression #multiplicationDivisionModulo
       | expression plusMinusSymbol expression #plusMinus
       | expression ('<<'|'>>') expression #bitwiseShift
-      | expression ('<'|'<='|'>'|'>=') expression #lesserOrGreater
-      | expression ('=='|'!=') expression #compare
+      | expression (LT|LTE|GT|GTE) expression #lesserOrGreater
+      | expression (EQUAL|NOTEQUAL) expression #compare
       | expression ('&'|'bitand') expression #bitwiseAnd
       | expression ('^'|'bitxor') expression #bitwiseXor
       | expression ('|'|'bitor') expression #bitwiseOr
