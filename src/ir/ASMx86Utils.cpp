@@ -19,6 +19,7 @@ char ASMx86Utils::symbolSizeChar(int s) {
     }
 }
 
+//TODO: change reg64 type to a specialized class for 64bits registries only
 std::string ASMx86Utils::moveTo64Reg(SymbolTableElement& s, SymbolTableElement& reg64) {
 
     std::stringstream ss;
