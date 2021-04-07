@@ -4,6 +4,7 @@
 #include "ast/Return.h"
 #include "ast/NullInstr.h"
 #include "ast/WhileInstr.h"
+#include "ast/DoWhileInstr.h"
 #include "ast/IfInstr.h"
 #include "ast/ForInstr.h"
 #include "ast/expression/Affectation.h"
@@ -298,7 +299,31 @@ antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) {
   return antlrcpp::Any(whileInstr);
 }
 
-antlrcpp::Any Visitor::visitDoWhileInstr(ifccParser::DoWhileInstrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitDoWhileInstr(ifccParser::DoWhileInstrContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> doWhileInstr = make_shared<DoWhileInstr>();
+  
+  // create links with the tree
+  parentNode->getChildren().push_back(doWhileInstr); // add the new node to it parent
+  doWhileInstr->setParent(parentNode); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = doWhileInstr; //setting parent to current node before anything else
+  antlrcpp::Any test = visit(context->expression());
+  antlrcpp::Any code = visit(context->instruction()); // TODO : comprendre pourquoi le retour n'est pas du bon type
+  parentNode = parent; //reseting parent node at the end of the call
+
+  // set current node attributes
+  // expression
+  doWhileInstr->setTest(test.as<shared_ptr<Node>>());
+  // code
+  doWhileInstr->setCode(code.as<shared_ptr<Node>>());
+  
+  return antlrcpp::Any(doWhileInstr);
+}
 
 antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
   TRACE
