@@ -225,7 +225,8 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
     return antlrcpp::Any(affectation);
   }
   //recursively visit declarationList
-  visit(context->variableDeclarationList());
+  if(context->variableDeclarationList())
+    visit(context->variableDeclarationList());
 
   return 0;
 }
