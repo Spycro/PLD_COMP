@@ -169,7 +169,6 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<SymbolTableElement> rightOp = inspectInstruction(instr->getOperand2());
             shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(leftOp->getType()->getLargestType(rightOp->getType()));
             shared_ptr<IRInstr> op;
-            std::cout << instr->getOp() <<std::endl;
 
             switch (instr->getOp())
             {
@@ -212,7 +211,67 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         break;
     case NodeType::UNARY:
         {
-            shared_ptr<SymbolTableElement> op= inspectInstruction(instr->getOperand());
+            shared_ptr<SymbolTableElement> in= inspectInstruction(instr->getOperand());
+            
+            shared_ptr<IRInstr> op;
+            
+            //todo unary op not set std::cout<< instr->getUnaryOp()<<std::endl;
+
+            switch (instr->getUnaryOp())
+            {
+            case UnaryOperator::POSTDECR:
+                {
+                    shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(in->getType());
+                    shared_ptr<IRInstr> copy(new Copy(current_bb.get(),*in,*res));
+                    op = shared_ptr<Add>(new Add(current_bb.get(),*in,SymbolTableElement(in->getType(),"-1"), *in));
+                    current_bb->add_IRInstr(copy);
+                    current_bb->add_IRInstr(op);
+                    return res;
+                }
+                break;
+            case UnaryOperator::POSTINCR:
+                {
+                    shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(in->getType());
+                    shared_ptr<IRInstr> copy(new Copy(current_bb.get(),*in,*res));
+                    op = shared_ptr<Add>(new Add(current_bb.get(),*in,SymbolTableElement(in->getType(),"1"), *in));
+                    current_bb->add_IRInstr(copy);
+                    current_bb->add_IRInstr(op);
+                    return res;
+                }
+                break;
+            case UnaryOperator::PREDECR:
+                {
+                    op = shared_ptr<Add>(new Add(current_bb.get(),*in,SymbolTableElement(in->getType(),"-1"), *in));
+                    current_bb->add_IRInstr(op);
+                    return in;
+                }
+                break;
+            case UnaryOperator::PREINCR:
+                {
+                    op = shared_ptr<Add>(new Add(current_bb.get(),*in,SymbolTableElement(in->getType(),"1"), *in));
+                    current_bb->add_IRInstr(op);
+                    return in;
+                }
+                break;
+            case UnaryOperator::NOT:
+                {
+                    shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(in->getType());
+                    op = shared_ptr<Cmp_eq>(new Cmp_eq(current_bb.get(),*in, SymbolTableElement(in->getType(),"0"), *res));
+                    current_bb->add_IRInstr(op);
+                    return res;
+                }
+                break;
+            case UnaryOperator::UNARYMINUS:
+                {
+                    shared_ptr<SymbolTableElement> res = current_bb->getScope()->addTempVariable(in->getType());
+                    op = shared_ptr<Sub>(new Sub(current_bb.get(),SymbolTableElement(in->getType(),"0"),*in, *res));
+                    current_bb->add_IRInstr(op);
+                    return res;
+                }
+                break;
+            default:
+                break;
+            }
         }
         break;
     case NodeType::INFINSTR:
