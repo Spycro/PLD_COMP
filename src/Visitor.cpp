@@ -133,7 +133,7 @@ antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *
   std::string symbol = context->getStart()->getText();
   functionCall->setSymbol(symbol);
   // PRINT(symbol)
-  verifySymbol(symbol);
+  verifySymbolExist(symbol);
   // create links with the tree
   functionCall->setParent(parentNode); // add the new node to it parent
   parentNode->getChildren().push_back(functionCall); // set the new node parent
@@ -197,8 +197,7 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
 
   // retrieve function name
   std::string functionName = context->NAME()->getSymbol()->getText();
-
-  // retrieve function type
+  verifySymbolNotExist(functionName);
   VarType::Type* functionType = VarType::getType(context->type()->getStart()->getText());
 
   // add to scope
@@ -267,7 +266,7 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
 
   // retrieve var name
   string name = context->varName()->NAME()->getSymbol()->getText();
-
+  verifySymbolNotExist(name);
   if (isArray) {
 
     // array declaration
@@ -601,7 +600,7 @@ antlrcpp::Any Visitor::visitBitwiseAnd_assign(ifccParser::BitwiseAnd_assignConte
 
 antlrcpp::Any Visitor::visitPreDecr(ifccParser::PreDecrContext *context) {
   TRACE
-  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
+  verifySymbolExist(context->varName()->NAME()->getSymbol()->getText());
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
 
@@ -748,7 +747,7 @@ antlrcpp::Any Visitor::visitAddresOf(ifccParser::AddresOfContext *context) UNHAN
 
 antlrcpp::Any Visitor::visitPostIncr(ifccParser::PostIncrContext *context) {
   TRACE
-  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
+  verifySymbolExist(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -785,7 +784,7 @@ antlrcpp::Any Visitor::visitBitwiseShift(ifccParser::BitwiseShiftContext *contex
 
 antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) {
   TRACE
-  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
+  verifySymbolExist(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> affectation = make_shared<Affectation>();
@@ -981,7 +980,7 @@ antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) {
 
 antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) {
   TRACE
-  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
+  verifySymbolExist(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -1010,7 +1009,7 @@ antlrcpp::Any Visitor::visitSizeof(ifccParser::SizeofContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitPostDecr(ifccParser::PostDecrContext *context) {
   TRACE
-  verifySymbol(context->varName()->NAME()->getSymbol()->getText());
+  verifySymbolExist(context->varName()->NAME()->getSymbol()->getText());
 
   // create corresponding AST node
   shared_ptr<Node> unary = make_shared<Unary>();
@@ -1112,7 +1111,7 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   // retrieve symbol
   std::string symbol = context->varName()->NAME()->getSymbol()->getText();
 
-  verifySymbol(symbol);
+  verifySymbolExist(symbol);
 
   // create corresponding AST node
   shared_ptr<Node> variable = make_shared<Variable>(symbol);
@@ -1198,10 +1197,21 @@ void Visitor::popScope() {
   scope = scope->getParentScope();
 }
 
-bool Visitor::verifySymbol(std::string symbol){
+bool Visitor::verifySymbolExist(std::string symbol){
   auto p = scope->getSymbol(symbol);
   if(!p){
     UNDECLARED(symbol)
+    return false; 
+  }
+  return true;
+}
+
+bool Visitor::verifySymbolNotExist(std::string symbol){
+  auto p = scope->getSymbol(symbol);
+  if(p){
+    setFail();
+    std::string trace = "[!] ERROR : Symbol named \"" + symbol + "\" was already declared before.\n";
+    addToErrorTrace(trace); 
     return false; 
   }
   return true;
