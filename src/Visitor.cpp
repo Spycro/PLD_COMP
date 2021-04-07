@@ -19,6 +19,8 @@
 #include "ast/expression/putCharInstr.h"
 #include "type/Int64.h"
 #include "type/Char.h"
+#include "ast/Break.h"
+#include "ast/Continue.h"
 
 #include <string>
 
@@ -333,9 +335,31 @@ antlrcpp::Any Visitor::visitNullInstr(ifccParser::NullInstrContext *context) {
   return antlrcpp::Any(nullInstr);
 }
 
-antlrcpp::Any Visitor::visitBreakInstr(ifccParser::BreakInstrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitBreakInstr(ifccParser::BreakInstrContext *context) {
+  TRACE
 
-antlrcpp::Any Visitor::visitContinueInstr(ifccParser::ContinueInstrContext *context) UNHANDLED
+  // create corresponding AST node
+  shared_ptr<Node> BreakInstr = make_shared<Break>();
+
+  // create links with the tree
+  BreakInstr->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(BreakInstr); // set the new node parent
+
+  return antlrcpp::Any(BreakInstr);
+}
+
+antlrcpp::Any Visitor::visitContinueInstr(ifccParser::ContinueInstrContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> ContinueInstr = make_shared<Continue>();
+
+  // create links with the tree
+  ContinueInstr->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(ContinueInstr); // set the new node parent
+
+  return antlrcpp::Any(ContinueInstr);
+}
 
 antlrcpp::Any Visitor::visitReturnInstr(ifccParser::ReturnInstrContext *context) {
   TRACE
