@@ -11,6 +11,8 @@ namespace VarType
             return new VarType::Int64();
         } else if (typeName == "char") {
             return new VarType::Char();
+        } else if (typeName == "void") {
+            return new VarType::Void();
         }
 
         // unrecognised type
