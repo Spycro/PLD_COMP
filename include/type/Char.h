@@ -15,5 +15,4 @@ namespace VarType
 
     };
 }
-
 extern VarType::Char CHARTYPE;
