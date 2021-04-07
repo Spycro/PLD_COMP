@@ -81,7 +81,12 @@ SIZEOF : 'sizeof' ;
 CONST : [0-9]+ ; // TODO : add chars ('a', '\0', '\n' ...), add type modifier
 NAME : [a-zA-Z_][a-zA-Z0-9_]* ;
 varName : NAME ('[' expression ']')? ;
-functionCall : NAME '(' (expression (',' expression)*)? ')' ;
+functionCall 
+      : 'putchar(' expression ')' #putchar
+      | 'getchar(' ')' #getchar
+      | NAME '(' (expression (',' expression)*)? ')' #functionCalling
+      ;
+
 
 
 
@@ -185,7 +190,7 @@ expression
       | varName ('&='|'and_eq') expression #bitwiseAnd_assign
       | varName ('^='|'xor_eq') expression #bitwiseXor_assig
       | varName ('|='|'or_eq') expression #bitwiseOr_assign
-      | expression ',' expression #comma
+      //    | expression ',' expression #comma
       ;
 
 MULTDIVMOD : '*' | '/' | '%' ; // remplacer par non terminal ? (en minuscules)

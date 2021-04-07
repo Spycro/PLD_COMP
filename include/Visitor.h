@@ -23,7 +23,9 @@ public:
     virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *context) override;
     virtual antlrcpp::Any visitType(ifccParser::TypeContext *context) override;
     virtual antlrcpp::Any visitVarName(ifccParser::VarNameContext *context) override;
-    virtual antlrcpp::Any visitFunctionCall(ifccParser::FunctionCallContext *context) override;
+    virtual antlrcpp::Any visitPutchar(ifccParser::PutcharContext *context) override;
+    virtual antlrcpp::Any visitGetchar(ifccParser::GetcharContext *context) override;
+    virtual antlrcpp::Any visitFunctionCalling(ifccParser::FunctionCallingContext *context) override;
     virtual antlrcpp::Any visitProg(ifccParser::ProgContext *context) override;
     virtual antlrcpp::Any visitMainFunction(ifccParser::MainFunctionContext *context) override;
     virtual antlrcpp::Any visitAnyFunction(ifccParser::AnyFunctionContext *context) override;
@@ -74,7 +76,6 @@ public:
     virtual antlrcpp::Any visitParenthesis(ifccParser::ParenthesisContext *context) override;
     virtual antlrcpp::Any visitBitwiseXor_assig(ifccParser::BitwiseXor_assigContext *context) override;
     virtual antlrcpp::Any visitBitwiseOr_assign(ifccParser::BitwiseOr_assignContext *context) override;
-    virtual antlrcpp::Any visitComma(ifccParser::CommaContext *context) override;
     virtual antlrcpp::Any visitUnaryPlus(ifccParser::UnaryPlusContext *context) override;
     virtual antlrcpp::Any visitSub_assign(ifccParser::Sub_assignContext *context) override;
     virtual antlrcpp::Any visitVariable(ifccParser::VariableContext *context) override;

@@ -4,6 +4,7 @@
 #include "ast/Return.h"
 #include "ast/NullInstr.h"
 #include "ast/WhileInstr.h"
+#include "ast/DoWhileInstr.h"
 #include "ast/IfInstr.h"
 #include "ast/ForInstr.h"
 #include "ast/expression/Affectation.h"
@@ -11,6 +12,9 @@
 #include "ast/expression/Binary.h"
 #include "ast/expression/Unary.h"
 #include "type/TypeUtil.h"
+#include "ast/expression/FunctionCall.h"
+#include "ast/expression/getCharInstr.h"
+#include "ast/expression/putCharInstr.h"
 #include "type/Int64.h"
 #include "type/Char.h"
 
@@ -39,11 +43,70 @@ antlrcpp::Any Visitor::visitAxiom(ifccParser::AxiomContext *context) {
   return visitChildren(context);
 }
 
-antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) {
+  TRACE
+
+  return visitChildren(context);
+}
 
 antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitFunctionCall(ifccParser::FunctionCallContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitPutchar(ifccParser::PutcharContext *context) {
+  TRACE
+  // create corresponding AST node
+  shared_ptr<Node> putChar = make_shared<putCharInstr>();
+  
+
+  // create links with the tree
+  putChar->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(putChar); // set the new node parent
+
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = putChar; //setting parent to current node before anything else
+  antlrcpp::Any expression = visit(context->expression());
+
+  parentNode = parent; //reseting parent node at the end of the call
+
+  return antlrcpp::Any(putChar); 
+}
+
+antlrcpp::Any Visitor::visitGetchar(ifccParser::GetcharContext *context) {
+  TRACE
+  // create corresponding AST node
+  shared_ptr<Node> getChar = make_shared<getCharInstr>();
+
+  // create links with the tree
+  getChar->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(getChar); // set the new node parent
+
+  return antlrcpp::Any(getChar); 
+}
+
+antlrcpp::Any Visitor::visitFunctionCalling(ifccParser::FunctionCallingContext *context) {
+   TRACE
+  // create corresponding AST node
+  shared_ptr<Node> functionCall = make_shared<FunctionCall>();
+  
+
+  // create links with the tree
+  functionCall->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(functionCall); // set the new node parent
+
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = functionCall; //setting parent to current node before anything else
+
+  //antlrcpp::Any expression = visit(context->expression());
+
+  for (auto child : context->expression()) {
+    antlrcpp::Any tmp = visit(child);
+    functionCall->getParameters().push_back(tmp.as<shared_ptr<Node>>());
+  }
+
+  parentNode = parent; //reseting parent node at the end of the call
+
+  return antlrcpp::Any(functionCall); 
+
+}
 
 antlrcpp::Any Visitor::visitProg(ifccParser::ProgContext *context) {
   TRACE
@@ -98,7 +161,7 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = funct; //setting parent to current node before anything else
-  visitChildren(context);
+  visit(context->block()); //TODO : visitchildren
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
@@ -290,7 +353,31 @@ antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) {
   return antlrcpp::Any(whileInstr);
 }
 
-antlrcpp::Any Visitor::visitDoWhileInstr(ifccParser::DoWhileInstrContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitDoWhileInstr(ifccParser::DoWhileInstrContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> doWhileInstr = make_shared<DoWhileInstr>();
+  
+  // create links with the tree
+  parentNode->getChildren().push_back(doWhileInstr); // add the new node to it parent
+  doWhileInstr->setParent(parentNode); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = doWhileInstr; //setting parent to current node before anything else
+  antlrcpp::Any test = visit(context->expression());
+  antlrcpp::Any code = visit(context->instruction()); // TODO : comprendre pourquoi le retour n'est pas du bon type
+  parentNode = parent; //reseting parent node at the end of the call
+
+  // set current node attributes
+  // expression
+  doWhileInstr->setTest(test.as<shared_ptr<Node>>());
+  // code
+  doWhileInstr->setCode(code.as<shared_ptr<Node>>());
+  
+  return antlrcpp::Any(doWhileInstr);
+}
 
 antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
   TRACE
@@ -624,7 +711,42 @@ antlrcpp::Any Visitor::visitMultiplicationDivisionModulo(ifccParser::Multiplicat
   return antlrcpp::Any(binary);
 }
 
-antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitLesserOrGreater(ifccParser::LesserOrGreaterContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> binary = make_shared<Binary>();
+
+  // create links with the tree
+  binary->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(binary); // set the new node parent
+
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = binary; //setting parent to current node before anything else
+  antlrcpp::Any op1 = visit(context->expression(0));
+  antlrcpp::Any op2 = visit(context->expression(1));
+  parentNode = parent; //reseting parent node at the end of the call
+  BinaryOperator op;
+  // set current node attributes
+  // operator
+  std::string opString = context->getStart()->getText();
+  if(opString == "<")
+    op = LT;
+  else if(opString   == ">")
+    op = GT;
+  else if(opString == "<=")
+    op = LTE;
+  else if(opString == ">=")
+    op = GTE;
+  
+  binary->setBinaryOperator(op);
+  // operands
+  binary->setOperand1(op1.as<shared_ptr<Node>>());
+  binary->setOperand2(op2.as<shared_ptr<Node>>());
+
+  return antlrcpp::Any(binary);
+}
 
 antlrcpp::Any Visitor::visitBitwiseLeftShift_assign(ifccParser::BitwiseLeftShift_assignContext *context) UNHANDLED
 
@@ -642,10 +764,13 @@ antlrcpp::Any Visitor::visitLogicalNot(ifccParser::LogicalNotContext *context) {
   // operator
   unary->setOp(NOT);
   // operand
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent to current node before anything else
   antlrcpp::Any tmp = visit(context->expression()); 
+  parentNode = parent; //reseting parent node at the end of the call
+
   shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
-  operand->setParent(unary);
-  unary->getChildren().push_back(operand);
 
   return antlrcpp::Any(unary);
 }
@@ -683,7 +808,11 @@ antlrcpp::Any Visitor::visitPlusMinus(ifccParser::PlusMinusContext *context) {
   return antlrcpp::Any(binary);
 }
 
-antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitFunctCall(ifccParser::FunctCallContext *context) {
+  TRACE
+  
+  return visitChildren(context);
+}
 
 antlrcpp::Any Visitor::visitPreIncr(ifccParser::PreIncrContext *context) {
   TRACE
@@ -772,9 +901,30 @@ antlrcpp::Any Visitor::visitBitwiseXor_assig(ifccParser::BitwiseXor_assigContext
 
 antlrcpp::Any Visitor::visitBitwiseOr_assign(ifccParser::BitwiseOr_assignContext *context) UNHANDLED
 
-antlrcpp::Any Visitor::visitComma(ifccParser::CommaContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitUnaryPlus(ifccParser::UnaryPlusContext *context) {
+  TRACE
 
-antlrcpp::Any Visitor::visitUnaryPlus(ifccParser::UnaryPlusContext *context) UNHANDLED
+  // create corresponding AST node
+  shared_ptr<Node> unary = make_shared<Unary>();
+
+  // create links with the tree
+  unary->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(unary); // set the new node parent
+
+  // set current node attributes
+  // operator
+  unary->setOp(UNARYMINUS);
+  // operand
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent to current node before anything else
+  antlrcpp::Any tmp = visit(context->expression()); 
+  parentNode = parent; //reseting parent node at the end of the call
+
+  shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
+
+  return antlrcpp::Any(unary);
+}
 
 antlrcpp::Any Visitor::visitSub_assign(ifccParser::Sub_assignContext *context) UNHANDLED
 
@@ -795,7 +945,30 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   return antlrcpp::Any(variable);
 }
 
-antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) {
+  TRACE
+
+  // create corresponding AST node
+  shared_ptr<Node> unary = make_shared<Unary>();
+
+  // create links with the tree
+  unary->setParent(parentNode); // add the new node to it parent
+  parentNode->getChildren().push_back(unary); // set the new node parent
+
+  // set current node attributes
+  // operator
+  unary->setOp(UNARYMINUS);
+  // operand
+  // visit children
+  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+  parentNode = unary; //setting parent to current node before anything else
+  antlrcpp::Any tmp = visit(context->expression()); 
+  parentNode = parent; //reseting parent node at the end of the call
+
+  shared_ptr<Node> operand = tmp.as<shared_ptr<Node>>();
+
+  return antlrcpp::Any(unary);
+}
 
 antlrcpp::Any Visitor::visitLogicalOr(ifccParser::LogicalOrContext *context) {
   TRACE
