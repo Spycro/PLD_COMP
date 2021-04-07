@@ -11,6 +11,8 @@
 #include "ast/expression/Const.h"
 #include "ast/expression/Binary.h"
 #include "ast/expression/Unary.h"
+#include "ast/expression/Array.h"
+#include "ast/expression/Variable.h"
 #include "type/TypeUtil.h"
 #include "ast/expression/FunctionCall.h"
 #include "ast/expression/getCharInstr.h"
@@ -24,11 +26,13 @@
 
 #ifdef DEBUG
   #define UNHANDLED { std::cerr << "/!\\ Unhandled operation : " << __PRETTY_FUNCTION__ << std::endl; return 0; }
+  #define FORBIDEN(x) { std::cerr << "/!\\ Forbiden operation : " << (x) << std::endl; return 0; }
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
   #define PRINT(x) std::cout << "[*] value : " << (x) << std::endl;
   #define PRINTM(m, x) std::cout << "[*] " << (m) << " : " << (x) << std::endl;
 #else
   #define UNHANDLED { std::cerr << "/!\\Unhandled operation : " << __PRETTY_FUNCTION__ << std::endl; throw; }
+  #define FORBIDEN(x) { std::cerr << "/!\\ Forbiden operation : " << (x) << std::endl; throw; }
   #define TRACCE ;
   #define PRINT(x) ;
   #define PRINTM(m, x) ;
@@ -49,7 +53,43 @@ antlrcpp::Any Visitor::visitType(ifccParser::TypeContext *context) {
   return visitChildren(context);
 }
 
-antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) UNHANDLED
+antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) {
+  TRACE
+
+  // is an array declaration ?
+  bool isArray = context->expression() != nullptr;
+
+  // retrieve var name
+  string name = context->NAME()->getSymbol()->getText();
+
+  // create corresponding AST node
+  shared_ptr<Node> var;
+  if (isArray) {
+    var = make_shared<Array>();
+  } else {
+    var = make_shared<Variable>();
+  }
+
+  // create links with the tree
+  parentNode->getChildren().push_back(var); // add the new node to it parent
+  var->setParent(parentNode); // set the new node parent
+  
+  // visit children
+  if (isArray) {
+    shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+    parentNode = var; //setting parent to current node before anything else
+    visit(context->expression());
+    parentNode = var; //reseting parent node at the end of the call
+  }
+
+  // set current node attributes
+  var->setSymbol(name);
+  if (isArray) {
+    var->setPosition(var->getChildren()[0]);
+  }
+  
+  return antlrcpp::Any(var);
+}
 
 antlrcpp::Any Visitor::visitPutchar(ifccParser::PutcharContext *context) {
   TRACE
@@ -135,11 +175,15 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = mainFunct; //setting parent to current node before anything else
-  visitChildren(context);
+  visit(context->block()); // TODO : parameters
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
-  mainFunct->setCode(dynamic_pointer_cast<Block>(mainFunct->getChildren()[0]));
+  mainFunct->setSymbol("main");
+  mainFunct->setCode(mainFunct->getChildren()[0]);
+
+  // set base scope
+  mainFunct->getCode()->getScope()->setFunctionBaseScope(true);
 
   return antlrcpp::Any(mainFunct);
 }
@@ -161,11 +205,15 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = funct; //setting parent to current node before anything else
-  visit(context->block()); //TODO : visitchildren
+  visit(context->block()); // TODO : parameters
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
+  funct->setSymbol(functionName);
   funct->setCode(funct->getChildren()[0]);
+
+  // set base scope
+  funct->getCode()->getScope()->setFunctionBaseScope(true);
 
   return antlrcpp::Any(funct);
 }
@@ -188,39 +236,81 @@ antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationC
 }
 
 antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarationListContext *context) {
-  // TODO : tableaux
-  // TODO : visite des déclarations multiples
   TRACE
+
+  // is an array declaration ?
+  bool isArray = context->varName()->expression() != nullptr;
+
+  // is affected on delcaration ?
+  bool isAffected = context->expression() != nullptr;
 
   // retrieve var name
   string name = context->varName()->NAME()->getSymbol()->getText();
-  PRINT(name)
 
-  // add to scope
-  scope->addVariable(name, declarationType);
+  if (isArray) {
 
-  // if a default expression (ie. value) is given, create an affectation
-  // otherwise, no AST node is needed
-  if(context->expression()){
-    // create corresponding AST node
-    shared_ptr<Node> affectation = make_shared<Affectation>(name);
+    // array declaration
 
-    // create links with the tree
-    parentNode->getChildren().push_back(affectation); // add the new node to it parent
-    affectation->setParent(parentNode); // set the new node parent
+    // retrieve array size
+    int arraySize;
+    {
+      // visit children (ie. array size)
+      shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+      parentNode = make_shared<Node>(); //setting parent node before anything else 
+      //parent is set to "nothing", we can't have array affectation on declarion, the size won't be in the AST
+      antlrcpp::Any arraySizeAny = visit(context->varName()->expression());
+      parentNode = parent; //reseting parent node at the end of the call
 
-    // visit children
-    shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
-    parentNode = affectation; //setting parent node before anything else
-    antlrcpp::Any tmp = visit(context->expression());
-    parentNode = parent; //reseting parent node at the end of the call
+      shared_ptr<Node> arraySizeNode = arraySizeAny.as<shared_ptr<Node>>();
+      if (arraySizeNode->getType() != NodeType::CONST) {
+        FORBIDEN("Array must be created using a constant size")
+      } else {
+        arraySize = arraySizeNode->getConstValue();
+      }
+    }
 
-    // set current node attributes
-    shared_ptr<Node> val = tmp.as<shared_ptr<Node>>();
-    PRINT(val->getType())
-    affectation->setValue(move(val));
+    if (isAffected) {
+      FORBIDEN("Array cannot be affected on creation")
+    }
 
-    return antlrcpp::Any(affectation);
+    // add to scope (done in last, statement not reached if something is invalid)
+    scope->addArray(name, declarationType, arraySize);
+
+  } else {
+
+    // variable declaration
+
+    // add to scope
+    scope->addVariable(name, declarationType);
+
+    // if a default expression (ie. value) is given, create an affectation
+    // otherwise, no AST node is needed
+    if(isAffected) {
+
+      // create corresponding AST node
+      shared_ptr<Node> affectation = make_shared<Affectation>();
+
+      // create links with the tree
+      parentNode->getChildren().push_back(affectation); // add the new node to it parent
+      affectation->setParent(parentNode); // set the new node parent
+
+      // visit children
+      shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+      parentNode = affectation; //setting parent node before anything else
+      antlrcpp::Any lValue = visit(context->varName());
+      antlrcpp::Any rValue = visit(context->expression());
+      parentNode = parent; //reseting parent node at the end of the call
+
+      // set current node attributes
+      shared_ptr<Node> lVal = lValue.as<shared_ptr<Node>>();
+      affectation->setLValue(move(lVal));
+
+      shared_ptr<Node> rVal = rValue.as<shared_ptr<Node>>();
+      affectation->setRValue(move(rVal));
+
+      return antlrcpp::Any(affectation);
+    }
+
   }
 
   return 0;
@@ -316,8 +406,7 @@ antlrcpp::Any Visitor::visitBlock(ifccParser::BlockContext *context) {
   // set current node attributes
   block->getInstructions().reserve(block->getChildren().size());
   for (shared_ptr<Node> child : block->getChildren()) {
-    shared_ptr<Node> instr = dynamic_pointer_cast<Instruction>(child);
-    block->getInstructions().push_back(instr);
+    block->getInstructions().push_back(child);
   }
 
   // reseting scope
@@ -340,7 +429,7 @@ antlrcpp::Any Visitor::visitWhileInstr(ifccParser::WhileInstrContext *context) {
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = whileInstr; //setting parent to current node before anything else
   antlrcpp::Any test = visit(context->expression());
-  antlrcpp::Any code = visit(context->instruction()); // TODO : comprendre pourquoi le retour n'est pas du bon type
+  antlrcpp::Any code = visit(context->instruction());
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
@@ -367,7 +456,7 @@ antlrcpp::Any Visitor::visitDoWhileInstr(ifccParser::DoWhileInstrContext *contex
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
   parentNode = doWhileInstr; //setting parent to current node before anything else
   antlrcpp::Any test = visit(context->expression());
-  antlrcpp::Any code = visit(context->instruction()); // TODO : comprendre pourquoi le retour n'est pas du bon type
+  antlrcpp::Any code = visit(context->instruction());
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
@@ -397,7 +486,7 @@ antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
   antlrcpp::Any elseCode;
   if (context->instruction()[1] != nullptr) { // else code
     elseCode = visit(context->instruction()[1]); 
-  } else { // no else code
+  } else { // no else code, create nullInstr
     // create corresponding AST node
     shared_ptr<Node> elseCodeInstr = make_shared<NullInstr>();
 
@@ -496,6 +585,7 @@ antlrcpp::Any Visitor::visitCompare(ifccParser::CompareContext *context) {
   // operator
   std::string opString = context->getStart()->getText();
   BinaryOperator op;
+
   if(opString == "==")
     op = EQUAL;
   else if(opString == "!=")
@@ -622,28 +712,31 @@ antlrcpp::Any Visitor::visitDiv_assign(ifccParser::Div_assignContext *context) U
 antlrcpp::Any Visitor::visitBitwiseShift(ifccParser::BitwiseShiftContext *context) UNHANDLED
 
 antlrcpp::Any Visitor::visitDirect_assign(ifccParser::Direct_assignContext *context) {
-  // TODO : tableaux
   TRACE
 
   // create corresponding AST node
-  shared_ptr<Node> affect = make_shared<Affectation>();
+  shared_ptr<Node> affectation = make_shared<Affectation>();
 
   // create links with the tree
-  affect->getParent() = parentNode; // add the new node to it parent
-  parentNode->getChildren().push_back(affect); // set the new node parent
+  
+  parentNode->getChildren().push_back(affectation); // add the new node to it parent
+  affectation->setParent(parentNode); // set the new node parent
 
   // visit children
   shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
-  parentNode = affect; //setting parent to current node before anything else
-  antlrcpp::Any value = visit(context->expression());
+  parentNode = affectation; //setting parent node before anything else
+  antlrcpp::Any lValue = visit(context->varName());
+  antlrcpp::Any rValue = visit(context->expression());
   parentNode = parent; //reseting parent node at the end of the call
 
   // set current node attributes
-  string name = context->varName()->NAME()->getText();
-  affect->setValue(value.as<shared_ptr<Node>>());
-  affect->setSymbol(name);
+  shared_ptr<Node> lVal = lValue.as<shared_ptr<Node>>();
+  affectation->setLValue(move(lVal));
 
-  return antlrcpp::Any(affect);
+  shared_ptr<Node> rVal = rValue.as<shared_ptr<Node>>();
+  affectation->setRValue(move(rVal));
+
+  return antlrcpp::Any(affectation);
 }
 
 antlrcpp::Any Visitor::visitBitwiseOr(ifccParser::BitwiseOrContext *context) {
@@ -933,7 +1026,6 @@ antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
 
   // retrieve symbol
   std::string symbol = context->varName()->NAME()->getSymbol()->getText();
-  PRINT(symbol)
 
   // create corresponding AST node
   shared_ptr<Node> variable = make_shared<Variable>(symbol);

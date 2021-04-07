@@ -25,9 +25,15 @@ class Function : public Node {
             
         inline void setCode(shared_ptr<Node> code) override { this->code = code; }
         inline shared_ptr<Node> getCode() override { return code; }
+
+        inline string& getSymbol() override { return symbol; }
+        void setSymbol(std::string symb) override { symbol = symb; }
+
         inline list<shared_ptr<Node>> getParameters() override { return parameters; }
+        
         virtual std::string toString() override;
     private:
+        string symbol;
         shared_ptr<Node> code;
         list<shared_ptr<Node>> parameters;
 };

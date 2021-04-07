@@ -1,8 +1,9 @@
 #include "ast/Scope.h"
 #include <iostream>
 
+#define WORDSIZE 8
+
 std::shared_ptr<SymbolTableElement> Scope::getSymbol(std::string name){
-    std::shared_ptr<SymbolTableElement> el;
     if(symbolicTable->symbolInTable(name)){
         return symbolicTable->getSymbol(name);
     }else if(parentScope == nullptr){
@@ -26,7 +27,22 @@ void Scope::addVariable(std::string name,const VarType::Type *variableType)
     symbolicTable->addVariable(name, variableType, getMemoryCounter64AndIncrement());
 }
 
-void Scope::addFunction(std::string name,const VarType::Type *functionType)
+void Scope::addArray(std::string name, const VarType::Type *functionType, int size)
+{
+    if(getSymbol(name)!= nullptr){
+        std::cerr<<"name is already used in scope" <<std::endl;
+    }
+    int baseMemoryCounter = getMemoryCounter64AndIncrement();
+    int allocated = WORDSIZE;
+    int needed = size * functionType->getSize();
+    while (allocated < needed) {
+        allocated += WORDSIZE;
+        getMemoryCounter64AndIncrement();
+    }
+    symbolicTable->addArray(name, functionType, size, baseMemoryCounter);
+}
+
+void Scope::addFunction(std::string name, const VarType::Type *functionType)
 {
     symbolicTable->addFunction(name, functionType, 0);
 }
