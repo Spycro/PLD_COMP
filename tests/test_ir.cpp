@@ -29,6 +29,33 @@
 #include "SymbolTable.h"
 #include "ir/ASMConstants.h"
 
+
+void test_cmp_neq() {
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant0(&INTTYPE64, "2");
+    SymbolTableElement constant1(&INTTYPE64, "3");
+    SymbolTableElement a(&INTTYPE64, false, false, 8);
+    SymbolTableElement b(&INTTYPE64, false, false, 16);
+    SymbolTableElement c(&INTTYPE64, false, false, 24);
+
+    shared_ptr<Copy> copy0(new Copy(bb0.get(), constant0, a));
+    shared_ptr<Copy> copy1(new Copy(bb0.get(), constant1, b));
+
+    shared_ptr<Cmp_neq> cmp_neq(new Cmp_neq(bb0.get(), a, b, c));
+
+    bb0->add_IRInstr(copy0);
+    bb0->add_IRInstr(copy1);
+    bb0->add_IRInstr(cmp_neq);
+
+    firstCFG->add_bb(bb0);
+
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
+
 void test_jmp_cmp_neq() {
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
 
@@ -433,4 +460,5 @@ int main(){
     test_mul();
     test_div();
     test_jmp_cmp_neq();
+    test_cmp_neq();
 }
