@@ -12,7 +12,6 @@ int main(){
     putchar('d');
     putchar(' ');
     putchar('!');
-    putchar('\n');
 
     return 0;
 }
