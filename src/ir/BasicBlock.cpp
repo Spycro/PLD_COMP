@@ -26,6 +26,9 @@ const std::shared_ptr<BasicBlock> BasicBlock::getExit_break(){
     }
     return exit_true;
 }
+const std::shared_ptr<BasicBlock> BasicBlock::getExit_continue(){
+    return exit_continue;
+}
 
 
 void BasicBlock::setExit_true(std::shared_ptr<BasicBlock> exit_true_){
@@ -36,6 +39,9 @@ void BasicBlock::setExit_false(std::shared_ptr<BasicBlock> exit_false_){
 }
 void BasicBlock::setExit_break(std::shared_ptr<BasicBlock> exit_break_){
     exit_break = exit_break_;
+}
+void BasicBlock::setExit_continue(std::shared_ptr<BasicBlock> exit_continue_){
+    exit_continue = exit_continue_;
 }
 
 
