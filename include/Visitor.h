@@ -113,4 +113,5 @@ private:
     void addToErrorTrace(std::string);
     void setFail(){ errorFlag = true; }
     VarType::Type* parseType(std::string typeString);
+    bool checkForReturn(shared_ptr<Node> block);
 };

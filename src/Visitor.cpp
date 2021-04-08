@@ -27,7 +27,7 @@
 //#define DEBUG
 
 #define UNHANDLED { setFail(); addToErrorTrace("[!] Unhandled operation : "); addToErrorTrace(__PRETTY_FUNCTION__); addToErrorTrace("\r\n"); return 0; }
- 
+
 #ifdef DEBUG
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
   #define PRINT(x) std::cout << "[*] value : " << (x) << std::endl;
@@ -184,63 +184,77 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   // set base scope
   mainFunct->getCode()->getScope()->setFunctionBaseScope(true);
 
+  // check for a return statement
+  if (!checkForReturn(mainFunct)) {
+    setFail();
+    addToErrorTrace("[!] Error : At least one return statement was expected in function \"main\".\r\n");
+  }
+
   return antlrcpp::Any(mainFunct);
 }
 
 antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context) {
-  TRACE
+    TRACE
 
-  // retrieve function name
-  std::string functionName = context->NAME()->getSymbol()->getText();
-  verifySymbolNotExist(functionName);
-  VarType::Type* functionType;
-  if(context->type()){
-    functionType = VarType::getType(context->type()->getStart()->getText());
-  }else{
-    functionType = new VarType::Void();
-  }
-  // add to scope
-  this->scope->addFunction(functionName, functionType);
-
-  // create corresponding AST node
-  shared_ptr<Node> funct = make_shared<Function>();
-  funct->setSymbol(functionName);
-
-  // create links with the tree
-  parentNode->getChildren().push_back(funct); // add the new node to it parent
-  funct->setParent(parentNode); // set the new node parent
-  
-  // prepare to add parameters to scope
-  isBaseBlock = true;
-  if (context->functionParametersDeclaration() != nullptr) {
-    varDeclNames = context->functionParametersDeclaration()->NAME();
-    varDeclTypes = context->functionParametersDeclaration()->type();
-  }
-  {
-    int paramCount = varDeclNames.size();
-    for (int i = 0; i < paramCount; ++i) {
-      // add to parameters
-      shared_ptr<Node> param = make_shared<Variable>();
-      param->setSymbol(varDeclNames[i]->getSymbol()->getText());
-      funct->getParameters().push_back(param);
+    // retrieve function name
+    std::string functionName = context->NAME()->getSymbol()->getText();
+    verifySymbolNotExist(functionName);
+    VarType::Type* functionType;
+    if(context->type()){
+        functionType = VarType::getType(context->type()->getStart()->getText());
+    }else{
+        functionType = new VarType::Void();
     }
-  }
+    // add to scope
+    this->scope->addFunction(functionName, functionType);
 
-  // visit children
-  shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
-  parentNode = funct; //setting parent to current node before anything else
-  visit(context->block());
-  parentNode = parent; //reseting parent node at the end of the call
+    // create corresponding AST node
+    shared_ptr<Node> funct = make_shared<Function>();
+    funct->setSymbol(functionName);
 
-  // set current node attributes
-  funct->setSymbol(functionName);
-  funct->setCode(funct->getChildren()[0]);
+    // create links with the tree
+    parentNode->getChildren().push_back(funct); // add the new node to it parent
+    funct->setParent(parentNode); // set the new node parent
+    
+    // prepare to add parameters to scope
+    isBaseBlock = true;
+    if (context->functionParametersDeclaration() != nullptr) {
+        varDeclNames = context->functionParametersDeclaration()->NAME();
+        varDeclTypes = context->functionParametersDeclaration()->type();
+    }
+    {
+        int paramCount = varDeclNames.size();
+        for (int i = 0; i < paramCount; ++i) {
+        // add to parameters
+        shared_ptr<Node> param = make_shared<Variable>();
+        param->setSymbol(varDeclNames[i]->getSymbol()->getText());
+        funct->getParameters().push_back(param);
+        }
+    }
 
-  // reset function parameters
-  varDeclNames = std::vector<antlr4::tree::TerminalNode *>();
-  varDeclTypes = std::vector<ifccParser::TypeContext *>();
+    // visit children
+    shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+    parentNode = funct; //setting parent to current node before anything else
+    visit(context->block());
+    parentNode = parent; //reseting parent node at the end of the call
 
-  return antlrcpp::Any(funct);
+    // set current node attributes
+    funct->setSymbol(functionName);
+    funct->setCode(funct->getChildren()[0]);
+
+    // reset function parameters
+    varDeclNames = std::vector<antlr4::tree::TerminalNode *>();
+    varDeclTypes = std::vector<ifccParser::TypeContext *>();
+    
+    // check for a return statement if needed
+    if (functionType->getSize() != 0) {
+        if (!checkForReturn(funct)) {
+            setFail();
+            addToErrorTrace("[!] Error : At least one return statement was expected in function \"" + functionName + "\".\r\n");
+        }
+    }
+
+    return antlrcpp::Any(funct);
 }
 
 antlrcpp::Any Visitor::visitFunctionParametersDeclaration(ifccParser::FunctionParametersDeclarationContext *context) UNHANDLED
@@ -1220,4 +1234,17 @@ VarType::Type* Visitor::parseType(std::string typeString) {
     return new VarType::Char();
   }
   return nullptr;
+}
+
+bool Visitor::checkForReturn(shared_ptr<Node> node) {
+  bool ret = false;
+
+  if (node->getType() == NodeType::RETURN) {
+    return node->getChildren().size() > 0;
+  } else {
+    for (shared_ptr<Node> child : node->getChildren()) {
+      ret = ret || checkForReturn(child);
+    }
+    return ret;
+  }
 }
