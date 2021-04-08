@@ -3,7 +3,7 @@ int main() {
 
     int i[3];
 
-    i[0] = 0;
+    i[0] = a;
     i[1] = 4;
     a = i[1];
     return a;

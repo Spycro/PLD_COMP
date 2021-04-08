@@ -140,10 +140,17 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<Node> leftValue = instr->getLValue();
             shared_ptr<Node> value = instr->getRValue();
 
-            std::string symbol = leftValue->getSymbol();
+
+           // std::string symbol = inspectInstruction(leftValue);
+            std::shared_ptr<SymbolTableElement> output;
+
+           // if(leftValue->getType() == NodeType::ARRAY){
+                output = inspectInstruction(leftValue);
+           // }else{
+            //    output = current_bb->getScope()->getSymbol(leftValue->getSymbol());
+           // }
 
             std::shared_ptr<SymbolTableElement> input = inspectInstruction(value);
-            std::shared_ptr<SymbolTableElement> output = current_bb->getScope()->getSymbol(symbol);
 
             shared_ptr<Copy> copy (new Copy(current_bb.get(),*input,*output));
             current_bb->add_IRInstr(copy);
@@ -158,6 +165,16 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         }
         break;
     
+    case NodeType::ARRAY:
+        {
+            std::string name = instr->getSymbol();
+            shared_ptr<SymbolTableElement> rootElem =  current_bb->getScope()->getSymbol(name);
+            shared_ptr<SymbolTableElement> position = inspectInstruction(instr-> getPosition());
+            shared_ptr<SymbolTableElement> elementInTable(new SymbolTableElement(rootElem->getType(),false,false,false,rootElem->getMemoryOffset()+8*instr->getPosition()->getConstValue()));
+            std::cout<<"# array "<< instr->getSymbol()<< " " << elementInTable->getMemoryOffset() <<std::endl;
+            return elementInTable;
+        }
+        break;
     case NodeType::VARIABLE:
         {
             shared_ptr<Variable> myVar = std::dynamic_pointer_cast<Variable>(instr);

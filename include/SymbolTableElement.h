@@ -37,7 +37,10 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
 
         inline void setCFG(CFG* functionPointer_){functionPointer = functionPointer_;}
         inline CFG* getCFG(){return functionPointer;};
-
+        
+        inline void setMemoryOffset(int memOffset){memoryOffset=memOffset;}
+        inline int getMemoryOffset(){return memoryOffset;}
+        
     private:
         const VarType::Type* type;
         bool isSet;

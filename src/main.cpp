@@ -10,6 +10,8 @@
 #include "antlr4-runtime.h"
 #include "ir/IR.h"
 
+//#define DEBUG
+
 using namespace antlr4;
 using namespace std;
 
