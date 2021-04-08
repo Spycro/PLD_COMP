@@ -29,7 +29,7 @@
 #define UNHANDLED { setFail(); addToErrorTrace("[!] Unhandled operation : "); addToErrorTrace(__PRETTY_FUNCTION__); addToErrorTrace(".\r\n"); return 0; }
 #define FORBIDEN(x) { setFail(); addToErrorTrace("[!] Forbiden operation : "); addToErrorTrace(x); addToErrorTrace(".\r\n"); }
 #define UNDECLARED(x) { setFail(); addToErrorTrace("[!] Error : Symbol named \""); addToErrorTrace(x); addToErrorTrace("\" is used but not declared.\r\n"); }
-#define NORETURN(x) { setFail(); addToErrorTrace("[!] Error : At least one return statement was expected in \""); addToErrorTrace(x); addToErrorTrace("\".\r\n"); }
+#define NORETURN(x) { setFail(); addToErrorTrace("[!] Error : At least one return statement was expected in function \""); addToErrorTrace(x); addToErrorTrace("\".\r\n"); }
 
 #ifdef DEBUG
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
