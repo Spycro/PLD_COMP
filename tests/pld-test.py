@@ -239,8 +239,6 @@ jobfailed = False
 
 print("\n" + colors.bold + colors.bg.blue + "➞ AST tests" + colors.reset + "\n")
 
-print(jobs)
-
 def job_name_compare(job1, job2):
     j1 = job1.replace(DEST + "/", '').replace("./", '')
     j2 = job2.replace(DEST + "/", '').replace("./", '')
