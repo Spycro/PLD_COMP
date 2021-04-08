@@ -21,17 +21,11 @@ shared_ptr<SymbolTableElement> Scope::addTempVariable(const VarType::Type* varia
 
 void Scope::addVariable(std::string name,const VarType::Type *variableType)
 {
-    if(getSymbol(name)!= nullptr){
-        std::cerr<<"name is already used in scope" <<std::endl;
-    }
     symbolicTable->addVariable(name, variableType, getMemoryCounter64AndIncrement());
 }
 
 void Scope::addArray(std::string name, const VarType::Type *functionType, int size)
 {
-    if(getSymbol(name)!= nullptr){
-        std::cerr<<"name is already used in scope" <<std::endl;
-    }
     int baseMemoryCounter = getMemoryCounter64AndIncrement();
     int allocated = WORDSIZE;
     int needed = size * functionType->getSize();
