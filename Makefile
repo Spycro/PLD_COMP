@@ -68,9 +68,13 @@ $(GEN_SRCS): $(GRAMMAR)
 test: ifcc test_ast test_ir
 	@cd $(TESTS_DIR) && python3 pld-test.py .
 
-clean:
-	@rm -rf $(BUILD_DIR)
-	@rm -rf $(GEN_SRCS_DIR) $(GEN_INCLUDE_DIR)
+clean_test:
 	@rm -rf $(TESTS_DIR)/pld-test-output
 
-.PHONY: clean
+clean_build:
+	@rm -rf $(BUILD_DIR)
+	@rm -rf $(GEN_SRCS_DIR) $(GEN_INCLUDE_DIR)
+
+clean: clean_test clean_build
+
+.PHONY: clean clean_test clean_build
