@@ -187,7 +187,7 @@ antlrcpp::Any Visitor::visitMainFunction(ifccParser::MainFunctionContext *contex
   // check for a return statement
   if (!checkForReturn(mainFunct)) {
     setFail();
-    addToErrorTrace("[!] Error : At least one return statement was expected in function \"main\".\r\n");
+    addToErrorTrace("[!] Semantic error : At least one return statement was expected in function \"main\".\r\n");
   }
 
   return antlrcpp::Any(mainFunct);
@@ -250,7 +250,7 @@ antlrcpp::Any Visitor::visitAnyFunction(ifccParser::AnyFunctionContext *context)
     if (functionType->getSize() != 0) {
         if (!checkForReturn(funct)) {
             setFail();
-            addToErrorTrace("[!] Error : At least one return statement was expected in function \"" + functionName + "\".\r\n");
+            addToErrorTrace("[!] Semantic error : At least one return statement was expected in function \"" + functionName + "\".\r\n");
         }
     }
 
@@ -298,7 +298,7 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
         shared_ptr<Node> arraySizeNode = arraySizeAny.as<shared_ptr<Node>>();
         if (arraySizeNode->getType() != NodeType::CONST) {
             setFail();
-            addToErrorTrace("[!] Forbiden operation : Array must be created using a constant size\r\n");
+            addToErrorTrace("[!] Semantic error : Forbiden operation, array must be created using a constant size\r\n");
         } else {
             arraySize = arraySizeNode->getConstValue();
         }
@@ -306,7 +306,7 @@ antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarat
 
         if (isAffected) {
             setFail();
-            addToErrorTrace("[!] Forbiden operation : Array cannot be affected on creation\r\n");
+            addToErrorTrace("[!] Semantic error : Forbiden operation, array cannot be affected on creation\r\n");
         }
 
         // add to scope (done in last, statement not reached if something is invalid)
@@ -1206,7 +1206,7 @@ bool Visitor::verifySymbolExist(std::string symbol){
 
     if(!p) {
         setFail();
-        addToErrorTrace("[!] Syntax error : Symbol named \"" + symbol + "\" is used but not declared.\r\n");
+        addToErrorTrace("[!] Semantic error : Symbol named \"" + symbol + "\" is used but not declared.\r\n");
         return false; 
     }
 
@@ -1217,7 +1217,7 @@ bool Visitor::verifySymbolNotExist(std::string symbol){
   auto p = scope->getSymbol(symbol);
   if(p){
     setFail();
-    addToErrorTrace("[!] Syntax error : Symbol named \"" + symbol + "\" was already declared before.\n"); 
+    addToErrorTrace("[!] Semantic error : Symbol named \"" + symbol + "\" was already declared before.\n"); 
     return false; 
   }
   return true;
