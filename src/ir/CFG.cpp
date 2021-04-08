@@ -26,6 +26,7 @@
 #include "ir/instructions/getChar.h"
 #include "ir/instructions/BinaryOr.h"
 #include "ir/instructions/BinaryAnd.h"
+#include "ir/instructions/AddressOf.h"
 #include "type/Int64.h"
 #include "type/Char.h"
 #include "ir/ASMx86Utils.h"
@@ -175,6 +176,12 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             return elementInTable;
 
             shared_ptr<SymbolTableElement> rootElemPosition = current_bb->getScope()->addTempVariable(&INTTYPE64);
+            shared_ptr<IRInstr> op(new AddressOf(current_bb.get(),*rootElemPosition,*rootElemPosition));
+            current_bb->add_IRInstr(op);
+            op = shared_ptr<Add>(new Add(current_bb.get(),*rootElemPosition,*position,*rootElemPosition));
+            current_bb->add_IRInstr(op);
+            rootElemPosition->setDeRef(true);
+            return rootElemPosition;
         }
         break;
     case NodeType::VARIABLE:
