@@ -25,7 +25,7 @@ public:
     virtual void syntaxError(Recognizer *recognizer, Token *offendingSymbol,
                             size_t line, size_t charPositionInLine,
                             const std::string &msg, std::exception_ptr e) {
-        cerr << "Error at " << line << ":" << charPositionInLine << endl;
+        cerr << "[!] Syntax error on line " << line << ", column " << charPositionInLine << ": " << msg << endl;
         error = true;
     }
 

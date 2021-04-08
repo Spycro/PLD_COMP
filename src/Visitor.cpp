@@ -27,8 +27,6 @@
 //#define DEBUG
 
 #define UNHANDLED { setFail(); addToErrorTrace("[!] Unhandled operation : "); addToErrorTrace(__PRETTY_FUNCTION__); addToErrorTrace("\r\n"); return 0; }
-#define FORBIDEN(x) { setFail(); addToErrorTrace("[!] Forbiden operation : "); addToErrorTrace(x); addToErrorTrace("\r\n"); }
-#define UNDECLARED(x) { setFail(); addToErrorTrace("[!] Error : Symbol named \""); addToErrorTrace(x); addToErrorTrace("\" is used but not declared.\r\n"); }
  
 #ifdef DEBUG
   #define TRACE std::cout << "[*] visiting " << __PRETTY_FUNCTION__ << std::endl;
@@ -258,87 +256,89 @@ antlrcpp::Any Visitor::visitVariableDeclaration(ifccParser::VariableDeclarationC
 }
 
 antlrcpp::Any Visitor::visitVariableDeclarationList(ifccParser::VariableDeclarationListContext *context) {
-  TRACE
+    TRACE
 
-  // is an array declaration ?
-  bool isArray = context->varName()->expression() != nullptr;
+    // is an array declaration ?
+    bool isArray = context->varName()->expression() != nullptr;
 
-  // is affected on delcaration ?
-  bool isAffected = context->expression() != nullptr;
+    // is affected on delcaration ?
+    bool isAffected = context->expression() != nullptr;
 
-  // retrieve var name
-  string name = context->varName()->NAME()->getSymbol()->getText();
-  verifySymbolNotExist(name);
-  if (isArray) {
+    // retrieve var name
+    string name = context->varName()->NAME()->getSymbol()->getText();
+    verifySymbolNotExist(name);
+    if (isArray) {
 
-    // array declaration
+        // array declaration
 
-    // retrieve array size
-    int arraySize;
-    {
-      // visit children (ie. array size)
-      shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
-      parentNode = make_shared<Node>(); //setting parent node before anything else 
-      //parent is set to "nothing", we can't have array affectation on declarion, the size won't be in the AST
-      antlrcpp::Any arraySizeAny = visit(context->varName()->expression());
-      parentNode = parent; //reseting parent node at the end of the call
+        // retrieve array size
+        int arraySize;
+        {
+        // visit children (ie. array size)
+        shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+        parentNode = make_shared<Node>(); //setting parent node before anything else 
+        //parent is set to "nothing", we can't have array affectation on declarion, the size won't be in the AST
+        antlrcpp::Any arraySizeAny = visit(context->varName()->expression());
+        parentNode = parent; //reseting parent node at the end of the call
 
-      shared_ptr<Node> arraySizeNode = arraySizeAny.as<shared_ptr<Node>>();
-      if (arraySizeNode->getType() != NodeType::CONST) {
-        FORBIDEN("Array must be created using a constant size")
-      } else {
-        arraySize = arraySizeNode->getConstValue();
-      }
+        shared_ptr<Node> arraySizeNode = arraySizeAny.as<shared_ptr<Node>>();
+        if (arraySizeNode->getType() != NodeType::CONST) {
+            setFail();
+            addToErrorTrace("[!] Forbiden operation : Array must be created using a constant size\r\n");
+        } else {
+            arraySize = arraySizeNode->getConstValue();
+        }
+        }
+
+        if (isAffected) {
+            setFail();
+            addToErrorTrace("[!] Forbiden operation : Array cannot be affected on creation\r\n");
+        }
+
+        // add to scope (done in last, statement not reached if something is invalid)
+        scope->addArray(name, declarationType, arraySize);
+
+    } else {
+
+        // variable declaration
+
+        // add to scope
+        scope->addVariable(name, declarationType);
+
+        // if a default expression (ie. value) is given, create an affectation
+        // otherwise, no AST node is needed
+        if(isAffected) {
+
+        // create corresponding AST node
+        shared_ptr<Node> affectation = make_shared<Affectation>();
+
+        // create links with the tree
+        parentNode->getChildren().push_back(affectation); // add the new node to it parent
+        affectation->setParent(parentNode); // set the new node parent
+
+        // visit children
+        shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
+        parentNode = affectation; //setting parent node before anything else
+        antlrcpp::Any lValue = visit(context->varName());
+        antlrcpp::Any rValue = visit(context->expression());
+        parentNode = parent; //reseting parent node at the end of the call
+
+        // set current node attributes
+        shared_ptr<Node> lVal = lValue.as<shared_ptr<Node>>();
+        affectation->setLValue(move(lVal));
+
+        shared_ptr<Node> rVal = rValue.as<shared_ptr<Node>>();
+        affectation->setRValue(move(rVal));
+
+        return antlrcpp::Any(affectation);
+        }
+
     }
+    //recursively visit declarationList
+    if(context->variableDeclarationList())
+        visit(context->variableDeclarationList());
 
-    if (isAffected) {
-      FORBIDEN("Array cannot be affected on creation")
-    }
-
-    // add to scope (done in last, statement not reached if something is invalid)
-    scope->addArray(name, declarationType, arraySize);
-
-  } else {
-
-    // variable declaration
-
-    // add to scope
-    scope->addVariable(name, declarationType);
-
-    // if a default expression (ie. value) is given, create an affectation
-    // otherwise, no AST node is needed
-    if(isAffected) {
-
-      // create corresponding AST node
-      shared_ptr<Node> affectation = make_shared<Affectation>();
-
-      // create links with the tree
-      parentNode->getChildren().push_back(affectation); // add the new node to it parent
-      affectation->setParent(parentNode); // set the new node parent
-
-      // visit children
-      shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
-      parentNode = affectation; //setting parent node before anything else
-      antlrcpp::Any lValue = visit(context->varName());
-      antlrcpp::Any rValue = visit(context->expression());
-      parentNode = parent; //reseting parent node at the end of the call
-
-      // set current node attributes
-      shared_ptr<Node> lVal = lValue.as<shared_ptr<Node>>();
-      affectation->setLValue(move(lVal));
-
-      shared_ptr<Node> rVal = rValue.as<shared_ptr<Node>>();
-      affectation->setRValue(move(rVal));
-
-      return antlrcpp::Any(affectation);
-    }
-
-  }
-  //recursively visit declarationList
-  if(context->variableDeclarationList())
-    visit(context->variableDeclarationList());
-
-  return 0;
+    return 0;
 }
 
 antlrcpp::Any Visitor::visitNullInstr(ifccParser::NullInstrContext *context) {
@@ -1188,20 +1188,22 @@ void Visitor::popScope() {
 }
 
 bool Visitor::verifySymbolExist(std::string symbol){
-  auto p = scope->getSymbol(symbol);
-  if(!p){
-    UNDECLARED(symbol)
-    return false; 
-  }
-  return true;
+    auto p = scope->getSymbol(symbol);
+
+    if(!p) {
+        setFail();
+        addToErrorTrace("[!] Syntax error : Symbol named \"" + symbol + "\" is used but not declared.\r\n");
+        return false; 
+    }
+
+    return true;
 }
 
 bool Visitor::verifySymbolNotExist(std::string symbol){
   auto p = scope->getSymbol(symbol);
   if(p){
     setFail();
-    std::string trace = "[!] ERROR : Symbol named \"" + symbol + "\" was already declared before.\n";
-    addToErrorTrace(trace); 
+    addToErrorTrace("[!] Syntax error : Symbol named \"" + symbol + "\" was already declared before.\n"); 
     return false; 
   }
   return true;
