@@ -1,15 +1,7 @@
 int main() {
-	int a = 0;
+	int a = 2;
 
-    int i;
-
-    for(i = 0 ; i < 5 ; ++i){
-        if(a >= 3){
-
-		} 
-
-        a = a + i;
-    }
-
-    return a;
+    int i[3];
+    i[1] = 4;
+    return i[1];
 }

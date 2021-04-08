@@ -26,6 +26,7 @@
 #include "ir/instructions/getChar.h"
 #include "ir/instructions/BinaryOr.h"
 #include "ir/instructions/BinaryAnd.h"
+#include "ir/instructions/AddressOf.h"
 #include "ir/instructions/Modulo.h"
 #include "type/Int64.h"
 #include "type/Char.h"
@@ -141,10 +142,17 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<Node> leftValue = instr->getLValue();
             shared_ptr<Node> value = instr->getRValue();
 
-            std::string symbol = leftValue->getSymbol();
+
+           // std::string symbol = inspectInstruction(leftValue);
+            std::shared_ptr<SymbolTableElement> output;
+
+           // if(leftValue->getType() == NodeType::ARRAY){
+                output = inspectInstruction(leftValue);
+           // }else{
+            //    output = current_bb->getScope()->getSymbol(leftValue->getSymbol());
+           // }
 
             std::shared_ptr<SymbolTableElement> input = inspectInstruction(value);
-            std::shared_ptr<SymbolTableElement> output = current_bb->getScope()->getSymbol(symbol);
 
             shared_ptr<Copy> copy (new Copy(current_bb.get(),*input,*output));
             current_bb->add_IRInstr(copy);
@@ -159,6 +167,35 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
         }
         break;
     
+    case NodeType::ARRAY:
+        {
+            std::string name = instr->getSymbol();
+            shared_ptr<SymbolTableElement> rootElem =  current_bb->getScope()->getSymbol(name);
+            shared_ptr<SymbolTableElement> position = inspectInstruction(instr-> getPosition());
+            /*shared_ptr<SymbolTableElement> elementInTable(new SymbolTableElement(rootElem->getType(),false,false,false,rootElem->getMemoryOffset()+8*instr->getPosition()->getConstValue()));
+            std::cout<<"# array "<< instr->getSymbol()<< " " << elementInTable->getMemoryOffset() <<std::endl;
+            return elementInTable;*/
+
+            shared_ptr<SymbolTableElement> rootElemPosition = current_bb->getScope()->addTempVariable(&INTTYPE64);
+            shared_ptr<SymbolTableElement> multPos = current_bb->getScope()->addTempVariable(&INTTYPE64);
+            
+            shared_ptr<IRInstr> op(new AddressOf(current_bb.get(),*rootElem,*rootElemPosition));
+            current_bb->add_IRInstr(op);
+
+            op = shared_ptr<Mul>(new Mul(current_bb.get(),*position,SymbolTableElement(position->getType(),"8"),*multPos));
+            current_bb->add_IRInstr(op);
+
+            op = shared_ptr<Sub>(new Sub(current_bb.get(),*rootElemPosition,*multPos,*rootElemPosition));
+            current_bb->add_IRInstr(op);
+
+            shared_ptr<SymbolTableElement> res(new SymbolTableElement( &INTTYPE64, "r10", true));
+            op = shared_ptr<Copy>(new Copy(current_bb.get(),*rootElemPosition,*res));
+            current_bb->add_IRInstr(op);
+
+            res->setDeRef(true);
+            return res;
+        }
+        break;
     case NodeType::VARIABLE:
         {
             shared_ptr<Variable> myVar = std::dynamic_pointer_cast<Variable>(instr);
