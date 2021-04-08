@@ -8,19 +8,19 @@ class Unary : public Expression
 {
     public:
         Unary() 
-            : operand(nullptr) {}
+            : operand(nullptr) { type=UNARY; }
 
-        Unary(shared_ptr<Expression> operand, UnaryOperator op) 
-            : operand(operand), op(op) {}
+        Unary(shared_ptr<Node> operand, UnaryOperator op) 
+            : operand(operand), op(op) {type=UNARY;}
 
-        inline shared_ptr<Expression> getOperand() { return operand; }
-        inline UnaryOperator getOp() { return op; }
-        void setOperand(shared_ptr<Expression> op) { operand = op; }
-        void setOp(UnaryOperator o) { op = o; }
+        inline shared_ptr<Node> getOperand() override { return operand; }
+        inline UnaryOperator getUnaryOp() override  { return op; }
+        void setOperand(shared_ptr<Node> op) override { operand = op; }
+        void setOp(UnaryOperator o) override { op = o; }
 
         virtual std::string toString() override;
 
     private:
-        shared_ptr<Expression> operand;
+        shared_ptr<Node> operand;
         UnaryOperator op;
 };

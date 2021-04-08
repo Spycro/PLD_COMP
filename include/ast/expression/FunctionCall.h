@@ -8,18 +8,20 @@ using namespace std;
 class FunctionCall : public Expression {
 
     public:
-        FunctionCall() {}
+        FunctionCall() {type=FUNCTIONCALL;}
 
-        FunctionCall(string symbol, list<shared_ptr<Expression>> param) 
+        FunctionCall(string symbol, list<shared_ptr<Node>> param) 
          : symbol(symbol), parameters(param) {}
 
-        inline string& getSymbol() { return symbol; }
-        inline list<shared_ptr<Expression>>& getParameters()  { return parameters; }
+        inline string& getSymbol() override { return symbol; }
+        void setSymbol(std::string symbol_) override { symbol=symbol_; }
+
+        inline list<shared_ptr<Node>> &getParameters() override { return parameters; }
 
         virtual std::string toString() override;
 
     private:
         string symbol;
-        list<shared_ptr<Expression>> parameters;
+        list<shared_ptr<Node>> parameters;
 
 };

@@ -9,13 +9,13 @@ using namespace std;
 class Variable : public Expression {
 
     public:
-        Variable() {}
+        Variable() {type=VARIABLE;}
 
-        Variable(string symbol) : symbol(symbol) { }
+        Variable(string symbol) : symbol(symbol) {type=VARIABLE;}
         
-        inline string& getSymbol() { return symbol; }
+        inline string& getSymbol() override { return symbol; }
 
-        void setSymbol(std::string symb) { symbol = symb; }
+        void setSymbol(std::string symb) override { symbol = symb; }
 
         virtual std::string toString() override;
 

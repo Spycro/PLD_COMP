@@ -21,6 +21,7 @@ GEN_HEADERS := $(GEN_INCLUDE_DIR)/ifccBaseVisitor.h $(GEN_INCLUDE_DIR)/ifccLexer
 GEN_OBJECTS := $(GEN_SRCS:$(GEN_SRCS_DIR)/%.cpp=$(GEN_BUILD_DIR)/%.o)
 
 AST_TESTS_OBJECTS := $(BUILD_DIR)/$(TESTS_DIR)/test_ast.o $(filter-out $(BUILD_DIR)/main.o,$(OBJECTS))
+IR_TESTS_OBJECTS := $(BUILD_DIR)/$(TESTS_DIR)/test_ir.o $(filter-out $(BUILD_DIR)/main.o,$(OBJECTS))
 
 ANTLR4_BINDIR=/usr/bin
 ANTLR4_INCDIR=/usr/include/antlr4-runtime
@@ -39,6 +40,10 @@ ifcc: $(GEN_OBJECTS) $(GEN_HEADERS) $(OBJECTS) $(HEADERS)
 test_ast: $(GEN_OBJECTS) $(GEN_HEADERS) $(AST_TESTS_OBJECTS) $(HEADERS)
 	@mkdir -p $(BUILD_DIR) $(GEN_BUILD_DIR) $(BUILD_DIR)/$(TESTS_DIR)
 	$(CC) $(LDARGS) $(AST_TESTS_OBJECTS) $(GEN_OBJECTS) $(ANTLR4_LIBDIR)/libantlr4-runtime.a -o $(BUILD_DIR)/test_ast
+
+test_ir: $(GEN_OBJECTS) $(GEN_HEADERS) $(IR_TESTS_OBJECTS) $(HEADERS)
+	@mkdir -p $(BUILD_DIR) $(GEN_BUILD_DIR) $(BUILD_DIR)/$(TESTS_DIR)
+	$(CC) $(LDARGS) $(IR_TESTS_OBJECTS) $(GEN_OBJECTS) $(ANTLR4_LIBDIR)/libantlr4-runtime.a -o $(BUILD_DIR)/test_ir
 
 $(BUILD_DIR)/$(TESTS_DIR)/%.o: $(TESTS_DIR)/%.cpp
 	@mkdir -p $(shell dirname $@)
@@ -60,12 +65,16 @@ $(GEN_SRCS): $(GRAMMAR)
 	@mv /tmp/antlr4-generated/*.h $(GEN_INCLUDE_DIR)
 	@rm -rf /tmp/antlr4-generated
 
-test: ifcc test_ast
-	@cd $(TESTS_DIR) && python3 pld-test.py . && exit $?
+test: ifcc test_ast test_ir
+	@cd $(TESTS_DIR) && python3 pld-test.py .
 
-clean:
-	@rm -rf $(BUILD_DIR)
-	@rm -rf $(GEN_SRCS_DIR) $(GEN_INCLUDE_DIR)
+clean_test:
 	@rm -rf $(TESTS_DIR)/pld-test-output
 
-.PHONY: clean
+clean_build:
+	@rm -rf $(BUILD_DIR)
+	@rm -rf $(GEN_SRCS_DIR) $(GEN_INCLUDE_DIR)
+
+clean: clean_test clean_build
+
+.PHONY: clean clean_test clean_build

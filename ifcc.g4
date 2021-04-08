@@ -60,7 +60,7 @@ WS    : [ \t\r\n] -> channel(HIDDEN) ;
 /*
  *    keywords
  */
-TYPE : 'int' ; // TODO : add char
+type : 'int'|'char';
 VOID : 'void' ;
 BREAK : 'break' ;
 CONTINUE : 'continue' ;
@@ -70,17 +70,30 @@ WHILE : 'while' ;
 IF : 'if' ;
 ELSE : 'else' ;
 FOR : 'for' ;
+SWITCH : 'switch' ;
 MAIN : 'main' ;
 SIZEOF : 'sizeof' ;
-
-
+LT: '<';
+LTE: '<=';
+GT: '>';
+GTE: '>=';
+EQUAL: '==';
+NOTEQUAL: '!=';
 /*
  *    names and numbers
  */
-CONST : [0-9]+ ; // TODO : add chars ('a', '\0', '\n' ...)
+
+NUMBERS : [0-9]+ ;
+CHARACTERS : '\''[\\]?[\u0000-\u007F]'\''; // TODO : add chars ('a', '\0', '\n' ...), add type modifier
 NAME : [a-zA-Z_][a-zA-Z0-9_]* ;
+constant : NUMBERS|CHARACTERS;
 varName : NAME ('[' expression ']')? ;
-functionCall : NAME '(' (expression (',' expression)*)? ')' ;
+functionCall 
+      : 'putchar(' expression ')' #putchar
+      | 'getchar(' ')' #getchar
+      | NAME '(' (expression (',' expression)*)? ')' #functionCalling
+      ;
+
 
 
 
@@ -97,13 +110,13 @@ functionCall : NAME '(' (expression (',' expression)*)? ')' ;
 prog : (variableDeclaration ';' | functionDeclaration)* ;
 
 
-functionDeclaration // TODO : add suport for parameters 
-      : (TYPE|VOID) MAIN '(' VOID? ')' block #mainFunction
-      | (TYPE|VOID) NAME '(' VOID? ')' block #anyFunction 
+functionDeclaration // TODO : add suport for parameters
+      : 'int' MAIN '(' VOID? ')' block #mainFunction
+      | (type|VOID) NAME '(' (VOID?| functionParametersDeclaration ) ')' block #anyFunction 
       ;
+functionParametersDeclaration : type NAME (',' type NAME)* ;
 
-
-variableDeclaration : TYPE variableDeclarationList ;
+variableDeclaration : type variableDeclarationList ;
 variableDeclarationList : varName ('=' expression)? (',' variableDeclarationList)? ;
 
 
@@ -140,12 +153,13 @@ controlStructure
       : WHILE '(' expression ')' instruction #whileInstr
       | DO instruction WHILE '(' expression ')' ';' #doWhileInstr
       | IF '(' expression ')' instruction (ELSE instruction)? #ifInstr
-      | FOR '(' expression? ';' expression? ';' expression? ')' instruction #forInstr
+      | FOR '(' expression ';' expression ';' expression ')' instruction #forInstr // TODO : add support for expression?
+      // TODO : add switch
       ;
 
 
 expression 
-      : CONST #const
+      : constant #const
       | varName #variable
       | functionCall #functCall
       | '(' expression ')' #parenthesis
@@ -158,16 +172,16 @@ expression
       | '+' expression #unaryPlus
       | ('!'|'not') expression #logicalNot
       | ('~'|'compl') expression #bitwiseNot
-      | '(' TYPE ')' expression #cast
+      | '(' type ')' expression #cast
       | '&' expression #addresOf
-      | SIZEOF '(' TYPE ')' #sizeof
+      | SIZEOF '(' type ')' #sizeof
       | expression MULTDIVMOD expression #multiplicationDivisionModulo
       | expression plusMinusSymbol expression #plusMinus
       | expression ('<<'|'>>') expression #bitwiseShift
-      | expression ('<'|'<='|'>'|'>=') expression #lesserOrGreater
-      | expression ('=='|'!=') expression #compare
+      | expression (LT|LTE|GT|GTE) expression #lesserOrGreater
+      | expression (EQUAL|NOTEQUAL) expression #compare
       | expression ('&'|'bitand') expression #bitwiseAnd
-      | expression ('^'|'bitor') expression #bitwiseXor
+      | expression ('^'|'bitxor') expression #bitwiseXor
       | expression ('|'|'bitor') expression #bitwiseOr
       | expression ('&&'|'and') expression #logicalAnd
       | expression ('||'|'or') expression #logicalOr
@@ -183,7 +197,7 @@ expression
       | varName ('&='|'and_eq') expression #bitwiseAnd_assign
       | varName ('^='|'xor_eq') expression #bitwiseXor_assig
       | varName ('|='|'or_eq') expression #bitwiseOr_assign
-      | expression ',' expression #comma
+      //    | expression ',' expression #comma
       ;
 
 MULTDIVMOD : '*' | '/' | '%' ; // remplacer par non terminal ? (en minuscules)

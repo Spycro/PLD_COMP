@@ -21,11 +21,16 @@ class Visitor : public ifccVisitor
 
 public:
     virtual antlrcpp::Any visitAxiom(ifccParser::AxiomContext *context) override;
+    virtual antlrcpp::Any visitType(ifccParser::TypeContext *context) override;
+    virtual antlrcpp::Any visitConstant(ifccParser::ConstantContext *context) override;
     virtual antlrcpp::Any visitVarName(ifccParser::VarNameContext *context) override;
-    virtual antlrcpp::Any visitFunctionCall(ifccParser::FunctionCallContext *context) override;
+    virtual antlrcpp::Any visitPutchar(ifccParser::PutcharContext *context) override;
+    virtual antlrcpp::Any visitGetchar(ifccParser::GetcharContext *context) override;
+    virtual antlrcpp::Any visitFunctionCalling(ifccParser::FunctionCallingContext *context) override;
     virtual antlrcpp::Any visitProg(ifccParser::ProgContext *context) override;
     virtual antlrcpp::Any visitMainFunction(ifccParser::MainFunctionContext *context) override;
     virtual antlrcpp::Any visitAnyFunction(ifccParser::AnyFunctionContext *context) override;
+    virtual antlrcpp::Any visitFunctionParametersDeclaration(ifccParser::FunctionParametersDeclarationContext *context) override;
     virtual antlrcpp::Any visitVariableDeclaration(ifccParser::VariableDeclarationContext *context) override;
     virtual antlrcpp::Any visitVariableDeclarationList(ifccParser::VariableDeclarationListContext *context) override;
     virtual antlrcpp::Any visitNullInstr(ifccParser::NullInstrContext *context) override;
@@ -72,7 +77,6 @@ public:
     virtual antlrcpp::Any visitParenthesis(ifccParser::ParenthesisContext *context) override;
     virtual antlrcpp::Any visitBitwiseXor_assig(ifccParser::BitwiseXor_assigContext *context) override;
     virtual antlrcpp::Any visitBitwiseOr_assign(ifccParser::BitwiseOr_assignContext *context) override;
-    virtual antlrcpp::Any visitComma(ifccParser::CommaContext *context) override;
     virtual antlrcpp::Any visitUnaryPlus(ifccParser::UnaryPlusContext *context) override;
     virtual antlrcpp::Any visitSub_assign(ifccParser::Sub_assignContext *context) override;
     virtual antlrcpp::Any visitVariable(ifccParser::VariableContext *context) override;
@@ -83,16 +87,31 @@ public:
 
     inline shared_ptr<Node> getRootNode() { return rootNode; }
     inline shared_ptr<Scope> getScope() { return scope; }
-
+    inline bool getErrorFlag() { return errorFlag; }
+    inline string& getErrorTrace() { return errorTrace; }
 private:
     shared_ptr<Scope> scope = make_shared<Scope>();
 
     shared_ptr<Node> rootNode = make_shared<Node>();
 
 	shared_ptr<Node> parentNode;
-    Type* declarationType;
+    
+    VarType::Type* declarationType;
+
+    bool isBaseBlock = false;
+    std::vector<antlr4::tree::TerminalNode *> varDeclNames;
+    std::vector<ifccParser::TypeContext *> varDeclTypes;
+
+    bool errorFlag = false;
+    
+    std::string errorTrace;
 
     void pushScope();
     void popScope();
-
+    bool verifySymbolExist(std::string);
+    bool verifySymbolNotExist(std::string);
+    void addToErrorTrace(std::string);
+    void setFail(){ errorFlag = true; }
+    VarType::Type* parseType(std::string typeString);
+    bool checkForReturn(shared_ptr<Node> block);
 };

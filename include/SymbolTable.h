@@ -2,22 +2,10 @@
 #include <unordered_map>
 #include <memory>
 #include "type/Type.h"
+#include <string>
+#include "SymbolTableElement.h"
 
-
-typedef struct symbolTableElements{
-	Type* type;
-	bool isSet;
-	bool isUsed;
-	bool isFunction;
-	int memoryOffset;
-
-	symbolTableElements(Type* type, bool isFunction)
-		: type(type), isSet(false), isUsed(false), isFunction(isFunction), memoryOffset(0) {}
-	symbolTableElements(Type* type, bool isSet, bool isUsed, bool isFunction, int memoryoffset) 
-		: type(type), isSet(isSet), isUsed(isUsed), isFunction(isFunction), memoryOffset(memoryoffset) {} 
-} symbolTableElement;
-
-typedef std::unordered_map<std::string, std::shared_ptr<symbolTableElement>> SymbolMap;
+typedef std::unordered_map<std::string, std::shared_ptr<SymbolTableElement>> SymbolMap;
 
 class SymbolTable{
 	public:
@@ -26,13 +14,21 @@ class SymbolTable{
 
 		virtual ~SymbolTable() {}
 		
-		std::shared_ptr<symbolTableElement> getSymbol(std::string name) { return elements->at(name) ; }
-		void putSymbol(std::string name, std::shared_ptr<symbolTableElement> symbol) { 
+		std::shared_ptr<SymbolTableElement> getSymbol(std::string name) { return elements->at(name) ; }
+		bool symbolInTable(std::string name){return elements->find(name) != elements->end();}
+		/*
+		void putSymbol(std::string name, std::shared_ptr<SymbolTableElement> symbol) { 
 			elements->emplace(name, symbol);
-		 }
+		}*/
 
-		void addVariable (std::string variableName, Type* variableType);
-		void addFunction (std::string functionName, Type* functionReturnType);
+		
+		int get_var_index(std::string name);
+		
+		VarType::Type* get_var_type(std::string name);
+
+		std::shared_ptr<SymbolTableElement> addVariable (std::string variableName, const VarType::Type* variableType, int mem64);
+		std::shared_ptr<SymbolTableElement> addArray (std::string variableName, const VarType::Type* variableType, int size, int mem64);
+		std::shared_ptr<SymbolTableElement> addFunction (std::string functionName, const VarType::Type* functionReturnType, int mem64);
 		//const std::unique_ptr<SymbolMap> & getElements() { return elements; }
 
 	private:

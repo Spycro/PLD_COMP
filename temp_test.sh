@@ -1,0 +1,1 @@
+./build/ifcc ./tests/test_cases/init/0_Main.c
