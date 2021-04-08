@@ -542,7 +542,7 @@ antlrcpp::Any Visitor::visitIfInstr(ifccParser::IfInstrContext *context) {
   antlrcpp::Any test = visit(context->expression());
   antlrcpp::Any ifCode = visit(context->instruction()[0]);
   antlrcpp::Any elseCode;
-  if (context->instruction()[1] != nullptr) { // else code
+  if (context->instruction().size() >= 2) { // else code
     elseCode = visit(context->instruction()[1]); 
   } else { // no else code, create nullInstr
     // create corresponding AST node
