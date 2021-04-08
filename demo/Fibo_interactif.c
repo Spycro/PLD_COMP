@@ -38,12 +38,11 @@ int main() {
     int c;
     int result = 0;
 
-    for(c=1;c<=n;c++) {
+    for(c=0;c<=n;c++) {
         result = f(c);
+        print(result);
+        putchar(10);
     }
-
-    print(result);
-    putchar(10);
 
     return result;
 }
