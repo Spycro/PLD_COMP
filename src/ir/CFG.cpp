@@ -191,7 +191,7 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             op = shared_ptr<Sub>(new Sub(current_bb.get(),*rootElemPosition,*multPos,*rootElemPosition));
             current_bb->add_IRInstr(op);
 
-            shared_ptr<SymbolTableElement> res(new SymbolTableElement( &INTTYPE64, "r10", true));
+            shared_ptr<SymbolTableElement> res(new SymbolTableElement( &INTTYPE64, "r10", true)); // ok this is bad, we were running out of time and needed arrays
             op = shared_ptr<Copy>(new Copy(current_bb.get(),*rootElemPosition,*res));
             current_bb->add_IRInstr(op);
 
