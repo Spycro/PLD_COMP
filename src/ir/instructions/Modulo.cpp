@@ -10,7 +10,7 @@ Modulo::Modulo(BasicBlock *bb, SymbolTableElement a_, SymbolTableElement b_, Sym
 void Modulo::gen_asm(std::ostream &o) {
 
     // Get subregister of RDX (dl, dx, edx) depending on res size
-    SymbolTableElement& rdxSubReg = getSubReg(RAX_REGISTER, res.getSize());
+    SymbolTableElement& rdxSubReg = getSubReg(RDX_REGISTER, res.getSize());
 
     // Convert both operands to 64 bits
     o << moveTo64Reg(a, RAX_REGISTER) << std::endl;
