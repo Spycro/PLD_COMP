@@ -118,9 +118,12 @@ void CFG::gen_asm_prologue(std::ostream& o) {
 
     SymbolTableElement* reg[] = {&RDI_REGISTER, &RSI_REGISTER, &RDX_REGISTER, &RCX_REGISTER, &R8_REGISTER, &R9_REGISTER};
 
+    int j = 0;
+
     while(i >= 0){
-        o << moveTo(*reg[i], *myParams.at(i)) << std::endl;
+        o << moveTo(*reg[j], *myParams.at(i)) << std::endl;
         --i;
+        ++j;
     }
 }
 
