@@ -171,17 +171,28 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             std::string name = instr->getSymbol();
             shared_ptr<SymbolTableElement> rootElem =  current_bb->getScope()->getSymbol(name);
             shared_ptr<SymbolTableElement> position = inspectInstruction(instr-> getPosition());
-            shared_ptr<SymbolTableElement> elementInTable(new SymbolTableElement(rootElem->getType(),false,false,false,rootElem->getMemoryOffset()+8*instr->getPosition()->getConstValue()));
+            /*shared_ptr<SymbolTableElement> elementInTable(new SymbolTableElement(rootElem->getType(),false,false,false,rootElem->getMemoryOffset()+8*instr->getPosition()->getConstValue()));
             std::cout<<"# array "<< instr->getSymbol()<< " " << elementInTable->getMemoryOffset() <<std::endl;
-            return elementInTable;
+            return elementInTable;*/
 
             shared_ptr<SymbolTableElement> rootElemPosition = current_bb->getScope()->addTempVariable(&INTTYPE64);
-            shared_ptr<IRInstr> op(new AddressOf(current_bb.get(),*rootElemPosition,*rootElemPosition));
+            shared_ptr<SymbolTableElement> multPos = current_bb->getScope()->addTempVariable(&INTTYPE64);
+            
+            shared_ptr<IRInstr> op(new AddressOf(current_bb.get(),*rootElem,*rootElemPosition));
             current_bb->add_IRInstr(op);
-            op = shared_ptr<Add>(new Add(current_bb.get(),*rootElemPosition,*position,*rootElemPosition));
+
+            op = shared_ptr<Mul>(new Mul(current_bb.get(),*position,SymbolTableElement(position->getType(),"8"),*multPos));
             current_bb->add_IRInstr(op);
-            rootElemPosition->setDeRef(true);
-            return rootElemPosition;
+
+            op = shared_ptr<Sub>(new Sub(current_bb.get(),*rootElemPosition,*multPos,*rootElemPosition));
+            current_bb->add_IRInstr(op);
+
+            shared_ptr<SymbolTableElement> res(new SymbolTableElement( &INTTYPE64, "r10", true));
+            op = shared_ptr<Copy>(new Copy(current_bb.get(),*rootElemPosition,*res));
+            current_bb->add_IRInstr(op);
+
+            res->setDeRef(true);
+            return res;
         }
         break;
     case NodeType::VARIABLE:

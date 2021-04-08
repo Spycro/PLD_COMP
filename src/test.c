@@ -1,10 +1,7 @@
 int main() {
-	int a = 0;
+	int a = 2;
 
     int i[3];
-
-    i[0] = 0;
     i[1] = 4;
-    a = i[1];
-    return a;
+    return i[1];
 }
