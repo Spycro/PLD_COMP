@@ -173,6 +173,8 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
             shared_ptr<SymbolTableElement> elementInTable(new SymbolTableElement(rootElem->getType(),false,false,false,rootElem->getMemoryOffset()+8*instr->getPosition()->getConstValue()));
             std::cout<<"# array "<< instr->getSymbol()<< " " << elementInTable->getMemoryOffset() <<std::endl;
             return elementInTable;
+
+            shared_ptr<SymbolTableElement> rootElemPosition = current_bb->getScope()->addTempVariable(&INTTYPE64);
         }
         break;
     case NodeType::VARIABLE:

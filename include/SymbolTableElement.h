@@ -23,7 +23,9 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
 		    : type(_type), isSet(false), isUsed(false), memoryOffset(false), isConst(false), constValue(""), isReg(_isReg), regValue(_regValue){}
 
         inline std::string getAsm(){
-            if(isConst){
+            if(deRef){
+                return "(%" + regValue + ")";
+            }else if(isConst){
                 return "$" + constValue;
             }else if(isReg){
                 return "%" + regValue;
@@ -41,6 +43,7 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
         inline void setMemoryOffset(int memOffset){memoryOffset=memOffset;}
         inline int getMemoryOffset(){return memoryOffset;}
         
+        inline void setDeRef(bool in){deRef = in;}
     private:
         const VarType::Type* type;
         bool isSet;
@@ -55,4 +58,6 @@ class SymbolTableElement{//todo this entire class should probably be seperated i
         std::string regValue;
 
         CFG* functionPointer;
+
+        bool deRef = false;
 };
