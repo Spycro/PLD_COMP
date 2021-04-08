@@ -18,6 +18,7 @@ int main(){
     putchar(':');
     putchar(' ');
     putchar(a);
+    putchar(10);
     
     return 0;
 }

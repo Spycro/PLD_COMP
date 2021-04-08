@@ -44,7 +44,9 @@ void BasicBlock::gen_asm(std::ostream &o) {
     o << "." << label << ":" << std::endl;
 
     for(auto& instr : instrs) {
-        instr->gen_asm(o);
+        if(instr != nullptr) {
+            instr->gen_asm(o);
+        }
     }
 
     if(needJmp && exit_true){

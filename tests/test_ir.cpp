@@ -23,12 +23,31 @@
 #include "ir/instructions/Jmp_cmp_le.h"
 #include "ir/instructions/Jmp_cmp_gt.h"
 #include "ir/instructions/Jmp_cmp_ge.h"
+#include "ir/instructions/Modulo.h"
 #include "type/Int32.h"
 #include "type/Int64.h"
 #include "type/Void.h"
 #include "SymbolTable.h"
 #include "ir/ASMConstants.h"
 
+void test_modulo() {
+    std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
+
+    shared_ptr<BasicBlock> bb0( new BasicBlock(firstCFG.get(), nullptr));
+
+    SymbolTableElement constant0(&INTTYPE64, "5");
+    SymbolTableElement constant1(&INTTYPE64, "3");
+    SymbolTableElement res(&INTTYPE64, false, false, 8);
+
+    shared_ptr<Modulo> modulo(new Modulo(bb0.get(), constant0, constant1, res));
+
+    bb0->add_IRInstr(modulo);
+
+    firstCFG->add_bb(bb0);
+
+    firstCFG->gen_asm(std::cout);
+    std::cout << std::endl << std::endl;
+}
 
 void test_cmp_neq() {
     std::shared_ptr<CFG> firstCFG(new CFG(nullptr, "main", &INTTYPE64));
@@ -448,7 +467,7 @@ int main(){
     //test_following_blocks();
     //test_if_condition();
     //test_if_else_condition();
-    test_call();
+    //test_call();
     //test_call_many_params();
     //test_operations_sub_add();
     //test_operations_mul_div();
@@ -464,4 +483,6 @@ int main(){
     test_jmp_cmp_neq();
     test_cmp_neq();
     */
+
+   test_modulo();
 }
