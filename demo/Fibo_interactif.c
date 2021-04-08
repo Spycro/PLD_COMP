@@ -6,26 +6,44 @@ int f (int n) {
     }
 }
 
+void print(int x)
+{
+    if (x < 0) {
+        putchar('-');
+        x = -x;
+    }
+    
+    if (x / 10) {
+        print(x / 10);
+    }
+
+    putchar(x % 10 + '0');
+}
+
 int main() {
     putchar('n');
-    putchar(':');
-    putchar('[');
-    putchar('1');
-    putchar('-');
-    putchar('9');
-    putchar(']');
+    putchar(' ');
     putchar('?');
+    putchar(10); // line break \n
 
-    char a = getchar();
-    int n = a - 48;
-    int i = 0;
+    char x;
+    int n = 0;
+
+    // Wait for line break \n
+    while((x = getchar()) != 10) {
+        n = n * 10;
+        n = n + (x - '0');
+    }
+
     int c;
-    int result;
+    int result = 0;
 
     for(c=1;c<=n;c++) {
-        result = f(i);
-        i++;
+        result = f(c);
     }
+
+    print(result);
+    putchar(10);
 
     return result;
 }
