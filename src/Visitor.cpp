@@ -83,7 +83,7 @@ antlrcpp::Any Visitor::visitVarName(ifccParser::VarNameContext *context) {
     shared_ptr<Node> parent = parentNode; //storing current parentNode into tmp var
     parentNode = var; //setting parent to current node before anything else
     visit(context->expression());
-    parentNode = var; //reseting parent node at the end of the call
+    parentNode = parent; //reseting parent node at the end of the call
   }
 
   // set current node attributes
@@ -1109,20 +1109,8 @@ antlrcpp::Any Visitor::visitSub_assign(ifccParser::Sub_assignContext *context) U
 
 antlrcpp::Any Visitor::visitVariable(ifccParser::VariableContext *context) {
   TRACE
-
-  // retrieve symbol
-  std::string symbol = context->varName()->NAME()->getSymbol()->getText();
-
-  verifySymbolExist(symbol);
-
-  // create corresponding AST node
-  shared_ptr<Node> variable = make_shared<Variable>(symbol);
-
-  // create links with the tree
-  parentNode->getChildren().push_back(variable); // add the new node to it parent
-  variable->setParent(parentNode); // set the new node parent
-
-  return antlrcpp::Any(variable);
+  
+  return visitChildren(context);
 }
 
 antlrcpp::Any Visitor::visitUnaryMinus(ifccParser::UnaryMinusContext *context) {
