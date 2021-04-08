@@ -26,6 +26,7 @@
 #include "ir/instructions/getChar.h"
 #include "ir/instructions/BinaryOr.h"
 #include "ir/instructions/BinaryAnd.h"
+#include "ir/instructions/Modulo.h"
 #include "type/Int64.h"
 #include "type/Char.h"
 #include "ir/ASMx86Utils.h"
@@ -229,6 +230,9 @@ std::shared_ptr<SymbolTableElement> CFG::inspectInstruction(shared_ptr<Node> ins
                 break;
             case BinaryOperator::BINXOR:
                 //todo to do in the distant future
+                break;
+            case BinaryOperator::MOD:
+                op = shared_ptr<Modulo>(new Modulo(current_bb.get(),*leftOp,*rightOp, *res));
                 break;
             default:
                 break;
