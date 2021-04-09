@@ -52,10 +52,12 @@ class BasicBlock {
 	const std::shared_ptr<BasicBlock> getExit_true();
 	const std::shared_ptr<BasicBlock> getExit_false();
 	const std::shared_ptr<BasicBlock> getExit_break();
+	const std::shared_ptr<BasicBlock> getExit_continue();
 
 	void setExit_true(std::shared_ptr<BasicBlock> exit_true);
 	void setExit_false(std::shared_ptr<BasicBlock> exit_false);
 	void setExit_break(std::shared_ptr<BasicBlock> exit_break);
+	void setExit_continue(std::shared_ptr<BasicBlock> exit_continue);
 
 	// No encapsulation whatsoever here. Feel free to do better.
 	std::string label; /**< label of the BB, also will be the label in the generated code */
@@ -71,6 +73,7 @@ class BasicBlock {
 	bool needJmp;
 	
 	std::shared_ptr<BasicBlock> exit_break = nullptr;//exit here if break happens
+	std::shared_ptr<BasicBlock> exit_continue = nullptr;//exit here if continue happens
 
  	std::shared_ptr<BasicBlock> exit_true =nullptr;  /**< pointer to the next basic block, true branch. If nullptr, return from procedure */ 
 	std::shared_ptr<BasicBlock> exit_false = nullptr; /**< pointer to the next basic block, false branch. If null_ptr, the basic block ends with an unconditional jump */
